@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<% include templates/head-template %>
+
+<body>
+
+	<% include templates/navbar-template %>
+
+	<div class="container">
+
+		<div class="row">
+
+			<!-- Sidebar Widgets Column -->
+			<div class="col-lg-3">
+
+				<!-- Search Widget -->
+				<div class="card my-4">
+					<h5 class="card-header">Search</h5>
+					<div class="card-body">
+						<div class="input-group">
+							<input type="text" class="form-control" placeholder="Search for...">
+							<span class="input-group-btn">
+								<button class="btn btn-secondary" type="button">Go!</button>
+							</span>
+						</div>
+					</div>
+				</div>
+
+				<!-- Categories Widget -->
+				<div class="card my-4">
+					<h5 class="card-header">Categories</h5>
+					<div class="card-body">
+						<div class="row">
+							<div class="col-lg-6">
+								<ul class="list-unstyled mb-0">
+									<li>
+										<a href="#">Web Design</a>
+									</li>
+									<li>
+										<a href="#">HTML</a>
+									</li>
+									<li>
+										<a href="#">Freebies</a>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Side Widget -->
+				<div class="card my-4">
+					<h5 class="card-header">Side Widget</h5>
+					<div class="card-body">
+						You can put anything you want inside of these side widgets. They are easy to use, and feature
+						the new Bootstrap 4 card containers!
+					</div>
+				</div>
+
+			</div>
+
+			<div class="col-lg-9">
+				<div class="row">
+					<h2>Nueva receta</h2>
+				</div>
+				<form method="POST" role="form" id="recipe-form" class="recipe-form needs-validation"
+					enctype="multipart/form-data" novalidate autocomplete="off">
+					<div class="form-group">
+						<div class="form-row">
+							<div class="col">
+								<label for="recipe-name">Recipe name</label>
+								<input class="form-control" type="text" name="name" id="recipe-name" required>
+								<div class="valid-feedback">Correct!</div>
+								<div class="invalid-feedback">Recipe must have a name</div>
+							</div>
+
+							<div class="col">
+								<label for="recipe-author">Author</label>
+								<input class="form-control" type="text" name="author" id="recipe-author" required>
+								<div class="valid-feedback">Correct!</div>
+								<div class="invalid-feedback">Recipe must have an author</div>
+							</div>
+						</div>
+
+						<div>
+							<label for="recipe-description">Recipe description</label>
+							<input class="form-control" type="text" name="description" id="recipe-description"
+								placeholder="Short recipe description" required maxlength="255">
+							<div class="valid-feedback">Correct!</div>
+							<div class="invalid-feedback">Recipes must have a description. Maximum 255</div>
+						</div>
+					</div>
+
+					<hr>
+
+					<div class="form-group">
+						<label>Ingredients</label>
+
+						<div class="form-row" id="ingredients-labels">
+							<div class="col-2">
+								<small class="form-text text-muted">Amount</small>
+							</div>
+							<div class="col-2">
+								<small class="form-text text-muted">Unit <span
+										style="color: grey; opacity: 0.5">(optional)</span></small>
+							</div>
+							<div class="col">
+								<small class="form-text text-muted">Thing</small>
+							</div>
+						</div>
+
+						<div id="ingredients-collection">
+							<div class="form-row ingredient-input">
+								<div class="col-2">
+									<input class="form-control" type="number" name="ingredientQuantity" value="1" min="1" placeholder="1">
+								</div>
+								<div class="col-2">
+									<input class="form-control" type="text" name="ingredientUnit">
+								</div>
+								<div class="col">
+									<input class="form-control" type="text" name="ingredientName" placeholder="thing">
+								</div>
+								<button type="button" class="btn btn-outline-danger btn-sm" onclick="removeIngredient(this)">╳</button>
+							</div>
+						</div>
+
+						<div class="text-center">
+							<button class="btn btn-outline-secondary btn-sm" type="button" onclick="addIngredient()">Add
+								ingredient</button>
+						</div>
+
+						<!-- <div class="form-row ingredient-input-template" id="ingredient-input-template">
+							<div class="col-2">
+								<input class="form-control" type="number"value="1" min="1" placeholder="1" disabled>
+							</div>
+							<div class="col-2">
+								<input class="form-control" type="text" disabled>
+							</div>
+							<div class="col">
+								<input class="form-control" type="text" placeholder="thing" disabled>
+							</div>
+						</div> -->
+
+					</div>
+
+					<hr>
+
+					<div class="form-group">
+						<label for="recipe-method">Recipe method</label>
+						<textarea class="form-control" name="method" id="recipe-method" cols="30" rows="10"
+							placeholder="Every paragraph would be a step in the recipe" required minlength="50"></textarea>
+						<small class="form-text text-muted" id="recipeMethodHelpText">Every paragraph would be a step in the
+							recipe</small>
+						<div class="valid-feedback">Correct!</div>
+						<div class="invalid-feedback">A method is required, at minimum 100 characters.</div>
+					</div>
+
+					<!-- <div class="form-group">
+						<div class="custom-file">
+							<input type="file" class="custom-file-input" id="recipe-img" name="img">
+							<label class="custom-file-label" for="recipe-img">Choose file</label>
+						</div>
+					</div> -->
+					<div class="form-group">
+						<input type="file" name="img" id="receta-img">
+					</div>
+
+					<div class="form-group text-center">
+						<button type="submit" class="btn btn-primary">Submit</button>
+					</div>
+				</form>
+			</div>
+		</div>
+		<!-- .row -->
+
+	</div>
+	<!-- .container -->
+
+	<% include templates/footer-template %>
+
+	<script>
+		window.addEventListener('load', function () {
+			// Fetch all the forms we want to apply custom Bootstrap validation styles to
+			var forms = document.getElementsByClassName('needs-validation');
+			// Loop over them and prevent submission
+			var validation = Array.prototype.filter.call(forms, function (form) {
+				form.addEventListener('submit', function (event) {
+					if (form.checkValidity() === false) {
+						event.preventDefault();
+						event.stopPropagation();
+					}
+					form.classList.add('was-validated');
+				}, false);
+			});
+		}, false);
+	</script>
+
+	<script>
+		function addIngredient() {
+			const collection = document.getElementById("ingredients-collection");
+
+			const newIngredient = document.createElement("div");
+			newIngredient.classList.add("form-row", "ingredient-input");
+			newIngredient.innerHTML = "<div class=\"col-2\">\
+									<input class=\"form-control\" type=\"number\" name=\"ingredientQuantity\" value=\"1\" min=\"1\" placeholder=\"1\">\
+								</div>\
+								<div class=\"col-2\">\
+									<input class=\"form-control\" type=\"text\" name=\"ingredientUnit\">\
+								</div>\
+								<div class=\"col\">\
+									<input class=\"form-control\" type=\"text\" name=\"ingredientName\" placeholder=\"thing\">\
+								</div>\
+								<button type=\"button\" class=\"btn btn-outline-danger btn-sm\" onclick=\"removeIngredient(this)\">╳</button>";
+			collection.appendChild(newIngredient);
+		}
+
+		function removeIngredient(ingredient) {
+			ingredient.parentElement.remove();
+		}
+	</script>
+</body>
+
+</html>
