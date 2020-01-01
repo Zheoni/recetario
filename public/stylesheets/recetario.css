@@ -12,6 +12,17 @@ div.ingredient-input {
   padding-bottom: 5px;
 }
 
+li.recipe-step {
+  color:lightgray;
+  font-size:smaller;
+}
+
+p.recipe-step {
+  color:black;
+  font-size:initial;
+  word-wrap: break-word;
+}
+
 /* 
 div.ingredient-input-template {
   color: gray;

@@ -1,6 +1,6 @@
 function transformIntoRecipeObject(row) {
-	row.INGREDIENTS = JSON.parse(row.INGREDIENTS).ingredients;
-	row.METHOD = row.METHOD.split('\n');
+	row.ingredients = JSON.parse(row.ingredients);
+	row.method = row.method.split('\n');
 	return row;
 }
 
@@ -11,8 +11,7 @@ function getAll(db) {
 
 		db.all("SELECT * FROM RECIPES", (err, rows) => {
 			if (err) {
-				reject(err);
-				return;
+				return reject(err);
 			}
 	
 			rows.forEach(row => {
@@ -73,7 +72,7 @@ function create(db, recipe, imageName) {
 			$name: recipe.name,
 			$author: recipe.author,
 			$desc: recipe.description,
-			$ing: JSON.stringify({ ingredients: ingredients }),
+			$ing: JSON.stringify(ingredients),
 			$method: recipe.method,
 			$img: imageName
 		}, function(err) {

@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<% include templates/head-template %>
+<%- include templates/head-template %>
 
 <body>
 
-	<% include templates/navbar-template %>
+	<%- include templates/navbar-template %>
 
 	<!-- Page Content -->
 	<div class="container">
@@ -58,12 +58,12 @@
 					<% for (const recipe of recipes) { %>
 						<div class="col-lg-4 col-md-6 mb-4">
 							<div class="card h-100">
-								<a href="/recipe/<%= recipe.ID %>"><img class="card-img-top" src="/recipes/images/<%= recipe.IMAGE %>" alt="<%= recipe.NAME %>"></a>
+								<a href="/recipe/<%= recipe.id %>"><img class="card-img-top" src="/recipes/images/<%= recipe.image %>" alt="<%= recipe.name %>"></a>
 								<div class="card-body">
 									<h4 class="card-title">
-										<a href="/recipe/<%= recipe.ID %>"><%= recipe.NAME %></a>
+										<a href="/recipe/<%= recipe.id %>"><%= recipe.name %></a>
 									</h4>
-									<p class="card-text"><%= recipe.DESCRIPTION %></p>
+									<p class="card-text"><%= recipe.description %></p>
 								</div>
 								<div class="card-footer">
 									<small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
@@ -100,7 +100,7 @@
 	</div>
 	<!-- /.container -->
 
-	<% include templates/footer-template %>
+	<%- include templates/footer-template %>
 
 </body>
 
