@@ -20,17 +20,17 @@ router.get('/recipe/:id', async function (req, res, next) {
 
 		res.render('recipe', { title: 'Recetario - ' + recipe.NAME, recipe: recipe });
 	} catch (err) {
-		res.status(404).render('error', { message: "Recipe not found", error: err })
+		res.status(404).render('error', { message: "Receta no encontrada", error: err })
 	}
 
 });
 
 router.get('/about', function (req, res, next) {
-	res.render('about', { title: 'Recetario - about' });
+	res.render('about', { title: 'Recetario - acera de' });
 });
 
 router.get('/create', function (req, res, next) {
-	res.render('create', { title: 'Recetario - new recipe' });
+	res.render('create', { title: 'Recetario - nueva receta' });
 });
 
 router.post('/create', upload.single('img'), async function (req, res, next) {

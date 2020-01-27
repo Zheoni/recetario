@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <%- include templates/head-template %>
 
@@ -18,7 +18,7 @@
 				<div class="sticky-top" style="top: 65px;">
 					<!-- Ingredients Widget -->
 					<div class="card my-4">
-						<h5 class="card-header">Ingredients</h5>
+						<h5 class="card-header">Ingredientes</h5>
 						<div class="card-body">
 							<ul class="list-group list-group-flush">
 								<% for (const ingredient of recipe.ingredients) { %>
@@ -93,14 +93,14 @@
 
 				<!-- Author -->
 				<p class="lead">
-					by
+					por 
 					<a href="#"><%= recipe.author %></a>
 				</p>
 
 				<hr>
 
 				<!-- Date/Time -->
-				<p>Posted on <span id="posted-date"><%= recipe.CREATED_AT %></span></p>
+				<p>Publicado el <span id="posted-date"><%= recipe.CREATED_AT %></span></p>
 
 				<hr>
 
@@ -110,7 +110,7 @@
 				<hr>
 
 				<!-- Post Content -->
-				<h3>Method</h3>
+				<h3>Método</h3>
 				<ol class="recipe-method">
 					<% for (const step of recipe.method) { %>
 					<li class="recipe-step">
@@ -162,7 +162,6 @@
 
 			request.onreadystatechange = function () {
 				if (this.readyState == 4 && this.status == 200) {
-					console.log(this.responseText);
 					if (this.responseText === "delete ok") {
 						$('#deleteModal').modal('hide');
 						document.getElementById("deleteButton").disabled = true;

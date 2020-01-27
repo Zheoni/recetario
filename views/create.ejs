@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <%- include templates/head-template %>
 
@@ -69,44 +69,43 @@
 					<div class="form-group">
 						<div class="form-row">
 							<div class="col">
-								<label for="recipe-name">Recipe name</label>
+								<label for="recipe-name">Nombre de la receta</label>
 								<input class="form-control" type="text" name="name" id="recipe-name" required>
-								<div class="valid-feedback">Correct!</div>
-								<div class="invalid-feedback">Recipe must have a name</div>
+								<div class="valid-feedback">¡Correcto!</div>
+								<div class="invalid-feedback">Debe tener un nombre</div>
 							</div>
 
 							<div class="col">
 								<label for="recipe-author">Author</label>
-								<input class="form-control" type="text" name="author" id="recipe-author" required>
-								<div class="valid-feedback">Correct!</div>
-								<div class="invalid-feedback">Recipe must have an author</div>
+								<input class="form-control" type="text" name="author" id="recipe-author">
+								<div class="valid-feedback">¡Correcto!</div>
 							</div>
 						</div>
 
 						<div>
-							<label for="recipe-description">Recipe description</label>
+							<label for="recipe-description">Descripción de la receta</label>
 							<input class="form-control" type="text" name="description" id="recipe-description"
-								placeholder="Short recipe description" required maxlength="255">
+								placeholder="Corta descripción de la receta" required maxlength="255">
 							<div class="valid-feedback">Correct!</div>
-							<div class="invalid-feedback">Recipes must have a description. Maximum 255</div>
+							<div class="invalid-feedback">Debe tener una descripción. Máximo 255 caracteres.</div>
 						</div>
 					</div>
 
 					<hr>
 
 					<div class="form-group">
-						<label>Ingredients</label>
+						<label>Ingredientes</label>
 
 						<div class="form-row" id="ingredients-labels">
 							<div class="col-2">
-								<small class="form-text text-muted">Amount</small>
+								<small class="form-text text-muted">Cantidad</small>
 							</div>
 							<div class="col-2">
-								<small class="form-text text-muted">Unit <span
-										style="color: grey; opacity: 0.5">(optional)</span></small>
+								<small class="form-text text-muted">Unidad <span
+										style="color: grey; opacity: 0.5">(opcional)</span></small>
 							</div>
 							<div class="col">
-								<small class="form-text text-muted">Thing</small>
+								<small class="form-text text-muted">Ingrediente</small>
 							</div>
 						</div>
 
@@ -119,15 +118,15 @@
 									<input class="form-control" type="text" name="ingredientUnit">
 								</div>
 								<div class="col">
-									<input class="form-control" type="text" name="ingredientName" placeholder="thing">
+									<input class="form-control" type="text" name="ingredientName" placeholder="Ingrediente">
 								</div>
 								<button type="button" class="btn btn-outline-danger btn-sm" onclick="removeIngredient(this)">╳</button>
 							</div>
 						</div>
 
 						<div class="text-center">
-							<button class="btn btn-outline-secondary btn-sm" type="button" onclick="addIngredient()">Add
-								ingredient</button>
+							<button class="btn btn-outline-secondary btn-sm" type="button" onclick="addIngredient()">Añadir
+								ingrediente</button>
 						</div>
 
 						<!-- <div class="form-row ingredient-input-template" id="ingredient-input-template">
@@ -147,23 +146,22 @@
 					<hr>
 
 					<div class="form-group">
-						<label for="recipe-method">Recipe method</label>
+						<label for="recipe-method">Método de la receta</label>
 						<textarea class="form-control" name="method" id="recipe-method" cols="30" rows="10"
-							placeholder="Every paragraph would be a step in the recipe" required minlength="50"></textarea>
-						<small class="form-text text-muted" id="recipeMethodHelpText">Every paragraph would be a step in the
-							recipe</small>
-						<div class="valid-feedback">Correct!</div>
-						<div class="invalid-feedback">A method is required, at minimum 100 characters.</div>
+							placeholder="Cada párrafo será un paso de la receta" required minlength="100"></textarea>
+						<small class="form-text text-muted" id="recipeMethodHelpText">Cada párrafo será un paso de la receta</small>
+						<div class="valid-feedback">¡Correcto!</div>
+						<div class="invalid-feedback">La receta debe tener un método, mínimo 100 caracteres.</div>
 					</div>
 
 					<div class="form-group">
 						<div class="input-group mb-3">
 							<div class="input-group-prepend">
-								<span class="input-group-text">Upload Image</span>
+								<span class="input-group-text">Subir imagen</span>
 							</div>
 							<div class="custom-file">
 								<input type="file" class="custom-file-input" id="inputGroupFile01">
-								<label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+								<label class="custom-file-label" for="inputGroupFile01">Elegir archivo</label>
 							</div>
 						</div>
 					</div>
@@ -173,7 +171,7 @@
 					</div> -->
 
 					<div class="form-group text-center">
-						<button type="submit" class="btn btn-primary">Submit</button>
+						<button type="submit" class="btn btn-primary">Enviar</button>
 					</div>
 				</form>
 			</div>
@@ -215,7 +213,7 @@
 									<input class=\"form-control\" type=\"text\" name=\"ingredientUnit\">\
 								</div>\
 								<div class=\"col\">\
-									<input class=\"form-control\" type=\"text\" name=\"ingredientName\" placeholder=\"thing\">\
+									<input class=\"form-control\" type=\"text\" name=\"ingredientName\" placeholder=\"ingrediente\">\
 								</div>\
 								<button type=\"button\" class=\"btn btn-outline-danger btn-sm\" onclick=\"removeIngredient(this)\">╳</button>";
 			collection.appendChild(newIngredient);
@@ -226,6 +224,7 @@
 		}
 	</script>
 
+	<!-- For the custom file input -->
 	<script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.min.js"></script>
 	<script>
 		bsCustomFileInput.init();
