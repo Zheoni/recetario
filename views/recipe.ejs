@@ -40,7 +40,56 @@
 			<div class="col-lg-8">
 
 				<!-- Title -->
-				<h1 class="mt-4"><%= recipe.name %></h1>
+				<div class="row">
+					<div class="col-sm-8">
+						<h1 class="mt-4"><%= recipe.name %></h1>
+					</div>
+					<div class="col-sm-4">
+						<div class="row mt-sm-4">
+							<div class="col">
+								<button id="editButton" class="btn btn-warning">
+									Editar
+								</button>
+							</div>
+							<div class="col">
+								<button id="deleteButton" class="btn btn-danger" data-toggle="modal"
+									data-target="#deleteModal">
+									Eliminar
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Delete confirmation modal -->
+				<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" data-backdrop="static">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title">Confirmación de eliminar</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								<p>¿Está seguro de que desea eliminar la receta?</p>
+								<p>Escriba el nombre de la receta para confirmar:</p>
+								<input class="form-control" type="text" name="nameConfirmation" id="nameConfirmation"
+									placeholder="<%= recipe.name %>">
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+								<button type="button" class="btn btn-danger"
+									onclick="deleteConfirmation()">Confirmar</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Alert -->
+				<div id="deleteConfirmationAlert" class="alert alert-warning" role="alert" hidden>
+					Esta receta ha sido eliminada con éxito. Será redirigido en unos segundos.
+				</div>
 
 				<!-- Author -->
 				<p class="lead">
@@ -99,6 +148,37 @@
 		})()
 
 		element.innerText = date.toLocaleDateString(locale, options);
+	</script>
+
+	<script>
+		function editRecipe() {
+
+		}
+
+		function deleteConfirmation() {
+			const input = document.getElementById("nameConfirmation");
+
+			const request = new XMLHttpRequest();
+
+			request.onreadystatechange = function () {
+				if (this.readyState == 4 && this.status == 200) {
+					console.log(this.responseText);
+					if (this.responseText === "delete ok") {
+						$('#deleteModal').modal('hide');
+						document.getElementById("deleteButton").disabled = true;
+						document.getElementById("editButton").disabled = true;
+						document.getElementById("deleteConfirmationAlert").hidden = false;
+						setTimeout(() => { window.location = "/" }, 3000);
+					} else if (this.responseText === "wrong input") {
+						input.classList.add("is-invalid");
+					}
+				}
+			}
+
+			request.open("POST", "<%= recipe.id %>/delete", true);
+			request.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+			request.send("userInput=" + input.value);
+		}
 	</script>
 
 </body>

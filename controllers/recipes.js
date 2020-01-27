@@ -29,7 +29,7 @@ function getById(db, id) {
 		if (typeof id !== "number") throw "Id is not a number.";
 
 		return new Promise((resolve, reject) => {
-			db.get("SELECT * FROM RECIPES WHERE ID=$id", {
+			db.get("SELECT * FROM RECIPES WHERE id=$id", {
 				$id: id
 			}, (err, row) => {
 				if (err) {
@@ -67,15 +67,15 @@ function create(db, recipe, imageName) {
 		imageName = "noimage.jpeg";
 	}
 
-	return new Promise((resolve, reject) =>  {
-		db.run("INSERT INTO RECIPES (NAME,AUTHOR,DESCRIPTION,INGREDIENTS,METHOD,IMAGE) VALUES ($name,$author,$desc,$ing,$method,$img)", {
+	return new Promise((resolve, reject) => {
+		db.run("INSERT INTO RECIPES (name,author,description,ingredients,method,image) VALUES ($name,$author,$desc,$ing,$method,$img)", {
 			$name: recipe.name,
 			$author: recipe.author,
 			$desc: recipe.description,
 			$ing: JSON.stringify(ingredients),
 			$method: recipe.method,
 			$img: imageName
-		}, function(err) {
+		}, function (err) {
 			if (err) {
 				return reject(err);
 			}
@@ -84,8 +84,17 @@ function create(db, recipe, imageName) {
 	});
 }
 
-function deleteById(id) {
-
+function deleteById(db, id) {
+	return new Promise((resolve, reject) => {
+		db.run("DELETE FROM RECIPES WHERE id=$id", { $id: id }, function (err) {
+			if (err) {
+				return reject(err);
+			} else {
+				console.log("Deleted recipe " + id);
+				resolve();
+			}
+		})
+	});
 }
 
 module.exports = { getAll, getById, create, deleteById }
