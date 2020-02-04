@@ -132,7 +132,7 @@
 	<script>
 		const element = document.getElementById("posted-date");
 		const p = element.innerText.split(/[ :-]/);
-		const date = new Date(Date.UTC(p[0], p[1], p[2], p[3], p[4], p[5]));
+		const date = new Date(Date.UTC(p[0], p[1] - 1, p[2], p[3], p[4], p[5]));
 		const options = {
 			year: 'numeric',
 			month: 'long',
