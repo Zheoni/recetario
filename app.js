@@ -52,7 +52,7 @@ function closeDB() {
   }
 }
 
-process.on('exit', () => app.database.close());
+process.on('exit', () => closeDB());
 process.on('SIGHUP', () => process.exit(128 + 1));
 process.on('SIGINT', () => process.exit(128 + 2));
 process.on('SIGTERM', () => process.exit(128 + 15));
