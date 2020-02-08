@@ -30,17 +30,26 @@ function create(db, recipe, imageName) {
 
 	let ingredients = [];
 
-	for (let i = 0; i < recipe.ingredientName.length; ++i) {
-		const ingredient = {
-			amount: recipe.ingredientQuantity[i],
-			unit: recipe.ingredientUnit[i],
-			name: recipe.ingredientName[i]
-		}
-
-		if (ingredient.name.length != 0) {
-			ingredients.push(ingredient);
+	if (typeof recipe.ingredientName === "string") {
+		ingredients.push({
+			amount: recipe.ingredientQuantity,
+			unit: recipe.ingredientUnit,
+			name: recipe.ingredientName
+		});
+	} else {
+		for (let i = 0; i < recipe.ingredientName.length; ++i) {
+			const ingredient = {
+				amount: recipe.ingredientQuantity[i],
+				unit: recipe.ingredientUnit[i],
+				name: recipe.ingredientName[i]
+			}
+	
+			if (ingredient.name.length != 0) {
+				ingredients.push(ingredient);
+			}
 		}
 	}
+
 
 	if (!imageName) {
 		imageName = "noimage.jpeg";
