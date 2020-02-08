@@ -3,7 +3,13 @@
 const Database = require('better-sqlite3');
 const fs = require('fs');
 
-console.log("Opening database...")
+
+if (fs.existsSync('recipes.db')) {
+	console.log("Database exists, exiting script");
+	process.exit(0);
+}
+
+console.log("Creating database file...")
 
 const db = new Database('recipes.db');
 	
