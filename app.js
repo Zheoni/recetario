@@ -4,7 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
-const sqlite3 = require('sqlite3');
+const Database = require('better-sqlite3');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
@@ -40,7 +40,7 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-app.database = new sqlite3.Database("recipes.db");
+app.database = new Database('recipes.db');
 
 function closeDB() {
   try {
@@ -52,7 +52,9 @@ function closeDB() {
   }
 }
 
-process.on('SIGINT', closeDB);
-process.on('SIGTERM', closeDB);
+process.on('exit', () => app.database.close());
+process.on('SIGHUP', () => process.exit(128 + 1));
+process.on('SIGINT', () => process.exit(128 + 2));
+process.on('SIGTERM', () => process.exit(128 + 15));
 
 module.exports = app;

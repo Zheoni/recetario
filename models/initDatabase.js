@@ -1,20 +1,18 @@
 #!/usr/bin/env node
 
-const sqlite3 = require('sqlite3').verbose();
+const Database = require('better-sqlite3');
 const fs = require('fs');
 
 console.log("Opening database...")
 
-const db = new sqlite3.Database('recipes.db', (err) => {
-	if (err) console.error(err);
+const db = new Database('recipes.db');
 	
-	console.log("Reading input file...")
-	const file = "models/recipes.sql";
-	const query = fs.readFileSync(file).toString();
+console.log("Reading input file...")
+const file = "models/recipes.sql";
+const query = fs.readFileSync(file).toString();
 	
-	console.log("Creating table...")
-	db.run(query);
+console.log("Creating table...")
+db.prepare(query).run();
 
-	console.log("Closing database...")
-	db.close();
-});
+console.log("Closing database...")
+db.close();

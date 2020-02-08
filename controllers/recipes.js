@@ -5,50 +5,29 @@ function transformIntoRecipeObject(row) {
 }
 
 function getAll(db) {
-	return new Promise((resolve, reject) => {
+	const stmt = db.prepare("SELECT * FROM RECIPES");
 
-		let recipes = [];
+	const recipes = stmt.all().map(transformIntoRecipeObject);
 
-		db.all("SELECT * FROM RECIPES", (err, rows) => {
-			if (err) {
-				return reject(err);
-			}
-	
-			rows.forEach(row => {
-				const recipe = transformIntoRecipeObject(row);
-				recipes.push(recipe);
-			});
-
-			resolve(recipes);
-		});
-	})
+	return recipes;
 }
 
 function getById(db, id) {
-	try {
-		if (typeof id !== "number") throw "Id is not a number.";
+	const row = db.prepare("SELECT * FROM RECIPES WHERE id = ?").get(id);
 
-		return new Promise((resolve, reject) => {
-			db.get("SELECT * FROM RECIPES WHERE id=$id", {
-				$id: id
-			}, (err, row) => {
-				if (err) {
-					return reject(err);
-				}
-				if (row == undefined) {
-					return reject("No recipe with id " + id);
-				}
-				const recipe = transformIntoRecipeObject(row);
-				resolve(recipe);
-			});
-		});
-	} catch (err) {
-		console.error(err)
-		return null;
+	if (row) {
+		const recipe = transformIntoRecipeObject(row);
+		return recipe;
+	} else {
+		throw ("No recipe with id " + id);
 	}
 }
 
 function create(db, recipe, imageName) {
+	const stmt = db.prepare("INSERT INTO RECIPES (name,author,description,ingredients,method,image) VALUES ($name,$author,$desc,$ing,$method,$img)");
+
+	console.log(recipe);
+
 	let ingredients = [];
 
 	for (let i = 0; i < recipe.ingredientName.length; ++i) {
@@ -67,34 +46,21 @@ function create(db, recipe, imageName) {
 		imageName = "noimage.jpeg";
 	}
 
-	return new Promise((resolve, reject) => {
-		db.run("INSERT INTO RECIPES (name,author,description,ingredients,method,image) VALUES ($name,$author,$desc,$ing,$method,$img)", {
-			$name: recipe.name,
-			$author: recipe.author,
-			$desc: recipe.description,
-			$ing: JSON.stringify(ingredients),
-			$method: recipe.method,
-			$img: imageName
-		}, function (err) {
-			if (err) {
-				return reject(err);
-			}
-			resolve(this.lastID);
-		});
+	const info = stmt.run({
+		name: recipe.name,
+		author: recipe.author,
+		desc: recipe.description,
+		ing: JSON.stringify(ingredients),
+		method: recipe.method,
+		img: imageName
 	});
+
+	return info.lastInsertRowid;
 }
 
 function deleteById(db, id) {
-	return new Promise((resolve, reject) => {
-		db.run("DELETE FROM RECIPES WHERE id=$id", { $id: id }, function (err) {
-			if (err) {
-				return reject(err);
-			} else {
-				console.log("Deleted recipe " + id);
-				resolve();
-			}
-		})
-	});
+	db.prepare("DELETE FROM RECIPES WHERE id = ?").run(id);
+	console.log("Deleted recipe " + id);
 }
 
 module.exports = { getAll, getById, create, deleteById }
