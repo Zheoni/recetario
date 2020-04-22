@@ -7,7 +7,7 @@
         <span class="link-text">Recetario</span>
       </a>
     </li>
-    <li class="search-container">
+    <li class="search-container mobile-hidden">
       <form class="searchbox" onsubmit="pressed();" action="javascript:void(0);">
         <input type="search" id="search-input" placeholder="Buscar">
         <button type="submit" id="search-button"><i class="fa fa-search"></i></button>
@@ -15,7 +15,7 @@
     </li>
     <li class="menu-container">
       <input type="checkbox" id="toggle">
-      <label for="toggle" class="burger-container">
+      <label for="toggle" class="burger-container mobile-only">
         <div class="burger">
           <div class="line top"></div>
           <div class="line mid"></div>
@@ -26,6 +26,11 @@
         <li class="nav-item active">
           <a href="#" class="nav-link">
             <span class="link-text">Inicio</span>
+          </a>
+        </li>
+        <li class="nav-item mobile-only">
+          <a href="#" class="nav-link">
+            <span class="link-text">Buscar</span>
           </a>
         </li>
         <li class="nav-item">

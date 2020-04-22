@@ -140,7 +140,6 @@ main {
 /* Burger menu */
 
 .burger-container {
-  display: none;
   float: right;
 }
 
@@ -241,12 +240,8 @@ body {
     transform: translateY(-8px) rotate(-45deg);
   }
 
-  .search-container {
+  .mobile-hidden {
     display: none;
-  }
-
-  .burger-container {
-    display: block;
   }
 
   .menu .link-text {
@@ -292,5 +287,9 @@ body {
 
   .navbar-nav li.active .link-text {
     font-weight: bold;
+  }
+
+  .mobile-only {
+    display: none;
   }
 }
