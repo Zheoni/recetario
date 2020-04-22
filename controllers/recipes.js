@@ -26,8 +26,6 @@ function getById(db, id) {
 function create(db, recipe, imageName) {
 	const stmt = db.prepare("INSERT INTO RECIPES (name,author,description,ingredients,method,image) VALUES ($name,$author,$desc,$ing,$method,$img)");
 
-	console.log(recipe);
-
 	let ingredients = [];
 
 	if (typeof recipe.ingredientName === "string") {
