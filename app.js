@@ -4,12 +4,15 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
-const Database = require('better-sqlite3');
+const { initDB, closeDB } = require("./db");
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 
 const app = express();
+
+// initialize database
+initDB();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -40,18 +43,7 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-app.database = new Database('recipes.db');
-
-function closeDB() {
-  try {
-    app.database.close();
-    console.log("Closed database");
-    process.exit(0);
-  } catch(err) {
-    console.error("Database was already closed");
-  }
-}
-
+// close db on exit
 process.on('exit', () => closeDB());
 process.on('SIGHUP', () => process.exit(128 + 1));
 process.on('SIGINT', () => process.exit(128 + 2));

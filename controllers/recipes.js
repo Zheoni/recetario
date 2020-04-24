@@ -1,10 +1,14 @@
+const { getDB } = require("../db");
+
 function transformIntoRecipeObject(row) {
 	row.ingredients = JSON.parse(row.ingredients);
 	row.method = row.method.split('\n');
 	return row;
 }
 
-function getAll(db) {
+function getAll() {
+	const db = getDB();
+
 	const stmt = db.prepare("SELECT * FROM RECIPES");
 
 	const recipes = stmt.all().map(transformIntoRecipeObject);
@@ -12,7 +16,9 @@ function getAll(db) {
 	return recipes;
 }
 
-function getById(db, id) {
+function getById(id) {
+	const db = getDB();
+
 	const row = db.prepare("SELECT * FROM RECIPES WHERE id = ?").get(id);
 
 	if (row) {
@@ -23,7 +29,9 @@ function getById(db, id) {
 	}
 }
 
-function create(db, recipe, imageName) {
+function create(recipe, imageName) {
+	const db = getDB();
+
 	const stmt = db.prepare("INSERT INTO RECIPES (name,author,description,ingredients,method,image) VALUES ($name,$author,$desc,$ing,$method,$img)");
 
 	let ingredients = [];
@@ -65,7 +73,9 @@ function create(db, recipe, imageName) {
 	return info.lastInsertRowid;
 }
 
-function deleteById(db, id) {
+function deleteById(id) {
+	const db = getDB();
+
 	db.prepare("DELETE FROM RECIPES WHERE id = ?").run(id);
 	console.log("Deleted recipe " + id);
 }
