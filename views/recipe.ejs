@@ -2,82 +2,77 @@
 <html lang="es">
 
 <head>
-	<%- include templates/head-template %>
-	<link rel="stylesheet" href="/stylesheets/recipe.css">
-
-	<script>
-		function load() {
-			const table = document.getElementsByClassName("ingredients-table");
-			const rows = table[0].children[0].children;
-
-			for (let row of rows) {
-				row.addEventListener("click", (event) => {
-					event.currentTarget.classList.toggle("marked");
-				});
-			}
-		}
-
-		document.addEventListener("DOMContentLoaded", load);
-	</script>
+  <%- include templates/head-template %>
+  <link rel="stylesheet" href="/stylesheets/recipe.css">
 </head>
 
 <body>
 
-	<%- include templates/navbar-template %>
+  <%- include templates/navbar-template %>
 
-	<main>
-		<article class="recipe" style="--recipe-image: url(/recipes/images/<%= recipe.image %>);">
+  <main>
+    <article class="recipe" style="--recipe-image: url(/recipes/images/<%= recipe.image %>);">
 
-			<section class="ingredients-container">
-				<input type="checkbox" id="ingredients-button" class="toggle">
-				<label for="ingredients-button" class="mobile-only ingredients-button-label">🗒</label>
-				<div class="ingredients">
-					<h2>Ingredientes</h2>
-					<table class="ingredients-table">
-						<% for (const ingredient of recipe.ingredients) { %>
-							<tr>
-								<td>
-									<%= ingredient.amount %> <%= ingredient.unit %>
-								</td>
-								<td>
-									<%= ingredient.name %>
-								</td>
-							</tr>
-						<% } %>
-					</table>
-				</div>
-			</section>
+      <section class="ingredients-container">
+        <input type="checkbox" id="ingredients-button" class="toggle">
+        <label for="ingredients-button" class="mobile-only ingredients-button-label">🗒</label>
+        <div class="ingredients">
+          <h2>Ingredientes</h2>
+          <table class="ingredients-table">
+            <% for (const ingredient of recipe.ingredients) { %>
+              <tr>
+                <td>
+                  <%= ingredient.amount %> <%= ingredient.unit %>
+                </td>
+                <td>
+                  <%= ingredient.name %>
+                </td>
+              </tr>
+            <% } %>
+          </table>
+        </div>
+      </section>
 
-			<div>
-				<header class="recipe-header" style>
-					<h1><%= recipe.name %></h1>
-					<p class="author">Por <%= recipe.author %></p>
-				</header>
-				
-				<section class="recipe-about">
-					<div class="about-text">
-						<p class="description"><%= recipe.description %></p>
-					</div>
-					<div class="image-container mobile-hidden">
-						<img class="recipe-image" src="/recipes/images/<%= recipe.image %>" alt="Image of the recipe">
-					</div>
-				</section>
-	
-				<hr>
-		
-				<section class="method">
-					<h2>Método</h2>
-					<ol>
-						<% for (const step of recipe.method) { %>
-							<li><%= step %></li>
-						<% } %>
-					</ol>
-				</section>
-			</div>
-		</article>
-	</main>
+      <div>
+        <header class="recipe-header" style>
+          <h1><%= recipe.name %></h1>
+          <p class="author">Por <%= recipe.author %></p>
+        </header>
+        
+        <section class="recipe-about">
+          <div class="about-text">
+            <p class="description"><%= recipe.description %></p>
+          </div>
+          <div class="image-container mobile-hidden">
+            <img class="recipe-image" src="/recipes/images/<%= recipe.image %>" alt="Image of the recipe">
+          </div>
+        </section>
+  
+        <hr>
+    
+        <section class="method">
+          <h2>Método</h2>
+          <ol>
+            <% for (const step of recipe.method) { %>
+              <li><%= step %></li>
+            <% } %>
+          </ol>
+        </section>
+      </div>
+    </article>
+  </main>
 
-	<%- include templates/footer-template %>
+  <%- include templates/footer-template %>
 
+
+  <script>
+    const rows = document.querySelectorAll(".ingredients-table tr");
+
+    for (let row of rows) {
+      row.addEventListener("click", (event) => {
+        event.currentTarget.classList.toggle("marked");
+      });
+    }
+  </script>
 </body>
 </html>

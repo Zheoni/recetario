@@ -23,7 +23,7 @@
         </div>
       </label>
       <ul class="menu">
-        <li class="nav-item active">
+        <li id="nav-home" class="nav-item">
           <a href="/" class="nav-link">
             <span class="link-text">Inicio</span>
           </a>
@@ -33,13 +33,13 @@
             <span class="link-text">Buscar</span>
           </a>
         </li>
-        <li class="nav-item">
-          <a href="#" class="nav-link">
+        <li id="nav-create" class="nav-item">
+          <a href="/create" class="nav-link">
             <span class="link-text">Nueva</span>
           </a>
         </li>
-        <li class="nav-item">
-          <a href="#" class="nav-link">
+        <li id="nav-about" class="nav-item">
+          <a href="/about" class="nav-link">
             <span class="link-text">Acerca de</span>
           </a>
         </li>
@@ -51,5 +51,23 @@
 <script>
   function pressed() {
     console.log("search")
+  }
+</script>
+
+<script>
+  const currentPage = document.getElementById("current-page");
+
+  if (currentPage) {
+    switch (currentPage.content) {
+      case "index":
+        document.getElementById("nav-home").classList.add('active');
+        break;
+      case "create":
+        document.getElementById("nav-create").classList.add('active');
+        break;
+      case "about":
+        document.getElementById("nav-about").classList.add('active');
+        break;
+    }
   }
 </script>
