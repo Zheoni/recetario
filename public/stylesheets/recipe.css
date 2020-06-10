@@ -1,0 +1,215 @@
+.recipe {
+  --image-height: 300px;
+}
+
+.recipe-header {
+  margin: 1rem 0;
+}
+
+.recipe-header h1 {
+  font-size: 3rem;
+  margin: 0;
+}
+
+.author {
+  font-size: 1rem;
+  font-style: italic;
+  font-weight: lighter;
+  margin: 0;
+}
+
+.about-text {
+  font-size: 1.2rem;
+  line-height: 1.6rem;
+  text-indent: 30px;
+  text-align: justify;
+  text-justify: inter-word;
+}
+
+.image-container {
+  width: 100%;
+  height: min(var(--image-height, 300px), 100%);
+  border-radius: 5px;
+  background-color: transparent;
+}
+
+.recipe-image {
+  display: block;
+  box-sizing: border-box;
+  max-height: 100%;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  margin: auto;
+  border-radius: 5px;
+}
+
+hr {
+  width: 75%;
+  border-radius: 10px;
+  border-color: var(--bg-secondary, black);
+  opacity: 0.3;
+  margin: 1rem auto;
+}
+
+#ingredients-button {
+  display: none;
+}
+
+.ingredients {
+  background-color: var(--details-color, lightgray);
+  border-radius: 5px;
+  padding: 10px;
+  overflow: auto;
+
+  transition: transform 200ms ease-out;
+}
+
+.ingredients h2 {
+  margin-top: 0;
+}
+
+.ingredients-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ingredients-table td {
+  line-height: 1.75rem;
+  font-size: 1.15rem;
+}
+
+.ingredients-table tr {
+  cursor: pointer;
+}
+
+.marked{
+  color: gray;
+  text-decoration: line-through;
+}
+
+.ingredients-table tr:not(:last-child) {
+  border-bottom: 1.5px solid rgba(0, 0, 0, 0.3);
+}
+
+.ingredients-button-label {
+  width: 65px;
+  height: 50px;
+  position: fixed;
+  bottom: 50px;
+  left: -25px;
+  background-color: var(--details-color, lightgray);
+  border-radius: 0px 5px 5px 0px;
+  font-size: 2rem;
+  box-shadow: 0px 0px 10px -2px rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 10px;
+  z-index: 1;
+
+  transition: box-shadow 250ms, transform 250ms ease-in-out;
+}
+
+/* Small screens */
+@media only screen and (max-width: 767px) {
+
+  .recipe-header {
+    background-image: var(--recipe-image);
+    background-position: center;
+    background-size: cover;
+    height: var(--image-height, 300px);
+    width: 100%;
+    border-radius: 5px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .recipe-header h1 {
+    color: var(--text-secondary, white);
+    border: solid var(--details-color, white) 2px;
+    margin-bottom: 5px;
+    width: 70%;
+    padding: 1rem 0;
+    padding-left: 10%;
+
+    position: relative;
+    z-index: 0;
+  }
+
+  /* This is for the blur effect behind the text */
+  .recipe-header h1::before {
+    content: "";
+    background-image: var(--recipe-image);
+    background-position: center;
+    background-size: cover;
+    width: 105%;
+    height: 100px;
+    position: absolute;
+    top: -15px;
+    left: -2.5%;
+    z-index: -1;
+    filter: blur(20px) brightness(70%) saturate(170%);
+  }
+
+  .author {
+    align-self: flex-start;
+    margin-left: 20%;
+    z-index: 0;
+    font-weight: 400;
+    color: white;
+  }
+
+  .ingredients {
+    position: fixed;
+    left: -100vw;
+    box-shadow: 0px 0px 10px -2px rgba(0, 0, 0, 0.4);
+    border-radius: 0 5px 5px 0;
+    width: 75vw;
+    max-height: 50vh;
+
+    z-index: 1;
+  }
+
+  #ingredients-button:checked ~ .ingredients {
+    
+    transform: translateX(100vw)
+  }
+
+  #ingredients-button:checked ~ .ingredients-button-label {
+    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.5);
+    transform: scale(1.03);
+  }
+
+}
+
+/* Large screens */
+@media only screen and (min-width: 768px) {
+  .recipe {
+    display: grid;
+    grid-template-columns: 1fr minmax(200px, 3fr);
+  }
+
+  .recipe-about {
+    display: flex;
+    align-items: center;
+  }
+
+  .about-text {
+    width: 50%;
+    margin-right: 10px;
+  }
+
+  .ingredients {
+    position: sticky;
+    top: 5rem;
+    max-width: 250px;
+    max-height: calc(100vh - 12rem);
+
+    margin-right: 2rem;
+  }
+
+}

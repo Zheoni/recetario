@@ -64,16 +64,16 @@
 }
 
 .card-description::-webkit-scrollbar {
-  width: 0.25rem;
+  width: 5px;
 }
 
 .card-description::-webkit-scrollbar-track {
-  background: var(--bg-secondary, darkgray);
+  display: none;
 }
 
 .card-description::-webkit-scrollbar-thumb {
-  background: #161a3e;
-  border-radius: 1px;
+  background: var(--details-color, darkgray);
+  border-radius: 2px;
 }
 
 .card-name h3 {
