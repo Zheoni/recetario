@@ -1,5 +1,5 @@
 :root {
-  font-size: 14px;
+  font-size: 15px;
   font-family: sans-serif;
   --text-primary: #23272a;
   --text-secondary: #f0f8ff;
@@ -12,6 +12,8 @@
   --bg-secondary: #2c2f33;
 
   --details-color: #bdc5ff;
+
+  --borders-color: rgba(0, 0, 0, 0.125);
 
   --navbar-size: 4rem;
   --navbar-content-size: 3rem;
@@ -30,7 +32,7 @@ main {
   margin: 0 auto;
   margin-top: var(--navbar-size, 4rem);
   width: 90%;
-  max-width: 1024px;
+  max-width: 75vw;
 }
 
 /* Navbar */
@@ -234,12 +236,11 @@ body {
 
   .menu .link-text {
     font-size: min(10vh, 3rem);
-    margin-bottom: 1vh;
     padding: 3vh;
     border: solid;
     border: 1px solid var(--navbar-secondary, #3f3f3f);
     border-radius: 10px;
-    width: 50vw;
+    width: 60vw;
     text-align: center;
   }
 
@@ -247,8 +248,11 @@ body {
     height: max-content;
   }
 
+  .menu .nav-item {
+    margin-bottom: 1vh;
+  }
+
   #burger-toggle:checked ~ .menu {
-    display: flex;
     height: calc(100vh - var(--navbar-size, 4rem));
   }
 

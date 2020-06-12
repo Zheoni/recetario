@@ -18,18 +18,20 @@
         <label for="ingredients-button" class="mobile-only ingredients-button-label">🗒</label>
         <div class="ingredients">
           <h2>Ingredientes</h2>
-          <table class="ingredients-table">
-            <% for (const ingredient of recipe.ingredients) { %>
-              <tr>
-                <td>
-                  <%= ingredient.amount %> <%= ingredient.unit %>
-                </td>
-                <td>
-                  <%= ingredient.name %>
-                </td>
-              </tr>
-            <% } %>
-          </table>
+          <div class="ingredients-list">
+            <table class="ingredients-table">
+              <% for (const ingredient of recipe.ingredients) { %>
+                <tr>
+                  <td>
+                    <%= ingredient.amount %> <%= ingredient.unit %>
+                  </td>
+                  <td>
+                    <%= ingredient.name %>
+                  </td>
+                </tr>
+              <% } %>
+            </table>
+          </div>
         </div>
       </section>
 
