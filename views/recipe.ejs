@@ -13,6 +13,21 @@
   <main>
     <article class="recipe" style="--recipe-image: url(/recipes/images/<%= recipe.image %>);">
 
+      <header class="recipe-header" style>
+        <h1 id="recipe-name"><%= recipe.name %></h1>
+        <p class="author">Por <%= recipe.author %></p>
+        <p class="date">Publicado el <span id="date"><%= recipe.CREATED_AT %></span></p>
+      </header>
+
+      <section class="recipe-about">
+        <div class="about-text">
+          <p class="description"><%= recipe.description %></p>
+        </div>
+        <div class="image-container mobile-hidden">
+          <img class="recipe-image" src="/recipes/images/<%= recipe.image %>" alt="Image of the recipe">
+        </div>
+      </section>
+
       <section class="ingredients-container">
         <input type="checkbox" id="ingredients-button" class="toggle">
         <label for="ingredients-button" class="mobile-only ingredients-button-label">🗒</label>
@@ -21,46 +36,30 @@
           <div class="ingredients-list">
             <table class="ingredients-table">
               <% for (const ingredient of recipe.ingredients) { %>
-                <tr>
-                  <td>
-                    <%= ingredient.amount %> <%= ingredient.unit %>
-                  </td>
-                  <td>
-                    <%= ingredient.name %>
-                  </td>
-                </tr>
+              <tr>
+                <td>
+                  <%= ingredient.amount %> <%= ingredient.unit %>
+                </td>
+                <td>
+                  <%= ingredient.name %>
+                </td>
+              </tr>
               <% } %>
             </table>
           </div>
         </div>
       </section>
 
-      <div>
-        <header class="recipe-header" style>
-          <h1><%= recipe.name %></h1>
-          <p class="author">Por <%= recipe.author %></p>
-        </header>
-        
-        <section class="recipe-about">
-          <div class="about-text">
-            <p class="description"><%= recipe.description %></p>
-          </div>
-          <div class="image-container mobile-hidden">
-            <img class="recipe-image" src="/recipes/images/<%= recipe.image %>" alt="Image of the recipe">
-          </div>
-        </section>
-  
-        <hr>
-    
-        <section class="method">
-          <h2>Método</h2>
-          <ol>
-            <% for (const step of recipe.method) { %>
-              <li><%= step %></li>
-            <% } %>
-          </ol>
-        </section>
-      </div>
+      <hr>
+
+      <section class="method">
+        <h2>Método</h2>
+        <ol>
+          <% for (const step of recipe.method) { %>
+          <li><%= step %></li>
+          <% } %>
+        </ol>
+      </section>
     </article>
   </main>
 
@@ -68,6 +67,7 @@
 
 
   <script>
+    // Tapping on an ingredient marks it
     const rows = document.querySelectorAll(".ingredients-table tr");
 
     for (let row of rows) {
@@ -76,5 +76,42 @@
       });
     }
   </script>
+  <script>
+    // When on mobile, rescale the title text to fit if needed
+    function rescaleMobileTitle() {
+      if (screen.width < 767) {
+        const title = document.getElementById("recipe-name");
+        const parent = title.parentElement;
+
+        let current_size = 50;
+        title.style.fontSize = current_size + "px";
+
+        while (current_size > 1 && (
+          title.offsetWidth > parent.offsetWidth ||
+          title.offsetHeight > parent.offsetHeight - 70 ||
+          title.scrollWidth > title.offsetWidth
+        )) {
+          current_size--;
+          title.style.fontSize = current_size + "px";
+        }
+      }
+    }
+    rescaleMobileTitle();
+    window.onresize = rescaleMobileTitle;
+  </script>
+
+  <script>
+    // Give corrent format to date
+    const monthNames = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+
+    const dateElement = document.getElementById("date");
+
+    const date = new Date(dateElement.textContent);
+
+    const dateString = date.getDate() + " de " + monthNames[date.getMonth()] + " de " + date.getFullYear();
+
+    dateElement.textContent = dateString;
+  </script>
 </body>
+
 </html>

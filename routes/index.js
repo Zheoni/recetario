@@ -19,7 +19,6 @@ router.get('/', async function (req, res, next) {
 router.get('/recipe/:id', function (req, res, next) {
 	try {
 		const recipe = recipes.getById(Number(req.params.id));
-
 		res.render('recipe', { title: recipe.name	|| "Receta", recipe: recipe });
 	} catch (err) {
 		res.status(404).render('error', { message: "Receta no encontrada", error: err })
