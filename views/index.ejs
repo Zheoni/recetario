@@ -2,14 +2,14 @@
 <html lang="es">
 
 <head>
-  <%- include templates/head-template %>
+	<%- include("templates/head-template"); %>
   <link rel="stylesheet" href="/stylesheets/grid.css">
   <meta id="current-page" content="index">
 </head>
 
 <body>
 
-  <%- include templates/navbar-template %>
+  <%- include("templates/navbar-template"); %>
 
   <main>
     <section class="basic-grid">
@@ -29,7 +29,7 @@
     </section>
   </main>
 
-  <%- include templates/footer-template %>
+  <%- include("templates/footer-template"); %>
 
 </body>
 

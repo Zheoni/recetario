@@ -2,13 +2,13 @@
 <html lang="es">
 
 <head>
-  <%- include templates/head-template %>
+  <%- include("templates/head-template"); %>
   <link rel="stylesheet" href="/stylesheets/recipe.css">
 </head>
 
 <body>
 
-  <%- include templates/navbar-template %>
+  <%- include("templates/navbar-template"); %>
 
   <main>
     <article class="recipe" style="--recipe-image: url(/recipes/images/<%= recipe.image %>);">
@@ -63,7 +63,7 @@
     </article>
   </main>
 
-  <%- include templates/footer-template %>
+  <%- include("templates/footer-template"); %>
 
 
   <script>

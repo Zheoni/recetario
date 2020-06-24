@@ -2,236 +2,96 @@
 <html lang="es">
 
 <head>
-	<%- include templates/head-template %>
-	<meta id="current-page" content="create">
+	<%- include("templates/head-template"); %>
+  <link rel="stylesheet" href="/stylesheets/create.css">
+
+  <meta id="current-page" content="create">
 </head>
 
 <body>
 
-	<%- include templates/navbar-template %>
+  <%- include("templates/navbar-template"); %>
 
-	<div class="container">
+  <main>
+    <h1>Crear nueva receta</h1>
 
-		<div class="row">
+    <form class="recipe-form" action="/create" onsubmit="return validate()" novalidate method="POST" autocomplete="off"
+      enctype="multipart/form-data">
+      <div class="form-item name">
+        <label for="name">Nombre de la receta</label>
+        <input type="text" name="recipe_name" id="name" maxlength="128" required placeholder="Nombre">
+        <p class="error">El nombre es obligatorio.</p>
+      </div>
 
-			<!-- Sidebar Widgets Column -->
-			<div class="col-lg-3">
+      <div class="form-item author">
+        <label for="author">Autor</label>
+        <input type="text" name="recipe_author" id="author" maxlength="64" placeholder="Autor">
+      </div>
 
-				<!-- Search Widget -->
-				<div class="card my-4">
-					<h5 class="card-header">Search</h5>
-					<div class="card-body">
-						<div class="input-group">
-							<input type="text" class="form-control" placeholder="Search for...">
-							<span class="input-group-btn">
-								<button class="btn btn-secondary" type="button">Go!</button>
-							</span>
-						</div>
-					</div>
-				</div>
+      <div class="form-item description">
+        <label for="description">Descripción</label>
+        <input type="text" name="recipe_description" id="description" maxlength="256" required
+          placeholder="Descripción">
+        <p class="error">Una descripción es obligatoria.</p>
+      </div>
 
-				<!-- Categories Widget -->
-				<div class="card my-4">
-					<h5 class="card-header">Categories</h5>
-					<div class="card-body">
-						<div class="row">
-							<div class="col-lg-6">
-								<ul class="list-unstyled mb-0">
-									<li>
-										<a href="#">Web Design</a>
-									</li>
-									<li>
-										<a href="#">HTML</a>
-									</li>
-									<li>
-										<a href="#">Freebies</a>
-									</li>
-								</ul>
-							</div>
-						</div>
-					</div>
-				</div>
+      <div class="form-item ingredients">
+        <label for="ingredients">Ingredientes</label>
+        <div class="ingredient-container ingredient-labels">
+          <div></div>
+          <p class="amount">Cantidad</p>
+          <p class="unit">Unidad</p>
+          <p class="ingredient">Ingrediente</p>
+        </div>
+        <ul class="ingredients-list" id="ingredients">
+          <li class="form-item ingredient-container">
+            <div class="handle">
+              <i class="fas fa-bars fa-lg"></i>
+            </div>
+            <input type="number" name="amount" class="amount" min=0>
+            <input type="text" name="unit" class="unit">
+            <input type="text" name="ingredient" class="ingredient" required>
+            <button class="button delete-button" type="button" onclick="deleteThisIngredient(this);">✕</button>
+          </li>
+        </ul>
+        <p class="error">Al menos un ingrediente.</p>
+        <button class="button" type="button" onclick="addIngredient();">Añadir ingrediente</button>
+      </div>
 
-				<!-- Side Widget -->
-				<div class="card my-4">
-					<h5 class="card-header">Side Widget</h5>
-					<div class="card-body">
-						You can put anything you want inside of these side widgets. They are easy to use, and feature
-						the new Bootstrap 4 card containers!
-					</div>
-				</div>
+      <div class="form-item method">
+        <label for="method">Método</label>
+        <textarea name="recipe_method" id="method" cols="30" rows="10" minlength="128"
+          placeholder="Cada párrafo es un paso." required placeholder="Método de la receta"></textarea>
+        <p class="error">Un método es obligatorio. Al menos 128 caracteres.</p>
+      </div>
 
-			</div>
+      <div class="form-item image">
+        <label for="image">Imagen para la receta</label>
+        <input type="file" name="recipe_image" id="image">
+      </div>
 
-			<div class="col-lg-9">
-				<div class="row">
-					<h2>Nueva receta</h2>
-				</div>
-				<form method="POST" role="form" id="recipe-form" class="recipe-form needs-validation"
-					enctype="multipart/form-data" novalidate autocomplete="off">
-					<div class="form-group">
-						<div class="form-row">
-							<div class="col">
-								<label for="recipe-name">Nombre de la receta</label>
-								<input class="form-control" type="text" name="name" id="recipe-name" required>
-								<div class="valid-feedback">¡Correcto!</div>
-								<div class="invalid-feedback">Debe tener un nombre</div>
-							</div>
+      <div class="form-item type">
+        <label for="type">Tipo de plato</label>
+        <select name="recipe_type" id="type">
+          <option value="unspecified" selected>Sin especificar</option>
+          <option value="entry">Entrante</option>
+          <option value="main">Plato principal</option>
+          <option value="dessert">Postre</option>
+          <option value="unspecified">Otro</option>
+        </select>
+      </div>
 
-							<div class="col">
-								<label for="recipe-author">Author</label>
-								<input class="form-control" type="text" name="author" id="recipe-author">
-								<div class="valid-feedback">¡Correcto!</div>
-							</div>
-						</div>
+      <div class="form-item submit">
+        <button class="button main-button" type="submit">Crear</button>
+      </div>
+    </form>
+  </main>
 
-						<div>
-							<label for="recipe-description">Descripción de la receta</label>
-							<input class="form-control" type="text" name="description" id="recipe-description"
-								placeholder="Corta descripción de la receta" required maxlength="255">
-							<div class="valid-feedback">Correct!</div>
-							<div class="invalid-feedback">Debe tener una descripción. Máximo 255 caracteres.</div>
-						</div>
-					</div>
-
-					<hr>
-
-					<div class="form-group">
-						<label>Ingredientes</label>
-
-						<div class="form-row" id="ingredients-labels">
-							<div class="col-2">
-								<small class="form-text text-muted">Cantidad</small>
-							</div>
-							<div class="col-2">
-								<small class="form-text text-muted">Unidad <span
-										style="color: grey; opacity: 0.5">(opcional)</span></small>
-							</div>
-							<div class="col">
-								<small class="form-text text-muted">Ingrediente</small>
-							</div>
-						</div>
-
-						<div id="ingredients-collection">
-							<div class="form-row ingredient-input">
-								<div class="col-2">
-									<input class="form-control" type="number" name="ingredientQuantity" value="1" min="1" placeholder="1">
-								</div>
-								<div class="col-2">
-									<input class="form-control" type="text" name="ingredientUnit">
-								</div>
-								<div class="col">
-									<input class="form-control" type="text" name="ingredientName" placeholder="Ingrediente">
-								</div>
-								<button type="button" class="btn btn-outline-danger btn-sm" onclick="removeIngredient(this)">╳</button>
-							</div>
-						</div>
-
-						<div class="text-center">
-							<button class="btn btn-outline-secondary btn-sm" type="button" onclick="addIngredient()">Añadir
-								ingrediente</button>
-						</div>
-
-						<!-- <div class="form-row ingredient-input-template" id="ingredient-input-template">
-							<div class="col-2">
-								<input class="form-control" type="number"value="1" min="1" placeholder="1" disabled>
-							</div>
-							<div class="col-2">
-								<input class="form-control" type="text" disabled>
-							</div>
-							<div class="col">
-								<input class="form-control" type="text" placeholder="thing" disabled>
-							</div>
-						</div> -->
-
-					</div>
-
-					<hr>
-
-					<div class="form-group">
-						<label for="recipe-method">Método de la receta</label>
-						<textarea class="form-control" name="method" id="recipe-method" cols="30" rows="10"
-							placeholder="Cada párrafo será un paso de la receta" required minlength="100"></textarea>
-						<small class="form-text text-muted" id="recipeMethodHelpText">Cada párrafo será un paso de la receta</small>
-						<div class="valid-feedback">¡Correcto!</div>
-						<div class="invalid-feedback">La receta debe tener un método, mínimo 100 caracteres.</div>
-					</div>
-
-					<div class="form-group">
-						<div class="input-group mb-3">
-							<div class="input-group-prepend">
-								<span class="input-group-text">Subir imagen</span>
-							</div>
-							<div class="custom-file">
-								<input type="file" class="custom-file-input" id="receta-img" name="img">
-								<label class="custom-file-label" for="receta-img">Elegir archivo</label>
-							</div>
-						</div>
-					</div>
-
-					<!-- <div class="form-group">
-						<input type="file" name="img" id="receta-img">
-					</div> -->
-
-					<div class="form-group text-center">
-						<button type="submit" class="btn btn-primary">Enviar</button>
-					</div>
-				</form>
-			</div>
-		</div>
-		<!-- .row -->
-
-	</div>
-	<!-- .container -->
-
-	<%- include templates/footer-template %>
-
-	<script>
-		window.addEventListener('load', function () {
-			// Fetch all the forms we want to apply custom Bootstrap validation styles to
-			var forms = document.getElementsByClassName('needs-validation');
-			// Loop over them and prevent submission
-			var validation = Array.prototype.filter.call(forms, function (form) {
-				form.addEventListener('submit', function (event) {
-					if (form.checkValidity() === false) {
-						event.preventDefault();
-						event.stopPropagation();
-					}
-					form.classList.add('was-validated');
-				}, false);
-			});
-		}, false);
-	</script>
-
-	<script>
-		function addIngredient() {
-			const collection = document.getElementById("ingredients-collection");
-
-			const newIngredient = document.createElement("div");
-			newIngredient.classList.add("form-row", "ingredient-input");
-			newIngredient.innerHTML = "<div class=\"col-2\">\
-									<input class=\"form-control\" type=\"number\" name=\"ingredientQuantity\" value=\"1\" min=\"1\" placeholder=\"1\">\
-								</div>\
-								<div class=\"col-2\">\
-									<input class=\"form-control\" type=\"text\" name=\"ingredientUnit\">\
-								</div>\
-								<div class=\"col\">\
-									<input class=\"form-control\" type=\"text\" name=\"ingredientName\" placeholder=\"ingrediente\">\
-								</div>\
-								<button type=\"button\" class=\"btn btn-outline-danger btn-sm\" onclick=\"removeIngredient(this)\">╳</button>";
-			collection.appendChild(newIngredient);
-		}
-
-		function removeIngredient(ingredient) {
-			ingredient.parentElement.remove();
-		}
-	</script>
-
-	<!-- For the custom file input -->
-	<script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.min.js"></script>
-	<script>
-		bsCustomFileInput.init();
-	</script>
+  <%- include("templates/footer-template"); %>
+  
+  <script async src="/javascripts/create_form.js"></script>
+  <script defer src="/vendor/Sortable.min.js"></script>
+  <script defer src="/javascripts/ingredients_list.js"></script>
 </body>
 
 </html>
