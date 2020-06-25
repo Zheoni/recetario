@@ -1,12 +1,11 @@
 const { getDB } = require("../db");
 
 function transformIntoRecipeObject(row) {
-	row.ingredients = JSON.parse(row.ingredients);
 	row.method = row.method.split('\n');
 	return row;
 }
 
-function getAll() {
+function getAllRecipes() {
 	const db = getDB();
 
 	const stmt = db.prepare("SELECT * FROM RECIPES");
@@ -29,31 +28,40 @@ function getById(id) {
 	}
 }
 
+function getByIdWithIngredients(id) {
+	const db = getDB();
+
+	let recipe = getById(id);
+	const ingredients = db.prepare(
+		`SELECT amount, unit, name FROM RECIPE_INGREDIENTS ri
+		JOIN INGREDIENTS i ON ri.ingredient = i.id
+		WHERE ri.recipe = ?
+		ORDER BY ri.sort ASC`
+	).all(id);
+
+	recipe.ingredients = ingredients;
+
+	return recipe;
+}
+
 function create(recipe, imageName) {
 	const db = getDB();
 
-	const stmt = db.prepare("INSERT INTO RECIPES (name,author,description,ingredients,method,image) VALUES ($name,$author,$desc,$ing,$method,$img)");
+	const i_recipe = db.prepare("INSERT INTO RECIPES (name,author,description,method,image,type) VALUES ($name,$author,$desc,$method,$img,$type)");
+	const i_ingredient = db.prepare("INSERT OR IGNORE INTO INGREDIENTS (name) VALUES (?)");
+	const s_ingredient_id = db.prepare("SELECT id FROM INGREDIENTS WHERE name = ?");
+	const i_recipe_ingredient = db.prepare("INSERT INTO RECIPE_INGREDIENTS (recipe, ingredient, amount, unit, sort) VALUES ($recipe, $ingredient, $amount, $unit, $sort)");
 
-	let ingredients = [];
-
-	if (typeof recipe.ingredientName === "string") {
-		ingredients.push({
-			amount: recipe.ingredientQuantity,
-			unit: recipe.ingredientUnit,
-			name: recipe.ingredientName
+	function addIngredient(ingredient, amount, unit, sort, recipe_id) {
+		i_ingredient.run(ingredient);
+		const ingredient_id = s_ingredient_id.get(ingredient).id;
+		i_recipe_ingredient.run({
+			recipe: recipe_id,
+			ingredient: ingredient_id,
+			amount: amount,
+			unit: unit,
+			sort: sort
 		});
-	} else {
-		for (let i = 0; i < recipe.ingredientName.length; ++i) {
-			const ingredient = {
-				amount: recipe.ingredientQuantity[i],
-				unit: recipe.ingredientUnit[i],
-				name: recipe.ingredientName[i]
-			}
-	
-			if (ingredient.name.length != 0) {
-				ingredients.push(ingredient);
-			}
-		}
 	}
 
 
@@ -61,16 +69,26 @@ function create(recipe, imageName) {
 		imageName = "noimage.jpeg";
 	}
 
-	const info = stmt.run({
-		name: recipe.name,
-		author: recipe.author,
-		desc: recipe.description,
-		ing: JSON.stringify(ingredients),
-		method: recipe.method,
-		img: imageName
+	const info = i_recipe.run({
+		name: recipe.recipe_name,
+		author: recipe.recipe_author,
+		desc: recipe.recipe_description,
+		method: recipe.recipe_method,
+		img: imageName,
+		type: Number(recipe.recipe_type)
 	});
 
-	return info.lastInsertRowid;
+	const recipe_id = info.lastInsertRowid;
+
+	if (typeof recipe.ingredient === "string") {
+		addIngredient(recipe.ingredient, recipe.amount, recipe.unit, 1, recipe_id);
+	} else {
+		for (let i = 0; i < recipe.ingredient.length; ++i) {
+			addIngredient(recipe.ingredient[i], recipe.amount[i], recipe.unit[i], i, recipe_id);
+		}
+	}
+
+	return recipe_id;
 }
 
 function deleteById(id) {
@@ -80,4 +98,10 @@ function deleteById(id) {
 	console.log("Deleted recipe " + id);
 }
 
-module.exports = { getAll, getById, create, deleteById }
+module.exports = {
+	getAllRecipes,
+	getById,
+	getByIdWithIngredients,
+	create,
+	deleteById
+}

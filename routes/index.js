@@ -10,7 +10,7 @@ const recipes = require("../controllers/recipes.js");
 
 /* GET home page. */
 router.get('/', async function (req, res, next) {
-	const allRecipes = await recipes.getAll();
+	const allRecipes = await recipes.getAllRecipes();
 
 	res.render('index', { title: 'Recetario', recipes: allRecipes });
 });
@@ -18,7 +18,7 @@ router.get('/', async function (req, res, next) {
 /* GET id */
 router.get('/recipe/:id', function (req, res, next) {
 	try {
-		const recipe = recipes.getById(Number(req.params.id));
+		const recipe = recipes.getByIdWithIngredients(Number(req.params.id));
 		res.render('recipe', { title: recipe.name	|| "Receta", recipe: recipe });
 	} catch (err) {
 		res.status(404).render('error', { message: "Receta no encontrada", error: err })
@@ -34,7 +34,7 @@ router.get('/create', function (req, res, next) {
 	res.render('create', { title: 'Recetario - nueva receta' });
 });
 
-router.post('/create', upload.single('img'), function (req, res, next) {
+router.post('/create', upload.single('recipe_image'), function (req, res, next) {
 	let id;
 	if (req.file) {
 		id = recipes.create(req.body, req.file.filename);

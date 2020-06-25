@@ -5,8 +5,12 @@ const fs = require('fs');
 
 
 if (fs.existsSync('recipes.db')) {
-	console.log("Database exists, exiting script");
-	process.exit(0);
+	if (process.argv.includes("--force")) {
+		fs.unlinkSync('recipes.db');
+	} else {
+		console.log("Database exists, exiting script");
+		process.exit(0);
+	}
 }
 
 console.log("Creating database file...")
@@ -15,10 +19,10 @@ const db = new Database('recipes.db');
 	
 console.log("Reading input file...")
 const file = "models/recipes.sql";
-const query = fs.readFileSync(file).toString();
+const queries = fs.readFileSync(file, 'utf8');
 	
 console.log("Creating table...")
-db.prepare(query).run();
+db.exec(queries)
 
 console.log("Closing database...")
 db.close();

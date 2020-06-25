@@ -1,11 +1,28 @@
 CREATE TABLE IF NOT EXISTS RECIPES(
+	-- need autoincrement because I cannot reuse ids when one is deleted
 	id 			INTEGER PRIMARY KEY AUTOINCREMENT,
-	name 		VARCHAR NOT NULL,
-	author		VARCHAR NOT NULL,
+	name 		TEXT NOT NULL,
+	author		TEXT NOT NULL,
 	description	TEXT NOT NULL,
-	ingredients	JSON NOT NULL,
 	method		TEXT NOT NULL,
-	image		VARCHAR DEFAULT "noimage.jpeg",
+	image		TEXT DEFAULT "noimage.jpeg",
+	type		INTEGER DEFAULT 0 CHECK(type >= 0 AND type <= 3),
 	CREATED_AT	DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	UPDATED_AT	DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS INGREDIENTS(
+	-- with no autoincrement, keys may be reused, but for this case its fine
+	id			INTEGER PRIMARY KEY,
+	name		TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS RECIPE_INGREDIENTS(
+	recipe		INTEGER NOT NULL,
+	ingredient	INTEGER NOT NULL,
+	amount		REAL,
+	unit		TEXT,
+	sort		INTEGER,
+	FOREIGN KEY(recipe) REFERENCES RECIPES(id) ON DELETE CASCADE,
+	FOREIGN KEY(ingredient) REFERENCES INGREDIENTS(id)
 );
