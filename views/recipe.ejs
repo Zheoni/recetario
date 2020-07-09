@@ -15,7 +15,9 @@
 
       <header class="recipe-header" style>
         <h1 id="recipe-name"><%= recipe.name %></h1>
+        <% if (recipe.author) { %>
         <p class="author">Por <%= recipe.author %></p>
+        <% } %>
         <p class="date">Publicado el <span id="date"><%= recipe.CREATED_AT %></span></p>
       </header>
 

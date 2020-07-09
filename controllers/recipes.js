@@ -1,4 +1,5 @@
 const { getDB } = require("../db");
+const fs = require("fs");
 
 function transformIntoRecipeObject(row) {
 	row.method = row.method.split('\n');
@@ -64,9 +65,12 @@ function create(recipe, imageName) {
 		});
 	}
 
-
 	if (!imageName) {
 		imageName = "noimage.jpeg";
+	}
+
+	if (recipe.recipe_author.length <= 0) {
+		recipe.recipe_author = null;
 	}
 
 	const info = i_recipe.run({
@@ -94,7 +98,19 @@ function create(recipe, imageName) {
 function deleteById(id) {
 	const db = getDB();
 
+	const image = db.prepare("SELECT image FROM RECIPES WHERE id = ?").get(id);
+	if (image && image.image !== "noimage.jpeg") {
+		const path = "./public/recipes/images/" + image.image;
+		fs.unlink(path, (err) => {
+			if (err)
+				console.error(`Could not delete image for recipe ${id}, path was: \n\t"${path}".`)
+			else
+				console.log(`File: "${path}" was deleted.`);
+		});
+	}
+
 	db.prepare("DELETE FROM RECIPES WHERE id = ?").run(id);
+
 	console.log("Deleted recipe " + id);
 }
 

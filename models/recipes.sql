@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS RECIPES(
 	-- need autoincrement because I cannot reuse ids when one is deleted
 	id 			INTEGER PRIMARY KEY AUTOINCREMENT,
 	name 		TEXT NOT NULL,
-	author		TEXT NOT NULL,
+	author		TEXT,
 	description	TEXT NOT NULL,
 	method		TEXT NOT NULL,
 	image		TEXT DEFAULT "noimage.jpeg",
