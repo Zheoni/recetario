@@ -137,6 +137,68 @@ hr {
   transition: box-shadow 250ms, transform 250ms ease-in-out;
 }
 
+.recipe-buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: flex-end;
+  margin: 1rem;
+  margin-top: 2.5rem;
+}
+
+.recipe-buttons > button {
+  margin: 0 5px;
+  width: 100px;
+  font-size: 1rem;
+
+  border-radius: 5px;
+  border-width: 1px;
+  border-style: solid;
+
+  padding: 10px;
+
+  cursor: pointer;
+
+  transition: background-color 150ms ease-in;
+}
+
+.edit-button {
+  background-color: #ffc107;
+  border-color: goldenrod;
+}
+
+.edit-button:hover {
+  background-color: #e0a800;
+}
+
+.delete-button {
+  background-color: #dc3545;
+  border-color: crimson;
+  color: white;
+}
+
+.delete-button:hover {
+  background-color: #c82333;
+}
+
+.title-row {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.tag {
+  margin: auto 2px;
+  padding: 4px 10px;
+  color: var(--text-secondary, white);
+  background: var(--details-color, gray);
+  font-weight: bolder;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: 3px;
+  cursor: default;
+}
+
 /* Small screens */
 @media only screen and (max-width: 767px) {
 
@@ -250,7 +312,7 @@ hr {
     grid-template-columns: 1fr minmax(200px, 3fr);
   }
 
-  .recipe-header, .recipe-about, .method, hr {
+  .recipe-header, .recipe-about, .method, hr, .recipe-buttons {
     grid-column: 2;
   }
 

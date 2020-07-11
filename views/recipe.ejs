@@ -14,9 +14,16 @@
     <article class="recipe" style="--recipe-image: url(/recipes/images/<%= recipe.image %>);">
 
       <header class="recipe-header" style>
-        <h1 id="recipe-name"><%= recipe.name %></h1>
+        <div class="title-row">
+          <h1 id="recipe-name"><%= recipe.name %></h1>
+          <% tags.forEach(tag => { %>
+           <span class="tag <%= tag.classes.join(' ') %>">
+             <%= tag.content %> 
+           </span>
+          <% }) %>
+        </div>
         <% if (recipe.author) { %>
-        <p class="author">Por <%= recipe.author %></p>
+          <p class="author">Por <%= recipe.author %></p>
         <% } %>
         <p class="date">Publicado el <span id="date"><%= recipe.CREATED_AT %></span></p>
       </header>
@@ -62,6 +69,12 @@
           <% } %>
         </ol>
       </section>
+
+      <div class="recipe-buttons">
+        <button type="button" class="edit-button" onclick="editRecipe();"><i class="fas fa-edit"></i> Editar</button>
+        <button type="button" class="delete-button" onclick="deleteRecipe();"><i class="fas fa-trash-alt"></i> Eliminar</button>
+      </div>
+
     </article>
   </main>
 
@@ -113,6 +126,40 @@
     const dateString = date.getDate() + " de " + monthNames[date.getMonth()] + " de " + date.getFullYear();
 
     dateElement.textContent = dateString;
+  </script>
+
+  <script>
+    function editRecipe() {
+
+    }
+
+    function deleteRecipe() {
+      const r = confirm("¿Estás seguro de querer eliminar la receta?");
+
+      if (r) {
+        const url = window.location.href;
+        const req = new Request(url, {
+          method: "DELETE"
+        });
+        
+        fetch(req)
+          .then(response => {
+            if (response.status === 200) {
+              return response.json();
+            } else {
+              throw new Error("Error in delete request");
+            }
+          })
+          .then(response => {
+            // Return to home page
+            setTimeout(() => window.location.replace("/"), 1000);
+          })
+          .catch(error => {
+            console.error(error);
+            alert("No se pudo eliminar la receta.")
+          })
+      }
+    }
   </script>
 </body>
 

@@ -1,8 +1,11 @@
 const { getDB } = require("../db");
 const fs = require("fs");
 
+const recipeTypes = ["none", "starter", "main", "dessert"];
+
 function transformIntoRecipeObject(row) {
 	row.method = row.method.split('\n');
+
 	return row;
 }
 
@@ -73,13 +76,17 @@ function create(recipe, imageName) {
 		recipe.recipe_author = null;
 	}
 
+	const type_number = recipeTypes.indexOf(recipe.recipe_type);
+
+	if (type_number < 0) type_number = 0;
+
 	const info = i_recipe.run({
 		name: recipe.recipe_name,
 		author: recipe.recipe_author,
 		desc: recipe.recipe_description,
 		method: recipe.recipe_method,
 		img: imageName,
-		type: Number(recipe.recipe_type)
+		type: type_number
 	});
 
 	const recipe_id = info.lastInsertRowid;
@@ -114,10 +121,39 @@ function deleteById(id) {
 	console.log("Deleted recipe " + id);
 }
 
+function typeTag(type, language) {
+	const classes = ["type"]
+	let content;
+  if (type > 0 && type < 4) {
+    let types;
+    if (language === "en") {
+			types = ["starter dish", "main dish", "dessert"]
+		} else if (language === "es") {
+			types = ["entrante", "plato principal", "postre"]
+    }
+
+		content = types[type - 1];
+		classes.push("recipe-" + recipeTypes[type])
+  } else {
+    content = null;
+	}
+	return {content, classes};
+}
+
+function generateTags(recipe, language = "en") {
+	let tags = [];
+	if (recipe.type) {
+		tags.push(typeTag(recipe.type, language));
+	}
+	
+	return tags;
+}
+
 module.exports = {
 	getAllRecipes,
 	getById,
 	getByIdWithIngredients,
 	create,
-	deleteById
+	deleteById,
+	generateTags
 }

@@ -15,7 +15,7 @@
   <main>
     <h1>Crear nueva receta</h1>
 
-    <form class="recipe-form" action="/create" onsubmit="return validate()" novalidate method="POST" autocomplete="off"
+    <form class="recipe-form" action="/recipe" onsubmit="return validate()" novalidate method="POST" autocomplete="off"
       enctype="multipart/form-data">
       <div class="form-item name">
         <label for="name">Nombre de la receta</label>
@@ -40,7 +40,7 @@
         <div class="ingredient-container ingredient-labels">
           <div></div>
           <p class="amount">Cantidad</p>
-          <p class="unit">Unidad</p>
+          <p class="unit">Unidad de medida</p>
           <p class="ingredient">Ingrediente</p>
         </div>
         <ul class="ingredients-list" id="ingredients">
@@ -73,10 +73,10 @@
       <div class="form-item type">
         <label for="type">Tipo de plato</label>
         <select name="recipe_type" id="type">
-          <option value="0" selected>Sin especificar</option>
-          <option value="1">Entrante</option>
-          <option value="2">Plato principal</option>
-          <option value="3">Postre</option>
+          <option value="none" selected>Sin especificar</option>
+          <option value="starter">Entrante</option>
+          <option value="main">Plato principal</option>
+          <option value="dessert">Postre</option>
         </select>
       </div>
 
