@@ -14,19 +14,20 @@
     <article class="recipe" style="--recipe-image: url(/recipes/images/<%= recipe.image %>);">
 
       <header class="recipe-header" style>
-        <div class="title-row">
-          <h1 id="recipe-name"><%= recipe.name %></h1>
-          <% tags.forEach(tag => { %>
-           <span class="tag <%= tag.classes.join(' ') %>">
-             <%= tag.content %> 
-           </span>
-          <% }) %>
-        </div>
+        <h1 id="recipe-name"><%= recipe.name %></h1>
         <% if (recipe.author) { %>
           <p class="author">Por <%= recipe.author %></p>
         <% } %>
         <p class="date">Publicado el <span id="date"><%= recipe.CREATED_AT %></span></p>
       </header>
+
+      <div class="tags-container">
+        <% tags.forEach(tag => { %>
+         <span class="tag <%= tag.classes.join(' ') %>">
+           <%= tag.content %> 
+         </span>
+        <% }) %>
+      </div>
 
       <section class="recipe-about">
         <div class="about-text">

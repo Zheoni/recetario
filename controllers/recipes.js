@@ -137,6 +137,10 @@ function typeTag(type, language) {
   } else {
     content = null;
 	}
+	return newTag(content, classes);
+}
+
+function newTag(content, classes = []) {
 	return {content, classes};
 }
 

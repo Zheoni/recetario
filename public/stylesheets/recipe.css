@@ -3,7 +3,7 @@
 }
 
 .recipe-header {
-  margin: 1rem 0;
+  margin: 1rem 0 0 0;
 }
 
 .recipe-header h1 {
@@ -19,6 +19,7 @@
 .date {
   font-style: italic;
   font-weight: lighter;
+  margin-bottom: 5px;
 }
 
 .about-text {
@@ -181,16 +182,20 @@ hr {
   background-color: #c82333;
 }
 
-.title-row {
+.tags-container {
   display: flex;
   justify-content: flex-start;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 10px 0;
 }
 
 .tag {
-  margin: auto 2px;
+  margin: 2px;
   padding: 4px 10px;
   color: var(--text-secondary, white);
   background: var(--details-color, gray);
+  white-space: nowrap;
   font-weight: bolder;
   font-size: 0.9rem;
   text-transform: uppercase;
@@ -273,7 +278,6 @@ hr {
   .date{
     color: white;
     margin-top: auto;
-    margin-bottom: 0;
     padding: 3px;
     align-self: flex-end;
     background-color: rgba(0, 0, 0, 0.5);
@@ -310,6 +314,15 @@ hr {
   .recipe {
     display: grid;
     grid-template-columns: 1fr minmax(200px, 3fr);
+  }
+
+  .title-row {
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .recipe-header h1 {
+    margin-right: 20px;
   }
 
   .recipe-header, .recipe-about, .method, hr, .recipe-buttons {
