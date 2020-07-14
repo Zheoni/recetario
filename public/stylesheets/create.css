@@ -20,6 +20,7 @@
   background-color: white;
   font-size: 1rem;
   transition: background-color 200ms ease;
+  margin: 5px;
 }
 
 .button:hover {
@@ -212,4 +213,15 @@ textarea {
 
 input {
   -webkit-appearance: none;
+}
+
+#image-delete-warning {
+  display: none;
+  color: salmon;
+  margin: 0 auto;
+  text-align: center;
+}
+
+#delete-image[value="true"] + #image-delete-warning {
+  display: block;
 }

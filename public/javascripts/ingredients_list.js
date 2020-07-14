@@ -1,5 +1,5 @@
 const list = document.getElementById("ingredients");
-const template = list.children[0].cloneNode(true);
+const template = list.children[list.childElementCount - 1].cloneNode(true);
 
 let sortable = new Sortable(list, {
   handle: ".handle",

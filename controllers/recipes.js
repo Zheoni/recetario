@@ -6,7 +6,43 @@ const recipeTypes = ["none", "starter", "main", "dessert"];
 function transformIntoRecipeObject(row) {
 	row.method = row.method.split('\n');
 
+	if (row.image == null) {
+		row.image = "noimage.jpeg";
+	}
+
 	return row;
+}
+
+function deleteUnusedIngredients() {
+	const db = getDB();
+	db.prepare(`DELETE FROM INGREDIENTS WHERE
+		(SELECT COUNT(*) FROM RECIPE_INGREDIENTS WHERE INGREDIENTS.id = RECIPE_INGREDIENTS.ingredient) = 0`).run();
+}
+
+function addIngredients(ingredients, amounts, units, recipe_id) {
+	const db = getDB();
+
+	const i_ingredient = db.prepare("INSERT OR IGNORE INTO INGREDIENTS (name) VALUES (?)");
+	const s_ingredient_id = db.prepare("SELECT id FROM INGREDIENTS WHERE name = ?");
+	const i_recipe_ingredient = db.prepare("INSERT INTO RECIPE_INGREDIENTS (recipe, ingredient, amount, unit, sort) VALUES ($recipe, $ingredient, $amount, $unit, $sort)");
+
+	if (typeof ingredients === "string") {
+		ingredients = [ingredients];
+		amounts = [amounts];
+		units = [units];
+	}
+
+	for (let i = 0; i < ingredients.length; ++i) {
+		i_ingredient.run(ingredients[i]);
+		const ingredient_id = s_ingredient_id.get(ingredients[i]).id;
+		i_recipe_ingredient.run({
+			recipe: recipe_id,
+			ingredient: ingredient_id,
+			amount: amounts[i],
+			unit: units[i],
+			sort: i
+		});
+	}
 }
 
 function getAllRecipes() {
@@ -40,8 +76,7 @@ function getByIdWithIngredients(id) {
 		`SELECT amount, unit, name FROM RECIPE_INGREDIENTS ri
 		JOIN INGREDIENTS i ON ri.ingredient = i.id
 		WHERE ri.recipe = ?
-		ORDER BY ri.sort ASC`
-	).all(id);
+		ORDER BY ri.sort ASC`).all(id);
 
 	recipe.ingredients = ingredients;
 
@@ -52,25 +87,6 @@ function create(recipe, imageName) {
 	const db = getDB();
 
 	const i_recipe = db.prepare("INSERT INTO RECIPES (name,author,description,method,image,type) VALUES ($name,$author,$desc,$method,$img,$type)");
-	const i_ingredient = db.prepare("INSERT OR IGNORE INTO INGREDIENTS (name) VALUES (?)");
-	const s_ingredient_id = db.prepare("SELECT id FROM INGREDIENTS WHERE name = ?");
-	const i_recipe_ingredient = db.prepare("INSERT INTO RECIPE_INGREDIENTS (recipe, ingredient, amount, unit, sort) VALUES ($recipe, $ingredient, $amount, $unit, $sort)");
-
-	function addIngredient(ingredient, amount, unit, sort, recipe_id) {
-		i_ingredient.run(ingredient);
-		const ingredient_id = s_ingredient_id.get(ingredient).id;
-		i_recipe_ingredient.run({
-			recipe: recipe_id,
-			ingredient: ingredient_id,
-			amount: amount,
-			unit: unit,
-			sort: sort
-		});
-	}
-
-	if (!imageName) {
-		imageName = "noimage.jpeg";
-	}
 
 	if (recipe.recipe_author.length <= 0) {
 		recipe.recipe_author = null;
@@ -91,15 +107,60 @@ function create(recipe, imageName) {
 
 	const recipe_id = info.lastInsertRowid;
 
-	if (typeof recipe.ingredient === "string") {
-		addIngredient(recipe.ingredient, recipe.amount, recipe.unit, 1, recipe_id);
-	} else {
-		for (let i = 0; i < recipe.ingredient.length; ++i) {
-			addIngredient(recipe.ingredient[i], recipe.amount[i], recipe.unit[i], i, recipe_id);
-		}
-	}
+	addIngredients(recipe.ingredient, recipe.amount, recipe.unit, recipe_id);
 
 	return recipe_id;
+}
+
+function update(id, recipe, imageName) {
+	const db = getDB();
+
+	const u_recipe = db.prepare(`UPDATE RECIPES
+	SET name = $name,
+	author = $author,
+	description = $description,
+	method = $method,
+	type = $type
+	WHERE id = $id`);
+
+	const u_recipe_with_image = db.prepare(`UPDATE RECIPES
+	SET name = $name,
+	author = $author,
+	description = $description,
+	method = $method,
+	image = $image,
+	type = $type
+	WHERE id = $id`);
+
+	let update_object = {
+		id: id,
+		name: recipe.recipe_name,
+		author: recipe.recipe_author,
+		description: recipe.recipe_description,
+		method: recipe.recipe_method,
+		type: recipeTypes.indexOf(recipe.recipe_type)
+	};
+
+	if (!imageName && recipe.recipe_delete_image === "false") {
+		// If image does not change
+		u_recipe.run(update_object);
+	} else if (imageName) {
+		// If image changes
+		update_object.image = imageName;
+		u_recipe_with_image.run(update_object);
+	} else {
+		// If image is deleted
+		update_object.image = null;
+		u_recipe_with_image.run(update_object);
+	}
+
+	// Delete all relations to the ingredients
+	db.prepare("DELETE FROM RECIPE_INGREDIENTS WHERE recipe = ?").run(id);
+
+	// Add the received ingredients
+	addIngredients(recipe.ingredient, recipe.amount, recipe.unit, id);
+
+	deleteUnusedIngredients();
 }
 
 function deleteById(id) {
@@ -118,30 +179,32 @@ function deleteById(id) {
 
 	db.prepare("DELETE FROM RECIPES WHERE id = ?").run(id);
 
+	deleteUnusedIngredients();
+
 	console.log("Deleted recipe " + id);
 }
 
-function typeTag(type, language) {
-	const classes = ["type"]
+function typeTag(type, language) {
+	const classes = ["type"];
 	let content;
-  if (type > 0 && type < 4) {
-    let types;
-    if (language === "en") {
+	if (type > 0 && type < 4) {
+		let types;
+		if (language === "en") {
 			types = ["starter dish", "main dish", "dessert"]
 		} else if (language === "es") {
 			types = ["entrante", "plato principal", "postre"]
-    }
+		}
 
 		content = types[type - 1];
 		classes.push("recipe-" + recipeTypes[type])
-  } else {
-    content = null;
+	} else {
+		content = null;
 	}
 	return newTag(content, classes);
 }
 
 function newTag(content, classes = []) {
-	return {content, classes};
+	return { content, classes };
 }
 
 function generateTags(recipe, language = "en") {
@@ -149,7 +212,7 @@ function generateTags(recipe, language = "en") {
 	if (recipe.type) {
 		tags.push(typeTag(recipe.type, language));
 	}
-	
+
 	return tags;
 }
 
@@ -158,6 +221,7 @@ module.exports = {
 	getById,
 	getByIdWithIngredients,
 	create,
+	update,
 	deleteById,
 	generateTags
 }

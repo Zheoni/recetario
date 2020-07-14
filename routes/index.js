@@ -37,6 +37,25 @@ router.get('/create', function (req, res, next) {
 	res.render('create', { title: 'Recetario - nueva receta' });
 });
 
+router.get('/recipe/:id/edit', function (req, res, next) {
+	const id = Number(req.params.id);
+	const recipe = recipes.getByIdWithIngredients(id);
+
+	res.render('edit', { title: `Editar - ${recipe.name}`, recipe: recipe});
+});
+
+router.post('/recipe/:id', upload.single('recipe_image'), function (req, res, next) {
+	const id = Number(req.params.id);
+
+	if (req.file) {
+		recipes.update(id, req.body, req.file.filename);
+	} else {
+		recipes.update(id, req.body);
+	}
+
+	res.redirect('/recipe/' + id);
+});
+
 router.post('/recipe', upload.single('recipe_image'), function (req, res, next) {
 	let id;
 	if (req.file) {
@@ -44,17 +63,8 @@ router.post('/recipe', upload.single('recipe_image'), function (req, res, next) 
 	} else {
 		id = recipes.create(req.body);
 	}
-	res.redirect('/recipe/' + String(id));
+	res.redirect('/recipe/' + id);
 });
-
-router.put('/recipe/:id', upload.single('recipe_image'), function (req, res, next) {
-	const id = Number(req.params.id);
-
-	let recipe = recipes.getByIdWithIngredients(id);
-	if (req.file) {
-
-	}
-})
 
 router.delete('/recipe/:id', async function (req, res, next) {
 	let id = Number(req.params.id);
