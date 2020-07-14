@@ -70,3 +70,5 @@ public/recipes/images/*
 public/recipes/recipes/*
 
 .DS_Store
+models/testdata.sql
+TODO.md
