@@ -3,11 +3,15 @@ const Database = require('better-sqlite3')
 
 let _db;
 
-function initDB() {
+function initDB(verbose = false) {
   if (_db) {
     console.warn("Trying to init DB again!");
   } else {
-    _db = new Database('recipes.db');
+    if (verbose) {
+      _db = new Database('recipes.db', { verbose: console.log });
+    } else {
+      _db = new Database('recipes.db');
+    }
   }
 
   return _db.open;
