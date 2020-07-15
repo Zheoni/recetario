@@ -16,16 +16,21 @@
       <header class="recipe-header" style>
         <h1 id="recipe-name"><%= recipe.name %></h1>
         <% if (recipe.author) { %>
-          <p class="author">Por <%= recipe.author %></p>
+        <p class="author">Por <%= recipe.author %></p>
         <% } %>
-        <p class="date">Publicado el <span id="date"><%= recipe.CREATED_AT %></span></p>
+        <p class="date">Publicado el
+          <span class="date-to-format"><%= recipe.CREATED_AT %></span>
+          <% if (recipe.CREATED_AT !== recipe.UPDATED_AT) { %>
+          (editada)
+          <% } %>
+        </p>
       </header>
 
       <div class="tags-container">
         <% tags.forEach(tag => { %>
-         <span class="tag <%= tag.classes.join(' ') %>">
-           <%= tag.content %> 
-         </span>
+        <span class="tag <%= tag.classes.join(' ') %>">
+          <%= tag.content %>
+        </span>
         <% }) %>
       </div>
 
@@ -73,7 +78,8 @@
 
       <div class="recipe-buttons">
         <button type="button" class="edit-button" onclick="editRecipe();"><i class="fas fa-edit"></i> Editar</button>
-        <button type="button" class="delete-button" onclick="deleteRecipe();"><i class="fas fa-trash-alt"></i> Eliminar</button>
+        <button type="button" class="delete-button" onclick="deleteRecipe();"><i class="fas fa-trash-alt"></i>
+          Eliminar</button>
       </div>
 
     </article>
@@ -117,16 +123,30 @@
   </script>
 
   <script>
-    // Give corrent format to date
+    // Give corrent format to date. Done in client due to timezones
+
     const monthNames = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
 
-    const dateElement = document.getElementById("date");
+    const dates = document.getElementsByClassName("date-to-format");
 
-    const date = new Date(dateElement.textContent);
+    for (let element of dates) {
+      const regex = /(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})/;
 
-    const dateString = date.getDate() + " de " + monthNames[date.getMonth()] + " de " + date.getFullYear();
+      const match = regex.exec(element.textContent);
 
-    dateElement.textContent = dateString;
+      if (match) {
+        const date = new Date(Date.UTC(
+          match[1],
+          match[2] - 1,
+          match[3],
+          match[4],
+          match[5],
+          match[6]));
+
+        const dateString = `${date.getDate()} de ${monthNames[date.getMonth()]} de ${date.getFullYear()}`;
+        element.textContent = dateString;
+      }
+    }
   </script>
 
   <script>
@@ -142,7 +162,7 @@
         const req = new Request(url, {
           method: "DELETE"
         });
-        
+
         fetch(req)
           .then(response => {
             if (response.status === 200) {
