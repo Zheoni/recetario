@@ -15,4 +15,12 @@
 
 <script defer src="/javascripts/common.js"></script>
 
+<% if (typeof alerts !== "undefined") { alerts.forEach(alert => { %>
+<meta name="alert"
+      type="<%= alert.type || "success" %>"
+      candismiss="<%= alert.candismiss || "false" %>"
+      delay="<%= alert.delay || -1 %>"
+      content="<%= alert.content %>">
+<% });} %>
+
 <title><%= title %></title>
