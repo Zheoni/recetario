@@ -8,7 +8,7 @@
       </a>
     </li>
     <li class="search-container mobile-hidden">
-      <form class="searchbox" onsubmit="pressed();" action="javascript:void(0);">
+      <form class="searchbox" onsubmit="search_pressed();" action="javascript:void(0);">
         <input type="search" id="search-input" placeholder="Buscar">
         <button type="submit" id="search-button"><i class="fa fa-search"></i></button>
       </form>
@@ -47,27 +47,3 @@
     </li>
   </ul>
 </nav>
-
-<script>
-  function pressed() {
-    console.log("search")
-  }
-</script>
-
-<script>
-  const currentPage = document.getElementById("current-page");
-
-  if (currentPage) {
-    switch (currentPage.content) {
-      case "index":
-        document.getElementById("nav-home").classList.add('active');
-        break;
-      case "create":
-        document.getElementById("nav-create").classList.add('active');
-        break;
-      case "about":
-        document.getElementById("nav-about").classList.add('active');
-        break;
-    }
-  }
-</script>
