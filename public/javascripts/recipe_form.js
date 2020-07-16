@@ -62,5 +62,13 @@ function validate() {
 
   // Validate
   const isValid = document.querySelectorAll(".validate:invalid").length === 0;
+
+  if (!isValid) {
+    addAlert("Revise los campos del formulario que no son correctos e inténtelo de nuevo.", {
+      type: "warning",
+      scrollback: true
+    });
+  }
+
   return isValid;
 }

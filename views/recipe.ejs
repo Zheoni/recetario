@@ -124,14 +124,17 @@
 
   <script>
     function editRecipe() {
-      window.location.replace(window.location.href + "/edit");
+      const location = window.location;
+      const url = [location.protocol, '//', location.host, location.pathname].join('');
+      window.location.replace(url + "/edit");
     }
 
     function deleteRecipe() {
       const r = confirm("¿Estás seguro de querer eliminar la receta?");
 
       if (r) {
-        const url = window.location.href;
+        const location = window.location;
+        const url = [location.protocol, '//', location.host, location.pathname].join('');
         const req = new Request(url, {
           method: "DELETE"
         });
@@ -145,12 +148,20 @@
             }
           })
           .then(response => {
-            // Return to home page
-            setTimeout(() => window.location.replace("/"), 1000);
+            // Notify to the user
+            addAlert("La receta se ha eliminado. Una vez salgas de esta página no podrás volver. Puede que algunos enlaces ya no funcionen.", {
+              type: "warning",
+              scrollback: true
+            });
+            // setTimeout(() => window.location.replace("/"), 1000);
           })
           .catch(error => {
             console.error(error);
-            alert("No se pudo eliminar la receta.")
+            addAlert("No se pudo eliminar la receta.", {
+              type: "error",
+              scrollback: true,
+              candismiss: true
+            });
           })
       }
     }

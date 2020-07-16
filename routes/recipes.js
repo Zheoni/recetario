@@ -10,11 +10,33 @@ const controller = require("../controllers/recipes.js");
 router.get('/:id', function(req, res, next) {
   try {
 		const recipe = controller.getByIdWithIngredients(Number(req.params.id));
-		const tags = controller.generateTags(recipe, "es")
+		const tags = controller.generateTags(recipe, "es");
+
+		let alerts = [];
+
+		if (req.query.hasOwnProperty("new")) {
+			alerts.push({
+				content: "Receta creada correctamente.",
+				type: "success",
+				delay: 10000,
+				candismiss: true
+			})
+		}
+
+		if (req.query.hasOwnProperty("edited")) {
+			alerts.push({
+				content: "Receta editada correctamente.",
+				type: "success",
+				delay: 10000,
+				candismiss: true
+			})
+		}
+
 		res.render('recipe', {
 			title: recipe.name	|| "Receta",
 			recipe: recipe,
-			tags: tags
+			tags: tags,
+			alerts: alerts
 		});
 	} catch (err) {
 		res.status(404).render('error', { message: "Receta no encontrada", error: err })
@@ -39,7 +61,7 @@ router.post('/:id', upload.single('recipe_image'), function (req, res, next) {
 		controller.update(id, req.body);
 	}
 
-	res.redirect('/recipe/' + id);
+	res.redirect(`/recipe/${id}?edited`);
 });
 
 /* POST Recipe (new) */ 
@@ -50,7 +72,7 @@ router.post('/', upload.single('recipe_image'), function (req, res, next) {
 	} else {
 		id = controller.create(req.body);
 	}
-	res.redirect('/recipe/' + id);
+	res.redirect(`/recipe/${id}?new`);
 });
 
 /* DELETE Recipe */
