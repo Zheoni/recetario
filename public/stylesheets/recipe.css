@@ -36,13 +36,14 @@
 }
 
 .about-text {
-  width: 50%;
+  width: 40%;
   margin-right: 10px;
 }
 
 .image-container {
-  width: 100%;
-  height: min(var(--image-height, 300px), 100%);
+  width: 60%;
+  height: 100%;
+  max-height: var(--image-height, 300px);
   border-radius: 5px;
   background-color: transparent;
 }
@@ -52,8 +53,6 @@
   box-sizing: border-box;
   max-height: 100%;
   max-width: 100%;
-  width: auto;
-  height: auto;
   margin: auto;
   border-radius: 5px;
 }
