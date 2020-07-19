@@ -35,6 +35,25 @@
         <p class="error">Una descripción es obligatoria.</p>
       </div>
 
+      <div class="form-item tags">
+        <label for="tags">Etiquetas</label>
+        <div class="tags-container form-input" id="tags-container">
+          <% let tag_input_content = ""; %> 
+          <% recipe.tags.forEach(tag => { %>
+            <% 
+              if (tag_input_content.length === 0) {
+                tag_input_content = tag.name;
+              } else {
+                tag_input_content += "," + tag.name;
+              }
+            %> 
+            <div class="tag-view" onclick="removeTagFromInput(this);"><%= tag.name %></div>
+          <% }) %>
+          <input type="text" id="tags-user-input" placeholder="escribe una etiqueta">
+          <input name="tags" type="text" id="tags-input" value="<%= tag_input_content %>" hidden>
+        </div>
+      </div>
+
       <div class="form-item ingredients">
         <label for="ingredients">Ingredientes</label>
         <div class="ingredient-container ingredient-labels">

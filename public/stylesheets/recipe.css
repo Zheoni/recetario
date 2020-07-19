@@ -203,6 +203,22 @@ hr {
   cursor: default;
 }
 
+.type-tag {
+  border: solid 1px var(--borders-color);
+}
+
+.tag.recipe-starter {
+  background-color: turquoise;
+}
+
+.tag.recipe-main {
+  background-color: plum;
+}
+
+.tag.recipe-dessert {
+  background-color: darksalmon;
+}
+
 /* Small screens */
 @media only screen and (max-width: 767px) {
 

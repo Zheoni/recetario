@@ -19,12 +19,17 @@ function deleteUnusedIngredients() {
 		(SELECT COUNT(*) FROM RECIPE_INGREDIENTS WHERE INGREDIENTS.id = RECIPE_INGREDIENTS.ingredient) = 0`).run();
 }
 
+function deleteUnusedTags() {
+	const db = getDB();
+	db.prepare(`DELETE FROM TAGS WHERE
+		(SELECT COUNT(*) FROM RECIPE_TAGS WHERE TAGS.id = RECIPE_TAGS.tag) = 0`).run();
+}
+
 function addIngredients(ingredients, amounts, units, recipe_id) {
 	const db = getDB();
 
 	const i_ingredient = db.prepare("INSERT OR IGNORE INTO INGREDIENTS (name) VALUES (?)");
-	const s_ingredient_id = db.prepare("SELECT id FROM INGREDIENTS WHERE name = ?");
-	const i_recipe_ingredient = db.prepare("INSERT INTO RECIPE_INGREDIENTS (recipe, ingredient, amount, unit, sort) VALUES ($recipe, $ingredient, $amount, $unit, $sort)");
+	const i_recipe_ingredient = db.prepare("INSERT INTO RECIPE_INGREDIENTS (recipe, ingredient, amount, unit, sort) VALUES ($recipe, (SELECT id FROM INGREDIENTS WHERE name = $ingredient), $amount, $unit, $sort)");
 
 	if (typeof ingredients === "string") {
 		ingredients = [ingredients];
@@ -34,14 +39,28 @@ function addIngredients(ingredients, amounts, units, recipe_id) {
 
 	for (let i = 0; i < ingredients.length; ++i) {
 		i_ingredient.run(ingredients[i]);
-		const ingredient_id = s_ingredient_id.get(ingredients[i]).id;
 		i_recipe_ingredient.run({
 			recipe: recipe_id,
-			ingredient: ingredient_id,
+			ingredient: ingredients[i],
 			amount: amounts[i],
 			unit: units[i],
 			sort: i
 		});
+	}
+}
+
+function addTags(tags, recipe_id) {
+	const db = getDB();
+
+	const i_tag = db.prepare("INSERT OR IGNORE INTO TAGS (name) VALUES (?)");
+
+	const i_recipe_tag = db.prepare(`INSERT INTO RECIPE_TAGS (recipe, tag) VALUES
+	($recipe_id,(SELECT id FROM TAGS WHERE name = $tag))`);
+
+	for (let tag of tags) {
+		console.log(tag)
+		i_tag.run(tag);
+		i_recipe_tag.run({recipe_id, tag});
 	}
 }
 
@@ -68,7 +87,7 @@ function getById(id) {
 	}
 }
 
-function getByIdWithIngredients(id) {
+function getByIdComplete(id) {
 	const db = getDB();
 
 	let recipe = getById(id);
@@ -78,7 +97,14 @@ function getByIdWithIngredients(id) {
 		WHERE ri.recipe = ?
 		ORDER BY ri.sort ASC`).all(id);
 
+	const tags = db.prepare(
+		`SELECT name FROM RECIPE_TAGS rt
+		JOIN TAGS t ON t.id = rt.tag
+		WHERE rt.recipe = ?
+		ORDER BY name ASC`).all(id);
+
 	recipe.ingredients = ingredients;
+	recipe.tags = tags;
 
 	return recipe;
 }
@@ -108,6 +134,7 @@ function create(recipe, imageName) {
 	const recipe_id = info.lastInsertRowid;
 
 	addIngredients(recipe.ingredient, recipe.amount, recipe.unit, recipe_id);
+	addTags(recipe.tags.split(","), recipe_id);
 
 	return recipe_id;
 }
@@ -154,13 +181,23 @@ function update(id, recipe, imageName) {
 		u_recipe_with_image.run(update_object);
 	}
 
-	// Delete all relations to the ingredients
-	db.prepare("DELETE FROM RECIPE_INGREDIENTS WHERE recipe = ?").run(id);
+	// Delete all relations to the ingredients, add the received ones and
+	// remove the ingredients that are not used by any recipe.
+	const update_ingredients = db.transaction((ingredients, amounts, units, id) => {
+		db.prepare("DELETE FROM RECIPE_INGREDIENTS WHERE recipe = ?").run(id);
+		addIngredients(ingredients, amounts, units, id);
+		deleteUnusedIngredients();
+	});
+	update_ingredients(recipe.ingredient, recipe.amount, recipe.unit, id);
 
-	// Add the received ingredients
-	addIngredients(recipe.ingredient, recipe.amount, recipe.unit, id);
-
-	deleteUnusedIngredients();
+	// Do the same with tags
+	const update_tags = db.transaction((tags, id) => {
+		db.prepare("DELETE FROM RECIPE_TAGS WHERE recipe = ?").run(id);
+		addTags(tags, id);
+		deleteUnusedTags();
+	});
+	update_tags(recipe.tags.split(","), id);
+	
 }
 
 function deleteById(id) {
@@ -185,7 +222,7 @@ function deleteById(id) {
 }
 
 function typeTag(type, language) {
-	const classes = ["type"];
+	const classes = ["type-tag"];
 	let content;
 	if (type > 0 && type < 4) {
 		let types;
@@ -207,11 +244,17 @@ function newTag(content, classes = []) {
 	return { content, classes };
 }
 
-function generateTags(recipe, language = "en") {
+function prepareTags(recipe, language = "en") {
 	let tags = [];
 	if (recipe.type) {
 		tags.push(typeTag(recipe.type, language));
 	}
+
+	for (const tag of recipe.tags) {
+		tags.push(newTag(tag.name, ["user-tag"]));
+	}
+
+	recipe.tags = tags;
 
 	return tags;
 }
@@ -219,9 +262,9 @@ function generateTags(recipe, language = "en") {
 module.exports = {
 	getAllRecipes,
 	getById,
-	getByIdWithIngredients,
+	getByIdComplete,
 	create,
 	update,
 	deleteById,
-	generateTags
+	prepareTags
 }

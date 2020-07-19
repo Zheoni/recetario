@@ -9,8 +9,8 @@ const controller = require("../controllers/recipes.js");
 /* GET Recipe */
 router.get('/:id', function(req, res, next) {
   try {
-		const recipe = controller.getByIdWithIngredients(Number(req.params.id));
-		const tags = controller.generateTags(recipe, "es");
+		const recipe = controller.getByIdComplete(Number(req.params.id));
+		controller.prepareTags(recipe, "es");
 
 		let alerts = [];
 
@@ -35,7 +35,6 @@ router.get('/:id', function(req, res, next) {
 		res.render('recipe', {
 			title: recipe.name	|| "Receta",
 			recipe: recipe,
-			tags: tags,
 			alerts: alerts
 		});
 	} catch (err) {
@@ -46,7 +45,7 @@ router.get('/:id', function(req, res, next) {
 /* GET Recipe edit form */
 router.get('/:id/edit', function (req, res, next) {
 	const id = Number(req.params.id);
-	const recipe = controller.getByIdWithIngredients(id);
+	const recipe = controller.getByIdComplete(id);
 
 	res.render('edit', { title: `Editar - ${recipe.name}`, recipe: recipe});
 });

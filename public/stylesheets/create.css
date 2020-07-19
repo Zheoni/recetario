@@ -6,6 +6,7 @@
   grid-template-columns: 1fr 1fr;
   grid-template-areas:  "name author"
                         "desc desc"
+                        "tags tags"
                         "ingr ingr"
                         "method method"
                         "image type"
@@ -59,20 +60,25 @@
   white-space: nowrap;
 }
 
-.form-item input,
-.form-item textarea,
-.form-item select
+.form-item > input,
+.form-item > textarea,
+.form-item > select {
+  padding: 10px;
+}
+
+.form-item > input,
+.form-item > textarea,
+.form-item > select,
+.form-item .form-input
 {
   width: 100%;
-  padding: 10px;
   background-color: white;
   font-size: 1rem;
 
   border: solid 1px var(--borders-color, whitesmoke);
   border-left-width: 4px;
   border-radius: 5px;
-  transition: border-color 300ms ease-out,
-              box-shadow 500ms ease-out;
+  transition: border-color 300ms ease-out;
 }
 
 .validate:valid {
@@ -173,6 +179,10 @@ p.error {
   grid-area: desc;
 }
 
+.tags {
+  grid-area: tags;
+}
+
 .ingredients {
   grid-area: ingr;
 }
@@ -224,4 +234,60 @@ input {
 
 #delete-image[value="true"] + #image-delete-warning {
   display: block;
+}
+
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  padding: 0;
+}
+
+.tag-view {
+  position: relative;
+  margin: 5px;
+  padding: 5px 10px;
+  font-size: 1rem;
+  background: var(--details-color, lightgray);
+  border-radius: 5px;
+  transition: transform 250ms, background-color 200ms;
+  cursor: default;
+}
+
+.tag-view:hover {
+  background-color: powderblue; 
+  transform: scale(1.1);
+}
+
+.form-input .tag-view::after {
+  content: "\00D7";
+  display: inline-block;
+  text-align: center;
+  margin-left: 5px;
+  font-weight: 700;
+  background: var(--details-color, lightgray);
+  border-radius: 50%;
+  height: 15px;
+  width: 15px;
+}
+
+.tag-view button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 5px;
+  height: 5px;
+  padding: 5px;
+  border-style: none;
+}
+
+#tags-user-input {
+  margin: 0 auto;
+  flex-grow: 1;
+  margin: 0;
+  font-size: 1rem;
+  padding: 10px;
+  min-width: 100px;
+  outline: none;
+  border-style: none;
 }

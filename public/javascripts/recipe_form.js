@@ -72,3 +72,48 @@ function validate() {
 
   return isValid;
 }
+
+
+const tags_input = document.getElementById("tags-input");
+const tags_user_input = document.getElementById("tags-user-input")
+const tags_container = document.getElementById("tags-container");
+
+const tag_regex = /^[0-9A-Za-zñáéíóúäëïöüàèìòùâêîôû\- ]+$/;
+const max_tag_length = 25;
+
+function removeTagFromInput(tag) {
+  const tag_content = tag.textContent;
+  tag.remove();
+  tags_input.value = tags_input.value.replace(RegExp(tag_content + ",?"), "");
+  tags_input.value = tags_input.value.replace(/,$/, "");
+}
+
+tags_user_input.addEventListener("keypress", (event) => {
+  if (event.key === "Enter" || event.key === ",") {
+    event.preventDefault();
+    let tag_content = tags_user_input.value;
+    tags_user_input.value = "";
+
+    if (tag_regex.test(tag_content) === false || tag_content.length > max_tag_length) return;
+
+    tag_content = tag_content.replace(",", "-");
+
+    const current_tags = tags_input.value.split(",");
+
+    if (tag_content && !current_tags.includes(tag_content)) {
+      // Create the new tag div and add it to the document
+      const new_tag_div = document.createElement("div");
+      new_tag_div.classList.add("tag-view");
+      new_tag_div.textContent = tag_content;
+      new_tag_div.onclick = () => removeTagFromInput(new_tag_div);
+  
+      tags_container.insertBefore(new_tag_div, tags_user_input);
+
+      // Add the tag to the input that will be sent
+      if (tags_input.value.length === 0)
+        tags_input.value = tag_content;
+      else
+        tags_input.value += "," + tag_content;
+    }
+  }
+});
