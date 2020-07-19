@@ -8,43 +8,50 @@ const controller = require("../controllers/recipes.js");
 
 /* GET Recipe */
 router.get('/:id', function(req, res, next) {
-  try {
-		const recipe = controller.getByIdComplete(Number(req.params.id));
-		controller.prepareTags(recipe, "es");
+	const id = Number(req.params.id);
 
-		let alerts = [];
-
-		if (req.query.hasOwnProperty("new")) {
-			alerts.push({
-				content: "Receta creada correctamente.",
-				type: "success",
-				delay: 10000,
-				candismiss: true
-			})
-		}
-
-		if (req.query.hasOwnProperty("edited")) {
-			alerts.push({
-				content: "Receta editada correctamente.",
-				type: "success",
-				delay: 10000,
-				candismiss: true
-			})
-		}
-
-		res.render('recipe', {
-			title: recipe.name	|| "Receta",
-			recipe: recipe,
-			alerts: alerts
-		});
-	} catch (err) {
-		res.status(404).render('error', { message: "Receta no encontrada", error: err })
+	if (!controller.checkIfExists(id)) {
+		res.status(404).render('error', { message: "Receta no encontrada", error: {} });
 	}
+
+	const recipe = controller.getByIdComplete(Number(req.params.id));
+	controller.prepareTags(recipe, "es");
+
+	let alerts = [];
+
+	if (req.query.hasOwnProperty("new")) {
+		alerts.push({
+			content: "Receta creada correctamente.",
+			type: "success",
+			delay: 10000,
+			candismiss: true
+		})
+	}
+
+	if (req.query.hasOwnProperty("edited")) {
+		alerts.push({
+			content: "Receta editada correctamente.",
+			type: "success",
+			delay: 10000,
+			candismiss: true
+		})
+	}
+
+	res.render('recipe', {
+		title: recipe.name	|| "Receta",
+		recipe: recipe,
+		alerts: alerts
+	});
 });
 
 /* GET Recipe edit form */
 router.get('/:id/edit', function (req, res, next) {
 	const id = Number(req.params.id);
+
+	if (!controller.checkIfExists(id)) {
+		res.status(404).render('error', { message: "Receta no encontrada", error: {} });
+	}
+
 	const recipe = controller.getByIdComplete(id);
 
 	res.render('edit', { title: `Editar - ${recipe.name}`, recipe: recipe});
@@ -53,6 +60,10 @@ router.get('/:id/edit', function (req, res, next) {
 /* POST Recipe (edit) */ // Wanted to use PUT... but this is easier
 router.post('/:id', upload.single('recipe_image'), function (req, res, next) {
 	const id = Number(req.params.id);
+
+	if (!controller.checkIfExists(id)) {
+		res.status(404).render('error', { message: "Receta no encontrada", error: {} });
+	}
 
 	if (req.file) {
 		controller.update(id, req.body, req.file.filename);
@@ -76,7 +87,12 @@ router.post('/', upload.single('recipe_image'), function (req, res, next) {
 
 /* DELETE Recipe */
 router.delete('/:id', async function (req, res, next) {
-	let id = Number(req.params.id);
+	const id = Number(req.params.id);
+
+	if (!controller.checkIfExists(id)) {
+		res.status(404).render('error', { message: "Receta no encontrada", error: {} });
+	}
+
 	if (id) {
 		controller.deleteById(id);
 		

@@ -13,6 +13,42 @@ function transformIntoRecipeObject(row) {
 	return row;
 }
 
+function validateRecipeInput(body) {
+	if (body.recipe_name.length <= 0 || body.recipe_name.length > 128)
+		return false;
+	
+	if (body.recipe_description.length <= 0 || body.recipe_description.length > 256)
+		return false;
+
+	const tags_regex = /^[0-9A-Za-zñáéíóúäëïöüàèìòùâêîôû\- ]+$/;
+
+	if (!body.tags.split(",").every((tag) => tags_regex.test(tag)))
+		return false;
+
+	if (!body.ingredient.every((ingredient) => ingredient.length > 0))
+		return false;
+
+	if (!body.amount.every((amount) => {
+		if (amount.length > 0) {
+			return Number(amount) !== NaN;
+		}
+	}))
+		return false;
+
+	if (body.recipe_method.length <= 128)
+		return false;
+
+	if (!recipeTypes.includes(body.recipe_type))
+		return false;
+
+	return true;
+}
+
+function checkIfExists(id) {
+	const db = getDB();
+	return db.prepare("SELECT 1 FROM RECIPES WHERE id = ?").pluck().get(id) === 1;
+}
+
 function deleteUnusedIngredients() {
 	const db = getDB();
 	db.prepare(`DELETE FROM INGREDIENTS WHERE
@@ -110,6 +146,9 @@ function getByIdComplete(id) {
 }
 
 function create(recipe, imageName) {
+	if (!validateRecipeInput(recipe))
+		throw new Error("Recipe input invalid");
+
 	const db = getDB();
 
 	const i_recipe = db.prepare("INSERT INTO RECIPES (name,author,description,method,image,type) VALUES ($name,$author,$desc,$method,$img,$type)");
@@ -140,6 +179,9 @@ function create(recipe, imageName) {
 }
 
 function update(id, recipe, imageName) {
+	if (!validateRecipeInput(recipe))
+		throw new Error("Recipe input invalid");
+
 	const db = getDB();
 
 	const u_recipe = db.prepare(`UPDATE RECIPES
@@ -266,5 +308,6 @@ module.exports = {
 	create,
 	update,
 	deleteById,
-	prepareTags
+	prepareTags,
+	checkIfExists
 }
