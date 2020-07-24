@@ -301,6 +301,28 @@ function prepareTags(recipe, language = "en") {
 	return tags;
 }
 
+function searchByName(str, includeTags = false, limit = 50) {
+	const db = getDB();
+	const results = db.prepare("SELECT id, name FROM RECIPES WHERE name LIKE $name ORDER BY name ASC LIMIT $limit").all({
+		name: `%${str}%`,
+		limit: limit
+	});
+
+	if (includeTags) {
+		const get_tags = db.prepare(
+			`SELECT name FROM RECIPE_TAGS rt
+			JOIN TAGS t ON t.id = rt.tag
+			WHERE rt.recipe = ?
+			ORDER BY name ASC`);
+		
+		for (let i = 0; i < results.length; ++i) {
+			results[i].tags = get_tags.all(results[i].id);
+		}
+	}
+
+	return results;
+}
+
 module.exports = {
 	getAllRecipes,
 	getById,
@@ -309,5 +331,6 @@ module.exports = {
 	update,
 	deleteById,
 	prepareTags,
-	checkIfExists
+	checkIfExists,
+	searchByName
 }

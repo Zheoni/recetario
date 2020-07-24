@@ -69,7 +69,8 @@
 .form-item > input,
 .form-item > textarea,
 .form-item > select,
-.form-item .form-input
+.form-item .form-input,
+.input
 {
   width: 100%;
   background-color: white;

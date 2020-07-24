@@ -189,6 +189,11 @@ hr {
   margin: 10px 0;
 }
 
+.tags-container.inline {
+  display: inline-flex;
+  margin: 0;
+}
+
 .tag {
   margin: 2px;
   padding: 4px 10px;

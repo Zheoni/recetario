@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+	<%- include("templates/head-template"); %>
+  <meta id="current-page" content="search">
+  <% if (results) { %>
+    <script>
+      const query_results = <%- JSON.stringify(results) %>;
+    </script>
+  <% } %>
+  <script defer src="/javascripts/search.js"></script>
+  <link rel="stylesheet" href="/stylesheets/create.css">
+  <link rel="stylesheet" href="/stylesheets/recipe.css">
+  <link rel="stylesheet" href="/stylesheets/search.css">
+</head>
+
+<body>
+  <%- include("templates/navbar-template"); %>
+	
+	<main>
+    <h1>Búsqueda</h1>
+
+    <form action="" method="get" id="search-form">
+      <input type="search" name="name" id="search-name" placeholder="Nombre de la receta" class="input">
+
+      <button type="submit" class="button main-button">Buscar!</button>
+    </form>
+    
+    <ul id="search-results">
+    </ul>
+
+	</main>
+
+	<%- include("templates/footer-template"); %>
+</body>
+</html>

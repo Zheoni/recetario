@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { getAllRecipes } = require("../controllers/recipes.js");
+const { getAllRecipes, searchByName } = require("../controllers/recipes.js");
 
 /* GET home page. */
 router.get('/', async function (req, res, next) {
@@ -18,5 +18,12 @@ router.get('/create', function (req, res, next) {
 	res.render('create', { title: 'Recetario - nueva receta' });
 });
 
+router.get('/search', function (req, res, next) {
+	let results = null;
+	if (req.query.name) {
+		results = searchByName(req.query.name, true);
+	}
 
+	res.render('search', { title: 'Recetario - busqueda', results: results });
+});
 module.exports = router;

@@ -1,0 +1,51 @@
+#search-form {
+  width: auto;
+  margin-bottom: 1rem;
+}
+
+#search-form input {
+  font-size: 1rem;
+}
+
+#search-results {
+  list-style: none;
+  width: auto;
+  margin: auto;
+  padding: 0;
+}
+
+li.recipe-result a {
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+  text-decoration: none;
+  color: var(--text-primary, black);
+  width: auto;
+  border: solid 1px var(--borders-color);
+  border-radius: 5px;
+  background: white;
+  margin: 5px auto;
+  padding: 10px;
+}
+
+li.recipe-result .tags-container {
+  margin-left: 15px;
+}
+
+li.recipe-result .tags-container .tag {
+  cursor: inherit;
+}
+
+#search-name {
+  padding: 10px;
+  margin: 5px auto;
+  display: block;
+  width: 50%;
+  min-width: 250px;
+  max-width: 100%;
+}
+
+#search-form button {
+  display: block;
+  margin: 5px auto;
+}
