@@ -350,7 +350,7 @@ hr {
   }
 
   .ingredients-container {
-    grid-row: 1 / span 4;
+    grid-row: 1 / span 6;
     grid-column: 1;
   }
 
