@@ -4,7 +4,8 @@ var router = express.Router();
 const multer = require('multer');
 const upload = multer({ dest: 'public/recipes/images' });
 
-const controller = require("../controllers/recipes.js");
+const controller = require("../controllers/recipes.controller.js");
+const Recipe = require('../models/recipe.model.js');
 
 /* GET Recipe */
 router.get('/:id', function(req, res, next) {
@@ -14,8 +15,7 @@ router.get('/:id', function(req, res, next) {
 		res.status(404).render('error', { message: "Receta no encontrada", error: {} });
 	}
 
-	const recipe = controller.getByIdComplete(Number(req.params.id));
-	controller.prepareTags(recipe, "es");
+	const recipe = controller.getById(id, { all: true });
 
 	let alerts = [];
 
@@ -36,10 +36,10 @@ router.get('/:id', function(req, res, next) {
 			candismiss: true
 		})
 	}
-
+	console.log(recipe, recipe.formatted())
 	res.render('recipe', {
 		title: recipe.name	|| "Receta",
-		recipe: recipe,
+		recipe: recipe.formatted(),
 		alerts: alerts
 	});
 });
@@ -52,35 +52,36 @@ router.get('/:id/edit', function (req, res, next) {
 		res.status(404).render('error', { message: "Receta no encontrada", error: {} });
 	}
 
-	const recipe = controller.getByIdComplete(id);
+	const recipe = controller.getById(id, { all: true });
+	console.log(recipe.formatted())
 
-	res.render('edit', { title: `Editar - ${recipe.name}`, recipe: recipe});
+	res.render('edit', { title: `Editar - ${recipe.name}`, recipe: recipe.formatted()});
 });
 
 /* POST Recipe (edit) */ // Wanted to use PUT... but this is easier
 router.post('/:id', upload.single('recipe_image'), function (req, res, next) {
 	const id = Number(req.params.id);
 
-	if (!controller.checkIfExists(id)) {
-		res.status(404).render('error', { message: "Receta no encontrada", error: {} });
-	}
+	const recipe = Recipe.fromFormInput(req.body,
+		id,
+		req.file && req.file.filename);
 
-	if (req.file) {
-		controller.update(id, req.body, req.file.filename);
-	} else {
-		controller.update(id, req.body);
-	}
+	const deleteImage = req.body.recipe_delete_image === "true";
+
+	controller.update(recipe, deleteImage);
 
 	res.redirect(`/recipe/${id}?edited`);
 });
 
 /* POST Recipe (new) */ 
 router.post('/', upload.single('recipe_image'), function (req, res, next) {
-	let id;
+	console.log(req.body)
+	let recipe = Recipe.fromFormInput(req.body,
+		undefined,
+		req.file && req.file.filename);
+
 	if (req.file) {
-		id = controller.create(req.body, req.file.filename);
-	} else {
-		id = controller.create(req.body);
+		id = controller.create(recipe);
 	}
 	res.redirect(`/recipe/${id}?new`);
 });

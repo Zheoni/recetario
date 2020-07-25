@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const controller = require("../controllers/recipes.js");
+const controller = require("../controllers/recipes.controller.js");
 
 router.post('/search', function (req, res, next) {
   let recipes = new Set();

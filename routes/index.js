@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
 
-const { getAllRecipes, searchByName } = require("../controllers/recipes.js");
+const { getAll, searchByName } = require("../controllers/recipes.controller.js");
 
 /* GET home page. */
 router.get('/', async function (req, res, next) {
-	const allRecipes = await getAllRecipes();
+	const allRecipes = await getAll();
 
 	res.render('index', { title: 'Recetario', recipes: allRecipes });
 });

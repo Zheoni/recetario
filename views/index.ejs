@@ -16,7 +16,7 @@
       <% for (const recipe of recipes) { %>
       <a href="/recipe/<%= recipe.id %>" alt="<%= recipe.name %>" class="card-link">
         <div class="card" id="<%= recipe.id %>">
-          <div class="card-image" style="background-image: url(/recipes/images/<%= recipe.image %>);" alt=""></div>
+          <div class="card-image" style="background-image: url(<%= recipe.imageURL; %>);" alt=""></div>
           <div class="card-name">
             <h3><%= recipe.name %></h3>
           </div>

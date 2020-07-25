@@ -5,15 +5,13 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
 const { initDB, closeDB } = require("./db");
+initDB();
 
 const indexRouter = require('./routes/index.js');
 const recipesRouter = require('./routes/recipes.js');
 const apiRouter = require('./routes/api.js');
 
 const app = express();
-
-// initialize database
-initDB();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

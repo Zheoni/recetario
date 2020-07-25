@@ -28,7 +28,7 @@ function displaySearchResults(results) {
       tags_div.classList.add("tags-container", "inline", "mobile-hidden");
       result.tags.forEach((tag) => {
         let tag_span = document.createElement("span");
-        tag_span.innerText = tag.name;
+        tag_span.innerText = tag;
         tag_span.classList.add("tag");
         tags_div.appendChild(tag_span);
       });

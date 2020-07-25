@@ -4,8 +4,6 @@
 <head>
   <link rel="stylesheet" href="/stylesheets/create.css">
 	<%- include("templates/head-template"); %>
-
-  <meta id="current-page" content="create">
 </head>
 
 <body>
@@ -39,15 +37,17 @@
         <label for="tags">Etiquetas</label>
         <div class="tags-container form-input" id="tags-container">
           <% let tag_input_content = ""; %> 
-          <% recipe.tags.forEach(tag => { %>
+          <% recipe.tags
+            .filter((tag) => tag.classes.includes("user-tag"))
+            .forEach((tag) => { %>
             <% 
               if (tag_input_content.length === 0) {
-                tag_input_content = tag.name;
+                tag_input_content = tag.content;
               } else {
-                tag_input_content += "," + tag.name;
+                tag_input_content += "," + tag.content;
               }
             %> 
-            <div class="tag-view" onclick="removeTagFromInput(this);"><%= tag.name %></div>
+            <div class="tag-view" onclick="removeTagFromInput(this);"><%= tag.content %></div>
           <% }) %>
           <input type="text" id="tags-user-input" placeholder="escribe una etiqueta">
           <input name="tags" type="text" id="tags-input" value="<%= tag_input_content %>" hidden>
