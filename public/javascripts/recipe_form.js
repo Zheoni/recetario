@@ -11,6 +11,13 @@ let sortable = new Sortable(list, {
 function addIngredient() {
   const copy = template.cloneNode(true);
   list.appendChild(copy);
+
+  if (list.classList.contains("validate")) {
+    const fields = copy.querySelectorAll("input, textarea, select");
+    for (let i = 0; i < fields.length; ++i) {
+      fields[i].classList.add("validate");
+    }
+  }
   
   sortable.option("disabled", false);
 }
@@ -43,7 +50,6 @@ function isEmpty(element) {
 function validate() {
 
   // Remove empty ingredients, always keeping one
-  const list = document.getElementById("ingredients");
   const ingredients = list.children;
   for (let i = ingredients.length - 1; i >= 0 && ingredients.length > 1; --i) {
     const ingredient = ingredients[i];
@@ -59,9 +65,29 @@ function validate() {
   for (const field of fields) {
     field.classList.add("validate");
   }
+  list.classList.add("validate");
 
   // Validate
-  const isValid = document.querySelectorAll(".validate:invalid").length === 0;
+  let isValid = document.querySelectorAll(".validate:invalid").length === 0;
+
+  if (ingredients.length === 1 && isEmpty(ingredients[0])) {
+    isValid = false;
+    list.classList.add("invalid");
+
+    list.addEventListener("keyup", () => {
+      let validIngredients = false;
+      for (let i = 0; i < ingredients.length && !validIngredients; ++i) {
+        const ingredient_name_input = ingredients[i].querySelector("input[name=ingredient]");
+        if (ingredient_name_input.value.length > 0)
+          validIngredients = true;
+      }
+      if (validIngredients) {
+        list.classList.remove("invalid");
+      } else {
+        list.classList.add("invalid");
+      }
+    });
+  }
 
   if (!isValid) {
     addAlert("Revise los campos del formulario que no son correctos e inténtelo de nuevo.", {

@@ -105,7 +105,8 @@ p.error {
   display: block;
 }
 
-.validate:invalid + p.error {
+.validate:invalid + p.error,
+.validate.invalid + p.error {
   opacity: 1;
 }
 
