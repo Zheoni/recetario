@@ -1,0 +1,13 @@
+{
+	"name": "Recetario",
+	"short_name": "Recetario",
+	"start_url": ".",
+	"display": "standalone",
+	"theme_color": "#fff",
+	"background_color": "#fffdf9",
+	"icons": [{
+	  "src": "images/apple-touch-icon.png",
+	  "sizes": "158x158",
+	  "type": "image/png"
+	}]
+  }
