@@ -85,7 +85,7 @@
 
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: "...";
+  text-overflow: ellipsis;
 }
 
 .card-description p {

@@ -23,15 +23,19 @@ const s_tags_id = db.prepare(
 	WHERE rt.recipe = ?
 	ORDER BY name ASC`);
 
+const s_steps_id = db.prepare(
+	`SELECT id, type, content FROM STEPS
+	WHERE recipe = ?
+	ORDER BY sort ASC`);
+
 const s_recipe_image = db.prepare("SELECT image FROM RECIPES WHERE id = ?");
 
-const i_recipe = db.prepare("INSERT INTO RECIPES (name,author,description,method,image,type) VALUES ($name,$author,$desc,$method,$img,$type)");
+const i_recipe = db.prepare("INSERT INTO RECIPES (name,author,description,image,type) VALUES ($name,$author,$desc,$img,$type)");
 
 const u_recipe = db.prepare(`UPDATE RECIPES
 	SET name = $name,
 	author = $author,
 	description = $description,
-	method = $method,
 	type = $type
 	WHERE id = $id`);
 
@@ -39,7 +43,6 @@ const u_recipe_with_image = db.prepare(`UPDATE RECIPES
 	SET name = $name,
 	author = $author,
 	description = $description,
-	method = $method,
 	image = $image,
 	type = $type
 	WHERE id = $id`);
@@ -63,6 +66,10 @@ const d_recipe_ingredients_id = db.prepare("DELETE FROM RECIPE_INGREDIENTS WHERE
 const i_tag = db.prepare("INSERT OR IGNORE INTO TAGS (name) VALUES (?)");
 const i_recipe_tag = db.prepare("INSERT INTO RECIPE_TAGS (recipe, tag) VALUES ($recipe_id,(SELECT id FROM TAGS WHERE name = $tag))");
 const d_recipe_tags_id = db.prepare("DELETE FROM RECIPE_TAGS WHERE recipe = ?");
+
+const i_step = db.prepare("INSERT INTO STEPS (recipe,type,content,sort) VALUES ($recipe,$type,$content,$sort)");
+const d_steps = db.prepare("DELETE FROM STEPS WHERE recipe = ?");
+
 
 function checkIfExists(id) {
 	return s_exist.pluck().get(id) === 1;
@@ -98,12 +105,28 @@ function insertTags(recipe) {
 	}
 }
 
+function insertSteps(recipe) {
+	for (let i = 0; i < recipe.steps.length; ++i) {
+		const step = recipe.steps[i];
+		i_step.run({
+			recipe: recipe.id,
+			type: step.type,
+			content: step.content,
+			sort: i
+		});
+	}
+}
+
 function loadTags(recipe_id) {
 	return s_tags_id.pluck().all(recipe_id);
 }
 
 function loadIngredients(recipe_id) {
 	return s_ingredients_id.all(recipe_id);
+}
+
+function loadSteps(recipe_id) {
+	return s_steps_id.all(recipe_id);
 }
 
 function getAll() {
@@ -120,6 +143,7 @@ function getById(id, options = {}) {
 	const defaults = {
 		loadIngredients: false,
 		loadTags: false,
+		loadSteps: false,
 		all: false
   };
 	options = Object.assign({}, defaults, options);
@@ -130,6 +154,9 @@ function getById(id, options = {}) {
 	if (options.loadTags || options.all) {
 		recipe.tags = loadTags(recipe.id);
 	}
+	if (options.loadSteps || options.all) {
+		recipe.steps = loadSteps(recipe.id);
+	}
 
 	return recipe;
 }
@@ -139,7 +166,6 @@ function create(recipe) {
 		name: recipe.name,
 		author: recipe.author,
 		desc: recipe.description,
-		method: recipe.method,
 		img: recipe.image,
 		type: recipe.type
 	});
@@ -148,6 +174,7 @@ function create(recipe) {
 
 	insertIngredients(recipe);
 	insertTags(recipe);
+	insertSteps(recipe);
 
 	return recipe.id;
 }
@@ -158,7 +185,6 @@ function update(recipe, deleteImage = false) {
 		name: recipe.name,
 		author: recipe.author,
 		description: recipe.description,
-		method: recipe.method,
 		type: recipe.type
 	};
 
@@ -193,6 +219,13 @@ function update(recipe, deleteImage = false) {
 		deleteUnusedTags();
 	});
 	update_tags(recipe);
+
+	// And for steps
+	const update_steps = db.transaction((recipe) => {
+		d_steps.run(recipe.id);
+		insertSteps(recipe);
+	});
+	update_steps(recipe);
 }
 
 function deleteById(id, imageName = undefined) {
@@ -242,6 +275,10 @@ Recipe.prototype.loadIngredients = function () {
 Recipe.prototype.loadTags = function () {
 	this.tags = loadTags(this.id);
 };
+
+Recipe.prototype.loadSteps = function () {
+	this.steps = loadSteps(this.id);
+}
 
 Recipe.prototype.exists = function () {
 	assert.ok(this.id, "The object has not a defined id");

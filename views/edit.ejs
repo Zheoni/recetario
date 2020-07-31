@@ -3,7 +3,10 @@
 
 <head>
   <link rel="stylesheet" href="/stylesheets/create.css">
-	<%- include("templates/head-template"); %>
+  <%- include("templates/head-template"); %>
+  <script defer src="/vendor/Sortable.min.js"></script>
+  <script defer src="/javascripts/recipe_form.js"></script>
+  <meta id="current-page" content="edit">
 </head>
 
 <body>
@@ -71,7 +74,7 @@
               <input type="number" name="amount" class="amount" min=0 step="any" value="<%= ingredient.amount %>">
               <input type="text" name="unit" class="unit" value="<%= ingredient.unit %>">
               <input type="text" name="ingredient" class="ingredient" value="<%= ingredient.name %>" required>
-              <button class="button delete-button" type="button" onclick="deleteThisIngredient(this);">&times;</button>
+              <button class="button delete-button delete-cross" type="button" onclick="deleteThisIngredient(this);"></button>
             </li>
           <% }) %>
           <li class="form-item ingredient-container">
@@ -81,7 +84,7 @@
             <input type="number" name="amount" class="amount" min=0 step="any">
             <input type="text" name="unit" class="unit">
             <input type="text" name="ingredient" class="ingredient" required>
-            <button class="button delete-button" type="button" onclick="deleteThisIngredient(this);">&times;</button>
+            <button class="button delete-button delete-cross" type="button" onclick="deleteThisIngredient(this);"></button>
           </li>
         </ul>
         <p class="error">Al menos un ingrediente.</p>
@@ -90,9 +93,44 @@
 
       <div class="form-item method">
         <label for="method">Método</label>
-        <textarea name="recipe_method" id="method" cols="30" rows="10" minlength="128"
-          placeholder="Cada párrafo es un paso." required placeholder="Método de la receta"><%= recipe.method.join('\n') %></textarea>
-        <p class="error">Un método es obligatorio. Al menos 128 caracteres.</p>
+        <ol id="method" class="steps-list">
+          <% for (const step of recipe.steps) { %>
+            <%
+              const extraClass = ["", "step-section", "step-note"][step.type];
+            %>
+            <li class="step form-item <%= extraClass %>">
+              <div class="handle">
+                <i class="fas fa-bars fa-lg"></i>
+              </div>
+              <% if (step.type === 1) { %>
+                <strong>Sección:</strong>
+                <input type="text" name="step" required="" maxlength="128" value="<%= step.content %>">
+              <% } else { %>
+                <textarea name="step" rows="5" required><%= step.content %></textarea>
+              <% } %>
+              <button class="button delete-button delete-cross" type="button" onclick="deleteThisStep(this);"></button>
+              <input type="hidden" name="step_type" value="<%= step.type %>">
+            </li>
+          <% } %>
+          <li class="step form-item">
+            <div class="handle">
+              <i class="fas fa-bars fa-lg"></i>
+            </div>
+            <textarea name="step" rows="5" required></textarea>
+            <button class="button delete-button delete-cross" type="button" onclick="deleteThisStep(this);"></button>
+            <input type="hidden" name="step_type" value="0">
+          </li>
+        </ol>
+        <p class="error">Un método es obligatorio. Al menos un paso. Cada sección ha de contener al menos un paso y tener un nombre..</p>
+
+        <button type="button" role="button" class="button add-step-button">
+          <i class="fas fa-plus" onclick="addStep();"></i>
+          <select id="new-step-type">
+            <option value="regular" selected>Paso</option>
+            <option value="section">Sección</option>
+            <option value="note">Nota</option>
+          </select>
+        </button>
       </div>
 
       <div class="form-item image">
@@ -124,8 +162,6 @@
 
   <%- include("templates/footer-template"); %>
   
-  <script defer src="/vendor/Sortable.min.js"></script>
-  <script defer src="/javascripts/recipe_form.js"></script>
   <script>
     document.getElementById("type").selectedIndex = <%= recipe.type || 0 %>;
 

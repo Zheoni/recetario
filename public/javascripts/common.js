@@ -47,6 +47,8 @@ if (currentPage) {
 const main_element = document.getElementsByTagName("main")[0];
 
 function dismissAlert(alert_div, withDelay = false) {
+  if (!alert_div) return;
+  
   if (withDelay) {
     alert_div.classList.add("fade-out");
     setTimeout((element) => {
@@ -57,13 +59,14 @@ function dismissAlert(alert_div, withDelay = false) {
   }
 }
 
-function addAlert(content, options = {}) {
+function addAlert(content, options = {type, delay, candismiss, container, scrollback, id}) {
   const defaults = {
     type: "default",
     delay: -1,
     candismiss: false,
     container: main_element,
-    scrollback: false
+    scrollback: false,
+    id: null
   };
 
   options = Object.assign({}, defaults, options);
@@ -71,6 +74,10 @@ function addAlert(content, options = {}) {
   const alert_div = document.createElement("div");
   alert_div.classList.add("alert", `alert-${options.type}`);
   alert_div.textContent = content;
+
+  if (options.id) {
+    alert_div.id = options.id;
+  }
 
   if (options.candismiss) {
     const dismiss_button = document.createElement("button");
@@ -93,6 +100,8 @@ function addAlert(content, options = {}) {
       dismissAlert(element, true);
     }, options.delay, alert_div);
   }
+
+  return alert_div;
 }
 
 const alerts = document.getElementsByName("alert");

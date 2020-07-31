@@ -49,6 +49,18 @@
   background-color: #dc3545;
 }
 
+.delete-cross {
+  font-size: 1.5rem;
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  font-weight: 500;
+}
+
+.delete-cross::after {
+  content: "\00D7";
+}
+
 .form-item > * {
   display: block;
   box-sizing: border-box;
@@ -193,10 +205,6 @@ p.error {
   grid-area: method;
 }
 
-textarea {
-  resize: none;
-} 
-
 .image {
   grid-area: image;
 }
@@ -211,16 +219,6 @@ textarea {
 
 .submit button {
   margin: 0 auto;
-}
-
-.sortable-ghost {
-  border-color: black;
-  opacity: 0.7;
-  background-color: var(--details-color, gray);
-}
-
-.sortable-drag {
-  visibility: hidden;
 }
 
 input {
@@ -250,7 +248,7 @@ input {
   margin: 5px;
   padding: 5px 10px;
   font-size: 1rem;
-  text-transform: uppercase;
+  text-transform: lowercase;
   background: var(--details-color, lightgray);
   border-radius: 5px;
   transition: transform 250ms, background-color 200ms;
@@ -293,4 +291,99 @@ input {
   min-width: 100px;
   outline: none;
   border-style: none;
+}
+
+.steps-list {
+  margin-bottom: 1rem;
+  list-style: none;
+  padding: 0;
+}
+
+.step {
+  display: grid;
+  grid-template-columns: 20px auto 43px;
+  grid-template-rows: auto;
+  column-gap: 5px;
+  justify-items: center;
+  align-items: center;
+  border: 2px dashed transparent;
+  border-radius: 7px;
+}
+
+.step textarea {
+  resize: vertical;
+  min-height: 45px;
+}
+
+.step:first-child:last-child .delete-button,
+.step:first-child:last-child .handle {
+  opacity: 0.1;
+  border-color: black;
+  background-color: initial;
+  color: black;
+  cursor: initial;
+}
+
+.step-section {
+  grid-template-columns: 20px min-content auto 43px;
+  margin-top: 20px;
+}
+
+.step-section strong {
+  padding: 0 15px;
+}
+
+.step-section input {
+  font-size: 1.2rem;
+}
+
+.step-note textarea {
+  background: cornsilk;
+  width: 75%;
+  justify-self: start;
+}
+
+.add-step-button {
+  padding: 0;
+  font-size: 1rem;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.add-step-button::after {
+  content: "\0025BC";
+  pointer-events: none;
+  right: 10px;
+  top: 10px;
+  position: absolute;
+}
+
+.add-step-button i {
+  width: 40px;
+  border-right: solid 1px var(--borders-color, whitesmoke);
+  font-size: 1.15rem;
+  padding: 11px 0;
+}
+
+.add-step-button select {
+  font-size: 1rem;
+  padding: 10px;
+  padding-right: 20px;
+  border: none;
+  border-radius: 0 5px 5px 0;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.sortable-chosen,
+.sortable-ghost {
+  border-color: black;
+  opacity: 0.7;
+  background-color: var(--details-color, gray);
+}
+
+.sortable-drag {
+  visibility: hidden;
 }

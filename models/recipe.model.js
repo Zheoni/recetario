@@ -7,18 +7,14 @@ class Recipe {
     this.name = data.name;
     this.author = data.author;
     this.description = data.description;
-    this.method = data.method;
     this.image = data.image;
     this.type = data.type;
     this.CREATED_AT = data.CREATED_AT;
     this.UPDATED_AT = data.UPDATED_AT;
-
+    
     this.ingredients = data.ingredients;
+    this.steps = data.steps;
     this.tags = data.tags;
-  }
-
-  get methodSteps() {
-    return this.method.split("\n");
   }
 
   get imageURL() {
@@ -30,6 +26,11 @@ class Recipe {
       body.ingredient = [body.ingredient];
       body.amount = [body.amount];
       body.unit = [body.unit];
+    }
+
+    if (typeof body.step === "string") {
+      body.step = [body.step];
+      body.step_type = [body.step_type];
     }
 
     if (!validateInput(body)) {
@@ -48,7 +49,6 @@ class Recipe {
       name: body.recipe_name,
       author: body.recipe_author,
       description: body.recipe_description,
-      method: body.recipe_method,
       image: imageName,
       type: type_number,
       CREATED_AT: undefined,
@@ -59,9 +59,11 @@ class Recipe {
       return { name: igr, amount: body.amount[i], unit: body.unit[i] };
     });
 
-    recipe.tags = body.tags.toLowerCase().split(",");
+    recipe.steps = body.step.map((step, i) => {
+      return { content: step, type: body.step_type[i] }; 
+    })
 
-    console.log(recipe);
+    recipe.tags = body.tags.toLowerCase().split(",").filter((t) => t.length > 0);
 
     return recipe;
   }
@@ -107,7 +109,6 @@ class Recipe {
   formatted() {
     let formattedRecipe = new Recipe({...this});
 
-    formattedRecipe.method = this.methodSteps;
     formattedRecipe.tags = this.formattedTags();
 
     return formattedRecipe;
@@ -119,25 +120,49 @@ module.exports = Recipe;
 function validateInput(body) {
 	if (body.recipe_name.length <= 0 || body.recipe_name.length > 128)
 		return false;
-
 	if (body.recipe_description.length <= 0 || body.recipe_description.length > 256)
 		return false;
 
 	const tags_regex = /^[0-9A-Za-zñáéíóúäëïöüàèìòùâêîôû\- ]+$/;
 
-	if (!body.tags.split(",").every((tag) => tags_regex.test(tag)))
-		return false;
-
+  if (!body.tags.split(",")
+    .filter((tag) => tag.length > 0)
+    .every((tag) => tags_regex.test(tag)))
+    return false;
+    
 	if (!body.ingredient.every((ingredient) => ingredient.length > 0))
-		return false;
+    return false;
 
+  if (!body.step.every((step) => step.length > 0))
+    return false;
+
+  if (!body.step_type.every((type) => {
+    type = Number(type);
+    return type >= 0 && type <= 2;
+  }))
+    return false;
+
+  let foundOne = false;
+  let emptySection = false;
+  for (let i = 0; i < body.step_type.length; ++i) {
+    const type = Number(body.step_type[i]);
+
+    if (type === 0) foundOne = true;
+
+    if (emptySection) {
+      if (type === 1) return false;
+
+      if (type === 0) emptySection = false;
+    } else if (type === 1) {
+      emptySection = true;
+    }
+  }
+  if (!foundOne || emptySection)
+    return false;
 
 	if (!body.amount.every((amount) => {
     return amount.length <= 0 || Number(amount) !== NaN;
 	}))
-		return false;
-
-  if (body.recipe_method.length <= 128)
 		return false;
 
 	if (!Recipe.recipeTypes.includes(body.recipe_type))

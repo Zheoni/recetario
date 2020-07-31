@@ -70,8 +70,16 @@
       <section class="method">
         <h2>Método</h2>
         <ol>
-          <% for (const step of recipe.method) { %>
-          <li><%= step %></li>
+          <% for (const step of recipe.steps) { %>
+            <% if (step.type === 0) { %>
+              <li class="step"><%= step.content %></li>
+            <% } else if (step.type === 1) { %>
+              </ol>
+              <h3><%= step.content %></h3>
+              <ol>
+            <% } else if (step.type === 2) { %>
+              <div class="step step-note"><%= step.content %></div>
+            <% } %>
           <% } %>
         </ol>
       </section>

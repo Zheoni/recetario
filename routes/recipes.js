@@ -36,7 +36,6 @@ router.get('/:id', function(req, res, next) {
 			candismiss: true
 		})
 	}
-	console.log(recipe, recipe.formatted())
 	res.render('recipe', {
 		title: recipe.name	|| "Receta",
 		recipe: recipe.formatted(),
@@ -53,7 +52,6 @@ router.get('/:id/edit', function (req, res, next) {
 	}
 
 	const recipe = controller.getById(id, { all: true });
-	console.log(recipe.formatted())
 
 	res.render('edit', { title: `Editar - ${recipe.name}`, recipe: recipe.formatted()});
 });
@@ -75,14 +73,12 @@ router.post('/:id', upload.single('recipe_image'), function (req, res, next) {
 
 /* POST Recipe (new) */ 
 router.post('/', upload.single('recipe_image'), function (req, res, next) {
-	console.log(req.body)
 	let recipe = Recipe.fromFormInput(req.body,
 		undefined,
 		req.file && req.file.filename);
 
-	if (req.file) {
-		id = controller.create(recipe);
-	}
+	const id = controller.create(recipe);
+	
 	res.redirect(`/recipe/${id}?new`);
 });
 

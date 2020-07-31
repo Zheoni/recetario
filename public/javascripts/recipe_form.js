@@ -1,36 +1,3 @@
-const list = document.getElementById("ingredients");
-const template = list.children[list.childElementCount - 1].cloneNode(true);
-
-let sortable = new Sortable(list, {
-  handle: ".handle",
-  animation: 200,
-  touchStartThreshold: 3,
-  disabled: list.childElementCount <= 1
-});
-
-function addIngredient() {
-  const copy = template.cloneNode(true);
-  list.appendChild(copy);
-
-  if (list.classList.contains("validate")) {
-    const fields = copy.querySelectorAll("input, textarea, select");
-    for (let i = 0; i < fields.length; ++i) {
-      fields[i].classList.add("validate");
-    }
-  }
-  
-  sortable.option("disabled", false);
-}
-
-function deleteThisIngredient(ingredient) {
-  if (list.childElementCount > 1) {
-    const container = ingredient.parentElement;
-    container.remove();
-
-    sortable.option("disabled", list.childElementCount <= 1);
-  }
-}
-
 function isEmpty(element) {
   let fields;
   if (["INPUT", "TEXTAREA", "SELECT"].includes(element.nodeName)) {
@@ -40,66 +7,14 @@ function isEmpty(element) {
   }
   
   for (const field of fields) {
-    if (field.value.length !== 0) {
+    if (field.value.length !== 0 && field.type !== "hidden") {
       return false;
     }
   }
   return true;
 }
 
-function validate() {
-
-  // Remove empty ingredients, always keeping one
-  const ingredients = list.children;
-  for (let i = ingredients.length - 1; i >= 0 && ingredients.length > 1; --i) {
-    const ingredient = ingredients[i];
-
-    if (isEmpty(ingredient)) {
-      ingredient.remove();
-    }
-  }
-
-  // Add validate class to all user inputs
-  const fields = document.querySelectorAll(".form-item > input, .form-item > textarea, .form-item > select");
-  
-  for (const field of fields) {
-    field.classList.add("validate");
-  }
-  list.classList.add("validate");
-
-  // Validate
-  let isValid = document.querySelectorAll(".validate:invalid").length === 0;
-
-  if (ingredients.length === 1 && isEmpty(ingredients[0])) {
-    isValid = false;
-    list.classList.add("invalid");
-
-    list.addEventListener("keyup", () => {
-      let validIngredients = false;
-      for (let i = 0; i < ingredients.length && !validIngredients; ++i) {
-        const ingredient_name_input = ingredients[i].querySelector("input[name=ingredient]");
-        if (ingredient_name_input.value.length > 0)
-          validIngredients = true;
-      }
-      if (validIngredients) {
-        list.classList.remove("invalid");
-      } else {
-        list.classList.add("invalid");
-      }
-    });
-  }
-
-  if (!isValid) {
-    addAlert("Revise los campos del formulario que no son correctos e inténtelo de nuevo.", {
-      type: "warning",
-      scrollback: true
-    });
-  }
-
-  return isValid;
-}
-
-
+// Tags
 const tags_input = document.getElementById("tags-input");
 const tags_user_input = document.getElementById("tags-user-input")
 const tags_container = document.getElementById("tags-container");
@@ -143,3 +58,252 @@ tags_user_input.addEventListener("keypress", (event) => {
     }
   }
 });
+
+// Ingredients
+const ingredients_list = document.getElementById("ingredients");
+const ingredient_template = ingredients_list.children[ingredients_list.childElementCount - 1].cloneNode(true);
+
+if (document.getElementById("current-page").content === "edit") {
+  const lastElement = ingredients_list.children[ingredients_list.childElementCount - 1]
+  if (isEmpty(lastElement)) {
+    lastElement.remove();
+  }
+}
+
+let sortable_ingredients = new Sortable(ingredients_list, {
+  handle: ".handle",
+  animation: 200,
+  touchStartThreshold: 3,
+  disabled: ingredients_list.childElementCount <= 1
+});
+
+function addIngredient() {
+  const copy = ingredient_template.cloneNode(true);
+  ingredients_list.appendChild(copy);
+
+  if (ingredients_list.classList.contains("validate")) {
+    const fields = copy.querySelectorAll("input, textarea, select");
+    for (let i = 0; i < fields.length; ++i) {
+      fields[i].classList.add("validate");
+    }
+  }
+  
+  sortable_ingredients.option("disabled", false);
+}
+
+function deleteThisIngredient(ingredient) {
+  if (ingredients_list.childElementCount > 1) {
+    const container = ingredient.parentElement;
+    container.remove();
+
+    sortable_ingredients.option("disabled", ingredients_list.childElementCount <= 1);
+
+    if (ingredients_list.classList.contains("validate")) {
+      validateIngredients();
+    }
+  }
+}
+
+
+// Steps
+const steps_list = document.getElementById("method");
+const step_template = steps_list.children[steps_list.childElementCount - 1].cloneNode(true);
+
+if (document.getElementById("current-page").content === "edit") {
+  const lastElement = steps_list.children[steps_list.childElementCount - 1]
+  if (isEmpty(lastElement)) {
+    lastElement.remove();
+  }
+}
+
+let sortable_steps = new Sortable(steps_list, {
+  handle: ".handle",
+  animation: 200,
+  touchStartThreshold: 3,
+  disabled: steps_list.childElementCount <= 1
+});
+
+function getStepType(step) {
+  if (step.classList.contains("step-section")) {
+    return 1;
+  } else if (step.classList.contains("step-note")) {
+    return 2;
+  } else {
+    return 0;
+  }
+}
+
+function addStep() {
+  const select_element = document.getElementById("new-step-type")
+  const select_type = select_element.selectedIndex;
+
+  const validate = steps_list.classList.contains("validate");
+  
+  let new_element = step_template.cloneNode(true);
+  switch (select_type) {
+    default: case 0: {
+      if (validate) {
+        new_element.children[1].classList.add("validate");
+      }
+    }
+    break;
+    case 1: {
+      const input = document.createElement("input");
+      input.type = "text";
+      input.required = true;
+      input.maxLength = 128;
+      input.setAttribute("name", "step");
+      new_element.replaceChild(input,new_element.children[1]);
+
+      const section = document.createElement("strong");
+      section.textContent = "Sección: ";
+      new_element.insertBefore(section, input);
+
+      new_element.classList.add("step-section");
+
+      if (validate) {
+        input.classList.add("validate");
+      }
+    }
+    break;
+    case 2: {
+      new_element.children[1].required = false;
+      new_element.classList.add("step-note");
+      if (validate) {
+        new_element.children[1].classList.add("validate");
+      }
+    }
+    break;
+  }
+  const type_input = new_element.querySelector('[name="step_type"]');
+  type_input.value = select_type;
+
+  steps_list.appendChild(new_element);
+  select_element.selectedIndex = 0;
+
+  sortable_steps.option("disabled", false);
+
+  if (steps_list.classList.contains("validate")) {
+    validateSteps();
+  }
+}
+
+function deleteThisStep(step) {
+  if (steps_list.childElementCount > 1) {
+    const container = step.parentElement;
+    container.remove();
+
+    sortable_steps.option("disabled", steps_list.childElementCount <= 1);
+  }
+
+  if (steps_list.classList.contains("validate")) {
+    validateSteps();
+  }
+}
+
+
+// Validation
+function validateIngredients() {
+  const ingredients = ingredients_list.children;
+
+  let empty = true;
+  for (let i = 0; i < ingredients.length && empty; ++i) {
+    const ingredient = ingredients[i];
+
+    if (ingredient
+      .querySelector("input[name=ingredient]")
+      .value.length > 0) {
+
+      empty = false;
+    }
+  }
+
+  const valid = !empty;
+  if (valid) {
+    ingredients_list.classList.remove("invalid");
+  } else {
+    ingredients_list.classList.add("invalid");
+  }
+
+  return valid;
+}
+
+function validateSteps() {
+  const types = Array.from(steps_list.children).map(getStepType);
+      
+  let foundOne = false;
+  let emptySection = false;
+
+  for (let i = 0; i < types.length; ++i) {
+    const type = types[i];
+
+    if (type === 0) foundOne = true;
+
+    if (emptySection) {
+      if (type === 1) return false;
+
+      if (type === 0) emptySection = false;
+    } else if (type === 1) {
+      emptySection = true;
+    }
+  }
+
+  const validFields = steps_list.querySelector(":invalid") === null;
+
+  const valid = foundOne && !emptySection && validFields;
+  
+  if (valid) {
+    steps_list.classList.remove("invalid");
+  } else {
+    steps_list.classList.add("invalid");
+  }
+
+  return valid;
+}
+
+function validate() {
+
+  // Remove empty ingredients, always keeping one
+  const ingredients = ingredients_list.children;
+  for (let i = ingredients.length - 1; i >= 0 && ingredients.length > 1; --i) {
+    const ingredient = ingredients[i];
+
+    if (isEmpty(ingredient)) {
+      ingredient.remove();
+    }
+  }
+
+  // Add validate class to all user inputs
+  const fields = document.querySelectorAll(".form-item > input, .form-item > textarea, .form-item > select");
+  
+  for (const field of fields) {
+    field.classList.add("validate");
+  }
+  ingredients_list.classList.add("validate");
+  steps_list.classList.add("validate");
+
+  // Validate
+  const toValidate = [
+    (document.querySelectorAll(".validate:invalid").length === 0),
+    validateIngredients(),
+    validateSteps()
+  ];
+
+  const isValid = toValidate.every(e => e);
+
+
+  // Give user feedback
+  if (!isValid) {
+    dismissAlert(document.getElementById("incorrect-form-alert"));
+    addAlert("Revise los campos del formulario que no son correctos e inténtelo de nuevo.", {
+      type: "warning",
+      scrollback: true,
+      id: "incorrect-form-alert"
+    });
+  }
+
+  ingredients_list.addEventListener("change", validateIngredients);
+  steps_list.addEventListener("change", validateSteps);
+  
+  return isValid;
+}
