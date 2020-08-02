@@ -115,25 +115,3 @@ for (let i = 0; i < alerts.length; ++i) {
 
   addAlert(content, {type, delay, candismiss});
 }
-
-
-// JSON XMLHttpRequest
-function JSONXMLHttpRequest(method, url, req) {
-  return new Promise((resolve, reject) => {
-    let xhr = new XMLHttpRequest();
-    xhr.open(method, url);
-    xhr.responseType = "json";
-    xhr.onload = function () {
-      if (this.readyState === 4 && this.status === 200) {
-        resolve(this.response);
-      }
-    }
-
-    xhr.onabort = xhr.onerror = function () {
-      reject();
-    }
-    
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.send(JSON.stringify(req));
-  });
-}

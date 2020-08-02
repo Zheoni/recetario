@@ -29,8 +29,8 @@ function removeTagFromInput(tag) {
   tags_input.value = tags_input.value.replace(/,$/, "");
 }
 
-tags_user_input.addEventListener("keypress", (event) => {
-  if (event.key === "Enter" || event.key === ",") {
+tags_user_input.addEventListener("keydown", (event) => {
+  if (event.key === "Enter" || event.key === "," || event.key === "Tab") {
     event.preventDefault();
     let tag_content = tags_user_input.value;
     tags_user_input.value = "";
@@ -55,6 +55,12 @@ tags_user_input.addEventListener("keypress", (event) => {
         tags_input.value = tag_content;
       else
         tags_input.value += "," + tag_content;
+    }
+  } else if (event.key === "Backspace" && tags_user_input.value.length === 0) {
+    event.preventDefault();
+    if (tags_container.childElementCount >= 4) {
+      const tag = tags_container.children[tags_container.childElementCount - 4];
+      removeTagFromInput(tag);
     }
   }
 });
@@ -307,3 +313,47 @@ function validate() {
   
   return isValid;
 }
+
+
+// Autocomplete
+let tagFetchController = new AbortController();
+
+function tagHinter(event) {
+  const input = event.target;
+  const list = document.getElementById("tag-datalist");
+
+  const minCharacters = 2;
+
+  if (input.value.length >= minCharacters) {
+    
+    tagFetchController.abort();
+    tagFetchController = new AbortController();
+    
+    const query = new URLSearchParams({
+      name: input.value,
+      limit: 5
+    });
+
+    fetch(`/api/autocomplete/tag?${query}`, {
+      signal: tagFetchController.signal
+    })
+      .then(response => response.json())
+      .then(response => {
+        list.innerHTML = "";
+    
+        response.tags.forEach(tag => {
+          const option = document.createElement("option");
+          option.value = tag;
+    
+          list.appendChild(option);
+        });
+      })
+      .catch(err => {
+        if (!(err instanceof DOMException && err.name === "AbortError")) {
+          console.error(err);
+        }
+      });
+  }
+}
+
+tags_user_input.addEventListener("input", tagHinter);

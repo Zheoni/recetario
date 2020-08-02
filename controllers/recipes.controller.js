@@ -268,6 +268,26 @@ function searchByName(str, includeTags = false, limit = 50) {
 	return results;
 }
 
+function searchIngredientByName(str, limit = 25) {
+
+	const results = db.prepare("SELECT name FROM INGREDIENTS WHERE name LIKE $name ORDER BY name ASC LIMIT $limit").pluck().all({
+		name: `%${str}%`,
+		limit: limit
+	});
+
+	return results;
+}
+
+function searchTagByName(str, limit = 25) {
+
+	const results = db.prepare("SELECT name FROM TAGS WHERE name LIKE $name ORDER BY name ASC LIMIT $limit").pluck().all({
+		name: `%${str}%`,
+		limit: limit
+	});
+
+	return results;
+}
+
 Recipe.prototype.loadIngredients = function () {
 	this.ingredietns = loadIngredients(this.id);
 }
@@ -303,5 +323,7 @@ module.exports = {
 	deleteById,
 	checkIfExists,
 	searchByName,
+	searchIngredientByName,
+	searchTagByName,
 	Recipe
 }

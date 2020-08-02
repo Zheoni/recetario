@@ -2,16 +2,6 @@ if (typeof query_results !== "undefined") {
   displaySearchResults({ recipes: query_results });
 }
 
-function search() {
-  const search_string = document.getElementById("search-name").value;
-
-  const req = { name: search_string };
-
-  JSONXMLHttpRequest("POST", "/api/search", req)
-    .then(displaySearchResults)
-    .catch(console.error);
-}
-
 function displaySearchResults(results) {
   const list = document.getElementById("search-results");
   list.innerHTML = "";
