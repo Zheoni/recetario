@@ -1,3 +1,5 @@
+const { body } = require("express-validator");
+
 class Recipe {
   static recipeTypes = ["none", "starter", "main", "dessert"];
   static baseImagePath = "/recipes/images/";
@@ -22,33 +24,18 @@ class Recipe {
   }
 
   static fromFormInput(body, id = undefined, imageName = undefined) {
-    if (typeof body.ingredient === "string") {
-      body.ingredient = [body.ingredient];
-      body.amount = [body.amount];
-      body.unit = [body.unit];
-    }
-
-    if (typeof body.step === "string") {
-      body.step = [body.step];
-      body.step_type = [body.step_type];
-    }
-
-    if (!validateInput(body)) {
-      throw new Error("Invalid form input");
-    }
-
-    if (body.recipe_author.length <= 0) {
+    if (body.author.length <= 0) {
       body.recipe_author = null;
     }
 
-    const type_number = Recipe.recipeTypes.indexOf(body.recipe_type);
+    const type_number = Recipe.recipeTypes.indexOf(body.type);
     if (type_number < 0) type_number = 0;
 
     let recipe = new Recipe({
       id: id,
-      name: body.recipe_name,
-      author: body.recipe_author,
-      description: body.recipe_description,
+      name: body.name,
+      author: body.author,
+      description: body.description,
       image: imageName,
       type: type_number,
       CREATED_AT: undefined,
@@ -63,7 +50,7 @@ class Recipe {
       return { content: step, type: body.step_type[i] }; 
     })
 
-    recipe.tags = body.tags.toLowerCase().split(",").filter((t) => t.length > 0);
+    recipe.tags = body.tags;
 
     return recipe;
   }
@@ -115,58 +102,84 @@ class Recipe {
   }
 }
 
-module.exports = Recipe;
-
-function validateInput(body) {
-	if (body.recipe_name.length <= 0 || body.recipe_name.length > 128)
-		return false;
-	if (body.recipe_description.length <= 0 || body.recipe_description.length > 256)
-		return false;
-
-	const tags_regex = /^[0-9A-Za-zñáéíóúäëïöüàèìòùâêîôû\- ]+$/;
-
-  if (!body.tags.split(",")
-    .filter((tag) => tag.length > 0)
-    .every((tag) => tags_regex.test(tag)))
-    return false;
+const recipeValidations = [
+  body("name")
+    .notEmpty()
+    .isLength({ max: 128 })
+    .trim(),
+  body("author")
+    .optional()
+    .isLength({ max: 64 })
+    .trim(),
+  body("description")
+    .notEmpty()
+    .isLength({ max: 256 })
+    .trim(),
+  body("tags")
+    .optional()
+    .customSanitizer(tags => tags.split(",").map(tag => tag.trim()))
+    .custom(tags => tags.every(tag => [
+      tag.length > 0,
+      tag.match(/^[0-9A-Za-zñáéíóúäëïöüàèìòùâêîôû\- ]+$/)
+    ].every(val => val))),
+  body("ingredient")
+    .toArray()
+    .notEmpty(),
+  body("ingredient.*")
+    .notEmpty()
+    .trim(),
+  body("amount")
+    .toArray()
+    .custom((amounts, { req }) => amounts.length === req.body.ingredient.length),
+  body("amount.*")
+    .optional()
+    .isNumeric()
+    .toFloat(),
+  body("unit")
+    .toArray()
+    .custom((units, { req }) => units.length === req.body.ingredient.length),
+  body("unit.*")
+    .optional()
+    .trim(),
+  body("step")
+    .toArray()
+    .notEmpty(),
+  body("step.*")
+    .notEmpty()
+    .trim(),
+  body("step_type.*")
+    .notEmpty()
+    .toInt()
+    .custom(type => type >= 0 && type <= 2),
+  body("step_type")
+    .toArray()
+    .notEmpty()
+    .custom((types, { req }) => types.length === req.body.step.length)
+    .custom(types => {
+      let foundOne = false;
+      let emptySection = false;
+      for (let i = 0; i < types.length; ++i) {
+        const type = types[i];
     
-	if (!body.ingredient.every((ingredient) => ingredient.length > 0))
-    return false;
+        if (type === 0) foundOne = true;
+    
+        if (emptySection) {
+          if (type === 1) return false;
+    
+          if (type === 0) emptySection = false;
+        } else if (type === 1) {
+          emptySection = true;
+        }
+      }
+  
+      return foundOne && !emptySection
+    }),
+  body("type")
+    .isIn(Recipe.recipeTypes),
+  body("delete_image")
+    .optional()
+    .isBoolean()
+    .toBoolean()
+];
 
-  if (!body.step.every((step) => step.length > 0))
-    return false;
-
-  if (!body.step_type.every((type) => {
-    type = Number(type);
-    return type >= 0 && type <= 2;
-  }))
-    return false;
-
-  let foundOne = false;
-  let emptySection = false;
-  for (let i = 0; i < body.step_type.length; ++i) {
-    const type = Number(body.step_type[i]);
-
-    if (type === 0) foundOne = true;
-
-    if (emptySection) {
-      if (type === 1) return false;
-
-      if (type === 0) emptySection = false;
-    } else if (type === 1) {
-      emptySection = true;
-    }
-  }
-  if (!foundOne || emptySection)
-    return false;
-
-	if (!body.amount.every((amount) => {
-    return amount.length <= 0 || Number(amount) !== NaN;
-	}))
-		return false;
-
-	if (!Recipe.recipeTypes.includes(body.recipe_type))
-		return false;
-
-	return true;
-}
+module.exports = { Recipe, recipeValidations };

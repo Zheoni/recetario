@@ -1,4 +1,4 @@
-const Recipe = require("../models/recipe.model.js");
+const { Recipe } = require("../models/recipe.model.js");
 const { getDB } = require("../db");
 const fs = require("fs");
 const assert = require("assert");

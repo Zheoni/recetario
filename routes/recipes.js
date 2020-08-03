@@ -3,9 +3,24 @@ var router = express.Router();
 
 const multer = require('multer');
 const upload = multer({ dest: 'public/recipes/images' });
+const { validationResult } = require("express-validator")
 
 const controller = require("../controllers/recipes.controller.js");
-const Recipe = require('../models/recipe.model.js');
+const { Recipe, recipeValidations } = require('../models/recipe.model.js');
+
+function validate(validations) {
+  return async (req, res, next) => {
+		console.log(req.body);
+    await Promise.all(validations.map(validation => validation.run(req)));
+
+    const errors = validationResult(req);
+    if (errors.isEmpty()) {
+      return next();
+    }
+
+    res.status(400).json({ errors: errors.array() });
+  };
+};
 
 /* GET Recipe */
 router.get('/:id', function(req, res, next) {
@@ -57,7 +72,7 @@ router.get('/:id/edit', function (req, res, next) {
 });
 
 /* POST Recipe (edit) */ // Wanted to use PUT... but this is easier
-router.post('/:id', upload.single('recipe_image'), function (req, res, next) {
+router.post('/:id', upload.single('recipe_image'), validate(recipeValidations), function (req, res, next) {
 	const id = Number(req.params.id);
 
 	const recipe = Recipe.fromFormInput(req.body,
@@ -72,7 +87,7 @@ router.post('/:id', upload.single('recipe_image'), function (req, res, next) {
 });
 
 /* POST Recipe (new) */ 
-router.post('/', upload.single('recipe_image'), function (req, res, next) {
+router.post('/', upload.single('recipe_image'), validate(recipeValidations),function (req, res, next) {
 	let recipe = Recipe.fromFormInput(req.body,
 		undefined,
 		req.file && req.file.filename);
