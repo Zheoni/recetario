@@ -1,0 +1,2 @@
+DELETE FROM RECIPE_TAGS
+WHERE recipe = ?;

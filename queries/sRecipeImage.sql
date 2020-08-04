@@ -1,0 +1,2 @@
+SELECT image FROM RECIPES
+WHERE id = ?;

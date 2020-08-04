@@ -1,0 +1,3 @@
+SELECT name FROM INGREDIENTS
+WHERE name LIKE $name
+ORDER BY name ASC LIMIT $limit;

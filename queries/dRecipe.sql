@@ -1,0 +1,2 @@
+DELETE FROM RECIPES
+WHERE id = ?;

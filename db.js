@@ -1,11 +1,12 @@
 const assert = require('assert')
 const Database = require('better-sqlite3')
+const debug = require("debug")("recetario:db");
 
 let _db;
 
 function initDB(verbose = false) {
   if (_db) {
-    console.warn("Trying to init DB again!");
+    debug("WARNING: Tried to initialize DB again!")
   } else {
     if (verbose) {
       _db = new Database('recipes.db', { verbose: console.log });
@@ -13,6 +14,8 @@ function initDB(verbose = false) {
       _db = new Database('recipes.db');
     }
   }
+
+  debug("Initialized database, new status: %o", _db.open)
 
   return _db.open;
 }
@@ -26,12 +29,13 @@ function closeDB() {
   if (_db) {
     try {
       _db.close();
-      console.log("Closed database");
+      debug("Closed database");
+      if (!debug.enabled) console.log("Closed database");
     } catch (err) {
-      console.err("Tried to close an already closed database!");
+      debug("ERROR: Tried to close an already closed database!")
     }
   } else {
-    console.warn("Database has not been initialized before trying to close it!")
+    debug("WARNING: Database has not been initialized before trying to close it!")
   }
 }
 

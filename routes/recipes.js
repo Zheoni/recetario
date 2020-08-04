@@ -10,7 +10,6 @@ const { Recipe, recipeValidations } = require('../models/recipe.model.js');
 
 function validate(validations) {
   return async (req, res, next) => {
-		console.log(req.body);
     await Promise.all(validations.map(validation => validation.run(req)));
 
     const errors = validationResult(req);

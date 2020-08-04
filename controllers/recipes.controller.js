@@ -1,94 +1,30 @@
 const { Recipe } = require("../models/recipe.model.js");
 const { getDB } = require("../db");
+const { getQueries } = require("../queryLoader.js");
 const fs = require("fs");
 const assert = require("assert");
 
 const db = getDB();
-
-const s_exist = db.prepare("SELECT 1 FROM RECIPES WHERE id = ?");
-
-const s_recipes_all = db.prepare("SELECT * FROM RECIPES");
-
-const s_recipe_id = db.prepare("SELECT * FROM RECIPES WHERE id = ?");
-
-const s_ingredients_id = db.prepare(
-	`SELECT amount, unit, name FROM RECIPE_INGREDIENTS ri
-	JOIN INGREDIENTS i ON ri.ingredient = i.id
-	WHERE ri.recipe = ?
-	ORDER BY ri.sort ASC`);
-
-const s_tags_id = db.prepare(
-	`SELECT name FROM RECIPE_TAGS rt
-	JOIN TAGS t ON t.id = rt.tag
-	WHERE rt.recipe = ?
-	ORDER BY name ASC`);
-
-const s_steps_id = db.prepare(
-	`SELECT id, type, content FROM STEPS
-	WHERE recipe = ?
-	ORDER BY sort ASC`);
-
-const s_recipe_image = db.prepare("SELECT image FROM RECIPES WHERE id = ?");
-
-const i_recipe = db.prepare("INSERT INTO RECIPES (name,author,description,image,type) VALUES ($name,$author,$desc,$img,$type)");
-
-const u_recipe = db.prepare(`UPDATE RECIPES
-	SET name = $name,
-	author = $author,
-	description = $description,
-	type = $type
-	WHERE id = $id`);
-
-const u_recipe_with_image = db.prepare(`UPDATE RECIPES
-	SET name = $name,
-	author = $author,
-	description = $description,
-	image = $image,
-	type = $type
-	WHERE id = $id`);
-
-const d_recipe = db.prepare("DELETE FROM RECIPES WHERE id = ?");
-
-const d_unused_ingredients = db.prepare(
-	`DELETE FROM INGREDIENTS
-	WHERE (SELECT COUNT(*) FROM RECIPE_INGREDIENTS
-	WHERE INGREDIENTS.id = RECIPE_INGREDIENTS.ingredient) = 0`);
-
-const d_unused_tags = db.prepare(
-	`DELETE FROM TAGS
-	WHERE (SELECT COUNT(*) FROM RECIPE_TAGS
-	WHERE TAGS.id = RECIPE_TAGS.tag) = 0`);
-
-const i_ingredient = db.prepare("INSERT OR IGNORE INTO INGREDIENTS (name) VALUES (?)");
-const i_recipe_ingredient = db.prepare("INSERT INTO RECIPE_INGREDIENTS (recipe, ingredient, amount, unit, sort) VALUES ($recipe, (SELECT id FROM INGREDIENTS WHERE name = $ingredient), $amount, $unit, $sort)");
-const d_recipe_ingredients_id = db.prepare("DELETE FROM RECIPE_INGREDIENTS WHERE recipe = ?");
-
-const i_tag = db.prepare("INSERT OR IGNORE INTO TAGS (name) VALUES (?)");
-const i_recipe_tag = db.prepare("INSERT INTO RECIPE_TAGS (recipe, tag) VALUES ($recipe_id,(SELECT id FROM TAGS WHERE name = $tag))");
-const d_recipe_tags_id = db.prepare("DELETE FROM RECIPE_TAGS WHERE recipe = ?");
-
-const i_step = db.prepare("INSERT INTO STEPS (recipe,type,content,sort) VALUES ($recipe,$type,$content,$sort)");
-const d_steps = db.prepare("DELETE FROM STEPS WHERE recipe = ?");
-
+const q = getQueries();
 
 function checkIfExists(id) {
-	return s_exist.pluck().get(id) === 1;
+	return q["sExistRecipe"].pluck().get(id) === 1;
 }
 
 function deleteUnusedIngredients() {
-	d_unused_ingredients.run();
+	q["dUnusedIngredients"].run();
 }
 
 function deleteUnusedTags() {
-	d_unused_tags.run();
+	q["dUnusedTags"].run();
 }
 
 function insertIngredients(recipe) {
 	for (let i = 0; i < recipe.ingredients.length; ++i) {
 		const ingredient = recipe.ingredients[i];
 
-		i_ingredient.run(ingredient.name);
-		i_recipe_ingredient.run({
+		q["iIngredient"].run(ingredient.name);
+		q["iRecipeIngredient"].run({
 			recipe: recipe.id,
 			ingredient: ingredient.name,
 			amount: ingredient.amount,
@@ -100,15 +36,15 @@ function insertIngredients(recipe) {
 
 function insertTags(recipe) {
 	for (let tag of recipe.tags) {
-		i_tag.run(tag);
-		i_recipe_tag.run({ recipe_id: recipe.id, tag: tag });
+		q["iTag"].run(tag);
+		q["iRecipeTag"].run({ recipe_id: recipe.id, tag: tag });
 	}
 }
 
 function insertSteps(recipe) {
 	for (let i = 0; i < recipe.steps.length; ++i) {
 		const step = recipe.steps[i];
-		i_step.run({
+		q["iStep"].run({
 			recipe: recipe.id,
 			type: step.type,
 			content: step.content,
@@ -118,26 +54,27 @@ function insertSteps(recipe) {
 }
 
 function loadTags(recipe_id) {
-	return s_tags_id.pluck().all(recipe_id);
+	return q["sRecipeTags"].pluck().all(recipe_id);
 }
 
 function loadIngredients(recipe_id) {
-	return s_ingredients_id.all(recipe_id);
+	return q["sRecipeIngredients"].all(recipe_id);
 }
 
 function loadSteps(recipe_id) {
-	return s_steps_id.all(recipe_id);
+	return q["sRecipeSteps"].all(recipe_id);
 }
 
 function getAll() {
-	const recipes = s_recipes_all.all()
+	const recipes = q["sAllRecipes"]
+		.all()
 		.map(row => new Recipe(row));
 
 	return recipes;
 }
 
 function getById(id, options = {}) {
-	const row = s_recipe_id.get(id);
+	const row = q["sRecipe"].get(id);
 	const recipe =  new Recipe(row);
 
 	const defaults = {
@@ -162,7 +99,7 @@ function getById(id, options = {}) {
 }
 
 function create(recipe) {
-	const info = i_recipe.run({
+	const info = q["iRecipe"].run({
 		name: recipe.name,
 		author: recipe.author,
 		desc: recipe.description,
@@ -190,15 +127,15 @@ function update(recipe, deleteImage = false) {
 
 	if (!recipe.image && !deleteImage) {
 		// If image does not change
-		u_recipe.run(update_object);
+		q["uRecipeNoImage"].run(update_object);
 	} else if (recipe.image && !deleteImage) {
 		// If image changes
 		update_object.image = recipe.image;
-		u_recipe_with_image.run(update_object);
+		q["uRecipeWithImage"].run(update_object);
 	} else if (!recipe.image && deleteImage) {
 		// If image is deleted
 		update_object.image = null;
-		u_recipe_with_image.run(update_object);
+		q["uRecipeWithImage"].run(update_object);
 	} else {
 		throw new Error("Invalid input, cannot decide if image needs to be updated or deleted.");
 	}
@@ -206,7 +143,7 @@ function update(recipe, deleteImage = false) {
 	// Delete all relations to the ingredients, add the received ones and
 	// remove the ingredients that are not used by any recipe.
 	const update_ingredients = db.transaction((recipe) => {
-		d_recipe_ingredients_id.run(recipe.id);
+		q["dRecipeIngredients"].run(recipe.id);
 		insertIngredients(recipe);
 		deleteUnusedIngredients();
 	});
@@ -214,7 +151,7 @@ function update(recipe, deleteImage = false) {
 
 	// Do the same with tags
 	const update_tags = db.transaction((recipe) => {
-		d_recipe_tags_id.run(recipe.id);
+		q["dRecipeTags"].run(recipe.id);
 		insertTags(recipe);
 		deleteUnusedTags();
 	});
@@ -222,7 +159,7 @@ function update(recipe, deleteImage = false) {
 
 	// And for steps
 	const update_steps = db.transaction((recipe) => {
-		d_steps.run(recipe.id);
+		q["dRecipeSteps"].run(recipe.id);
 		insertSteps(recipe);
 	});
 	update_steps(recipe);
@@ -230,7 +167,7 @@ function update(recipe, deleteImage = false) {
 
 function deleteById(id, imageName = undefined) {
 	// Delete the image
-	imageName = imageName || s_recipe_image.pluck().get(id)
+	imageName = imageName || q["sRecipeImage"].pluck().get(id)
 
 	if (imageName && imageName !== "noimage.jpeg") {
 		const path = "./public/recipes/images/" + imageName;
@@ -243,7 +180,7 @@ function deleteById(id, imageName = undefined) {
 	}
 
 	// Delete the recipe
-	d_recipe.run(id);
+	q["dRecipe"].run(id);
 
 	// Remove unused ingredients
 	deleteUnusedIngredients();
@@ -254,7 +191,7 @@ function deleteById(id, imageName = undefined) {
 
 function searchByName(str, includeTags = false, limit = 50) {
 	
-	const results = db.prepare("SELECT id, name FROM RECIPES WHERE name LIKE $name ORDER BY name ASC LIMIT $limit").all({
+	const results = q.search["sRecipeByName"].all({
 		name: `%${str}%`,
 		limit: limit
 	});
@@ -270,7 +207,7 @@ function searchByName(str, includeTags = false, limit = 50) {
 
 function searchIngredientByName(str, limit = 25) {
 
-	const results = db.prepare("SELECT name FROM INGREDIENTS WHERE name LIKE $name ORDER BY name ASC LIMIT $limit").pluck().all({
+	const results = q.search["sIngredientByName"].pluck().all({
 		name: `%${str}%`,
 		limit: limit
 	});
@@ -280,7 +217,7 @@ function searchIngredientByName(str, limit = 25) {
 
 function searchTagByName(str, limit = 25) {
 
-	const results = db.prepare("SELECT name FROM TAGS WHERE name LIKE $name ORDER BY name ASC LIMIT $limit").pluck().all({
+	const results = q.search["sTagByName"].pluck().all({
 		name: `%${str}%`,
 		limit: limit
 	});

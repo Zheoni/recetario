@@ -1,0 +1,3 @@
+INSERT OR IGNORE INTO TAGS (name)
+VALUES
+(?);

@@ -3,14 +3,23 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const debug = require("debug")("recetario:app");
 
 const { initDB, closeDB } = require("./db");
 initDB();
+debug("Connected to database.")
+
+const { loadQueriesFrom } = require("./queryLoader");
+
+const amount = loadQueriesFrom("./queries", { recursive: true });
+debug("Loaded " + amount + " queries.");
 
 const indexRouter = require('./routes/index.js');
 const recipesRouter = require('./routes/recipes.js');
 const apiRouter = require('./routes/api.js');
+debug("Loaded routers.");
 
+debug("Configuring app...");
 const app = express();
 
 // view engine setup
@@ -42,6 +51,8 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+debug("App configured!");
 
 // close db on exit
 process.on('exit', () => closeDB());
