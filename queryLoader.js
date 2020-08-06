@@ -1,6 +1,8 @@
 const { getDB } = require("./db.js");
 const fs = require("fs");
 const path = require("path");
+const { SqliteError } = require("better-sqlite3");
+const debug = require("debug")("recetario:queryLoader");
 
 const _db = getDB();
 
@@ -22,8 +24,18 @@ function loadFromRecursive(directory, recursive = false) {
       fs.accessSync(filePath, fs.constants.R_OK);
       const fileBuffer = fs.readFileSync(filePath);
       const sql = fileBuffer.toString();
-      queries[path.basename(dirent.name, ".sql")] = _db.prepare(sql);
-      ++numberLoaded;
+      try {
+        const statement = _db.prepare(sql);
+        queries[path.basename(dirent.name, ".sql")] = statement;
+        ++numberLoaded;
+      } catch(err) {
+        if (err instanceof SqliteError) {
+          debug(`Cannot load query at ${filePath}. Error: ${err.message}`);
+          process.exit(1);
+        } else {
+          throw err;
+        }
+      }
     }
   }
 
