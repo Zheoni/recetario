@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
 
-const controller = require("../controllers/recipes.controller.js");
+const { Tag } = require('../models/tag.model.js');
+const { Ingredient } = require('../models/ingredient.model.js');
 
 router.get('/autocomplete/ingredient', function (req, res, next) {
   try {
     const { name, limit } = req.query;
     if (name) {
-      const ingredients = controller.searchIngredientByName(name, limit);
+      const ingredients = Ingredient.searchByName(name, limit);
       res.json({ ingredients });
     } else {
       res.status(400).json({ message: "No name given" });
@@ -21,7 +22,7 @@ router.get('/autocomplete/tag', function (req, res, next) {
   try {
     const { name, limit } = req.query;
     if (name) {
-      const tags = controller.searchTagByName(name, limit);
+      const tags = Tag.searchByName(name, limit);
       res.json({ tags });
     } else {
       res.status(400).json({ message: "No name given" });

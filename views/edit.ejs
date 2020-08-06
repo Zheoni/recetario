@@ -72,9 +72,9 @@
               <div class="handle">
                 <i class="fas fa-bars fa-lg"></i>
               </div>
-              <input type="number" name="amount" class="amount" min=0 step="any" value="<%= ingredient.amount %>">
-              <input type="text" name="unit" class="unit" value="<%= ingredient.unit %>">
-              <input type="text" name="ingredient" class="ingredient" value="<%= ingredient.name %>" required>
+              <input type="number" name="amount[]" class="amount" min=0 step="any" value="<%= ingredient.amount %>">
+              <input type="text" name="unit[]" class="unit" value="<%= ingredient.unit %>">
+              <input type="text" name="ingredient[]" class="ingredient" value="<%= ingredient.name %>" required>
               <button class="button delete-button delete-cross" type="button" onclick="deleteThisIngredient(this);"></button>
             </li>
           <% }) %>
@@ -82,9 +82,9 @@
             <div class="handle">
               <i class="fas fa-bars fa-lg"></i>
             </div>
-            <input type="number" name="amount" class="amount" min=0 step="any">
-            <input type="text" name="unit" class="unit">
-            <input type="text" name="ingredient" class="ingredient" required>
+            <input type="number" name="amount[]" class="amount" min=0 step="any">
+            <input type="text" name="unit[]" class="unit">
+            <input type="text" name="ingredient[]" class="ingredient" required>
             <button class="button delete-button delete-cross" type="button" onclick="deleteThisIngredient(this);"></button>
           </li>
         </ul>
@@ -105,12 +105,12 @@
               </div>
               <% if (step.type === 1) { %>
                 <strong>Sección:</strong>
-                <input type="text" name="step" required="" maxlength="128" value="<%= step.content %>">
+                <input type="text" name="step[]" required="" maxlength="128" value="<%= step.content %>">
               <% } else { %>
-                <textarea name="step" rows="5" required><%= step.content %></textarea>
+                <textarea name="step[]" rows="5" required><%= step.content %></textarea>
               <% } %>
               <button class="button delete-button delete-cross" type="button" onclick="deleteThisStep(this);"></button>
-              <input type="hidden" name="step_type" value="<%= step.type %>">
+              <input type="hidden" name="step_type[]" value="<%= stepTypes[step.type].name %>">
             </li>
           <% } %>
           <li class="step form-item">
@@ -119,7 +119,7 @@
             </div>
             <textarea name="step" rows="5" required></textarea>
             <button class="button delete-button delete-cross" type="button" onclick="deleteThisStep(this);"></button>
-            <input type="hidden" name="step_type" value="0">
+            <input type="hidden" name="step_type[]" value="0">
           </li>
         </ol>
         <p class="error">Un método es obligatorio. Al menos un paso. Cada sección ha de contener al menos un paso y tener un nombre..</p>
@@ -127,9 +127,9 @@
         <button type="button" role="button" class="button add-step-button">
           <i class="fas fa-plus" onclick="addStep();"></i>
           <select id="new-step-type">
-            <option value="regular" selected>Paso</option>
-            <option value="section">Sección</option>
-            <option value="note">Nota</option>
+            <% stepTypes.forEach(type => { %>
+              <option value="<%= type.name %>"><%= type[localisation] %></option>
+            <% }) %>
           </select>
         </button>
       </div>
@@ -148,10 +148,9 @@
       <div class="form-item type">
         <label for="type">Tipo de plato</label>
         <select name="type" id="type">
-          <option value="none">Sin especificar</option>
-          <option value="starter">Entrante</option>
-          <option value="main">Plato principal</option>
-          <option value="dessert">Postre</option>
+          <% recipeTypes.forEach(type => { %>
+            <option value="<%= type.name %>"><%= type[localisation] %></option>
+          <% }) %>
         </select>
       </div>
 

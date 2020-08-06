@@ -5,8 +5,8 @@ const multer = require('multer');
 const upload = multer({ dest: 'public/recipes/images' });
 const { validationResult } = require("express-validator")
 
-const controller = require("../controllers/recipes.controller.js");
-const { Recipe, recipeValidations } = require('../models/recipe.model.js');
+const { Recipe, bodyValidations } = require('../models/recipe.model.js');
+const { Step } = require('../models/step.model.js');
 
 function validate(validations) {
   return async (req, res, next) => {
@@ -19,20 +19,28 @@ function validate(validations) {
 
     res.status(400).json({ errors: errors.array() });
   };
-};
+}
+
+function parseRecipeId(req, res, next) {
+	const id = Number(req.params.id);
+	if (id && typeof id === "number" && id !== undefined) {
+		const exists = Recipe.checkIfExists(id);
+		if (exists) {
+			res.recipeId = id;
+			return next();
+		} else {
+			res.status(404).json({ error: "Recipe not found" });
+		}
+	} else {
+		res.status(400).json({ error: "Bad recipe id" });
+	}
+}
 
 /* GET Recipe */
-router.get('/:id', function(req, res, next) {
-	const id = Number(req.params.id);
-
-	if (!controller.checkIfExists(id)) {
-		res.status(404).render('error', { message: "Receta no encontrada", error: {} });
-	}
-
-	const recipe = controller.getById(id, { all: true });
+router.get('/:id', parseRecipeId, function(req, res, next) {
+	const recipe = Recipe.getById(res.recipeId, { all: true });
 
 	let alerts = [];
-
 	if (req.query.hasOwnProperty("new")) {
 		alerts.push({
 			content: "Receta creada correctamente.",
@@ -41,7 +49,6 @@ router.get('/:id', function(req, res, next) {
 			candismiss: true
 		})
 	}
-
 	if (req.query.hasOwnProperty("edited")) {
 		alerts.push({
 			content: "Receta editada correctamente.",
@@ -52,65 +59,50 @@ router.get('/:id', function(req, res, next) {
 	}
 	res.render('recipe', {
 		title: recipe.name	|| "Receta",
-		recipe: recipe.formatted(),
+		recipe: recipe.formatted(res.localisation),
 		alerts: alerts
 	});
 });
 
 /* GET Recipe edit form */
-router.get('/:id/edit', function (req, res, next) {
-	const id = Number(req.params.id);
+router.get('/:id/edit', parseRecipeId, function (req, res, next) {
+	const recipe = Recipe.getById(res.recipeId, { all: true });
 
-	if (!controller.checkIfExists(id)) {
-		res.status(404).render('error', { message: "Receta no encontrada", error: {} });
-	}
-
-	const recipe = controller.getById(id, { all: true });
-
-	res.render('edit', { title: `Editar - ${recipe.name}`, recipe: recipe.formatted()});
+	res.render('edit', {
+		title: `Editar - ${recipe.name}`,
+		recipe: recipe.formatted(res.localisation),
+		recipeTypes: Recipe.recipeTypes,
+		stepTypes: Step.stepTypes,
+		localisation: res.localisation
+	});
 });
 
 /* POST Recipe (edit) */ // Wanted to use PUT... but this is easier
-router.post('/:id', upload.single('recipe_image'), validate(recipeValidations), function (req, res, next) {
-	const id = Number(req.params.id);
-
+router.post('/:id', parseRecipeId, upload.single('image'), validate(bodyValidations), function (req, res, next) {
 	const recipe = Recipe.fromFormInput(req.body,
-		id,
+		res.recipeId,
 		req.file && req.file.filename);
 
-	const deleteImage = req.body.recipe_delete_image === "true";
+	const deleteImage = req.body.delete_image;
+	recipe.update(deleteImage);
 
-	controller.update(recipe, deleteImage);
-
-	res.redirect(`/recipe/${id}?edited`);
+	res.redirect(`/recipe/${recipe.id}?edited`);
 });
 
 /* POST Recipe (new) */ 
-router.post('/', upload.single('recipe_image'), validate(recipeValidations),function (req, res, next) {
+router.post('/', upload.single('image'), validate(bodyValidations), function (req, res, next) {
 	let recipe = Recipe.fromFormInput(req.body,
 		undefined,
 		req.file && req.file.filename);
-
-	const id = controller.create(recipe);
+	const id = recipe.insert();
 	
 	res.redirect(`/recipe/${id}?new`);
 });
 
 /* DELETE Recipe */
-router.delete('/:id', async function (req, res, next) {
-	const id = Number(req.params.id);
-
-	if (!controller.checkIfExists(id)) {
-		res.status(404).render('error', { message: "Receta no encontrada", error: {} });
-	}
-
-	if (id) {
-		controller.deleteById(id);
-		
-		res.status(200).send({ id: id, msg: "delete ok"});
-	} else {
-		res.sendStatus(400);
-	}
+router.delete('/:id', parseRecipeId, function (req, res, next) {
+	Recipe.deleteById(res.recipeId);
+	res.status(200).json({ id: res.recipeId, msg: "delete ok"});
 });
 
 module.exports = router;

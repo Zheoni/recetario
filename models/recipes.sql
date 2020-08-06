@@ -1,3 +1,42 @@
+CREATE TABLE TRANSLATIONS(
+	id			INTEGER PRIMARY KEY,
+	name		TEXT UNIQUE,
+	en			TEXT,
+	es			TEXT
+);
+
+CREATE TABLE RECIPE_TYPES(
+	number		INTEGER PRIMARY KEY,
+	name		TEXT NOT NULL,
+	translation	INTEGER REFERENCES TRANSLATIONS(id)
+);
+
+CREATE TABLE STEP_TYPES(
+	number		INTEGER PRIMARY KEY,
+	name		TEXT NOT NULL,
+	translation	INTEGER REFERENCES TRANSLATIONS(id)
+);
+
+INSERT INTO TRANSLATIONS(id, en, es) VALUES
+(0, 'Unspecified', 'Sin especificar'),
+(1, 'Starter', 'Entrante'),
+(2, 'Main dish', 'Plato principal'),
+(3, 'Dessert', 'Postre'),
+(4, 'Step', 'Paso'),
+(5, 'Section', 'Sección'),
+(6, 'Note', 'Nota');
+
+INSERT INTO RECIPE_TYPES (number, name, translation) VALUES
+(0, 'none', 0),
+(1, 'starter', 1),
+(2, 'main', 2),
+(3, 'dessert', 3);
+
+INSERT INTO STEP_TYPES (number, name, translation) VALUES
+(0, 'step', 4),
+(1, 'section', 5),
+(2, 'note', 6);
+
 CREATE TABLE RECIPES(
 	-- need autoincrement because I cannot reuse ids when one is deleted
 	id 			INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -5,7 +44,7 @@ CREATE TABLE RECIPES(
 	author		TEXT,
 	description	TEXT NOT NULL,
 	image		TEXT,
-	type		INTEGER NOT NULL DEFAULT 0 CHECK(type >= 0 AND type <= 3),
+	type		INTEGER NOT NULL REFERENCES RECIPE_TYPES(number),
 	CREATED_AT	DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	UPDATED_AT	DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
@@ -13,7 +52,7 @@ CREATE TABLE RECIPES(
 CREATE TABLE STEPS(
 	id			INTEGER PRIMARY KEY,
 	recipe		INTEGER NOT NULL,
-	type		INTEGER NOT NULL DEFAULT 0,
+	type		INTEGER NOT NULL REFERENCES STEP_TYPES(number),
 	content		TEXT NOT NULL,
 	sort		INTEGER DEFAULT NULL,
 	FOREIGN KEY(recipe) REFERENCES RECIPES(id)

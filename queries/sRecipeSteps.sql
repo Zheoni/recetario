@@ -1,3 +1,3 @@
-SELECT id, type, content FROM STEPS
+SELECT type, content, recipe FROM STEPS
 WHERE recipe = ?
 ORDER BY sort ASC;

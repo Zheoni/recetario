@@ -158,7 +158,7 @@ function addStep() {
       input.type = "text";
       input.required = true;
       input.maxLength = 128;
-      input.setAttribute("name", "step");
+      input.setAttribute("name", "step[]");
       new_element.replaceChild(input,new_element.children[1]);
 
       const section = document.createElement("strong");
@@ -181,8 +181,8 @@ function addStep() {
     }
     break;
   }
-  const type_input = new_element.querySelector('[name="step_type"]');
-  type_input.value = select_type;
+  const type_input = new_element.querySelector('[name="step_type[]"]');
+  type_input.value = select_element.value;
 
   steps_list.appendChild(new_element);
   select_element.selectedIndex = 0;
@@ -217,7 +217,7 @@ function validateIngredients() {
     const ingredient = ingredients[i];
 
     if (ingredient
-      .querySelector("input[name=ingredient]")
+      .querySelector('input[name="ingredient[]"]')
       .value.length > 0) {
 
       empty = false;

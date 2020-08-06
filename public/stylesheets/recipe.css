@@ -200,8 +200,7 @@ hr {
   color: var(--text-secondary, white);
   background: var(--details-color, gray);
   white-space: nowrap;
-  font-weight: bolder;
-  font-size: 0.9rem;
+  font-weight: bold;
   text-transform: lowercase;
   text-decoration: none;
   border-radius: 3px;
