@@ -10,6 +10,7 @@ initDB();
 debug("Connected to database.")
 
 const { loadQueriesFrom } = require("./queryLoader");
+const { getLocale } = require("./localeLoader.js");
 
 const amount = loadQueriesFrom("./queries", { recursive: true });
 debug("Loaded " + amount + " queries.");
@@ -32,8 +33,16 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(function(req, res, next) {
-  // TODO
-  res.localisation = "es";
+  let locale = process.env.DEFAULT_LOCALE ?? "es";
+  if (req.cookies["locale"]) {
+    if (["es", "en"].includes(req.cookies["locale"])) {
+      locale = req.cookies["locale"];
+    } else {
+      res.clearCookie("locale");
+    }
+  }
+
+  res.locals.locale = getLocale(locale);
   return next();
 });
 

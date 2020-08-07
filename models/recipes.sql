@@ -1,41 +1,23 @@
-CREATE TABLE TRANSLATIONS(
-	id			INTEGER PRIMARY KEY,
-	name		TEXT UNIQUE,
-	en			TEXT,
-	es			TEXT
-);
-
 CREATE TABLE RECIPE_TYPES(
 	number		INTEGER PRIMARY KEY,
-	name		TEXT NOT NULL,
-	translation	INTEGER REFERENCES TRANSLATIONS(id)
+	name		TEXT NOT NULL
 );
 
 CREATE TABLE STEP_TYPES(
 	number		INTEGER PRIMARY KEY,
-	name		TEXT NOT NULL,
-	translation	INTEGER REFERENCES TRANSLATIONS(id)
+	name		TEXT NOT NULL
 );
 
-INSERT INTO TRANSLATIONS(id, en, es) VALUES
-(0, 'Unspecified', 'Sin especificar'),
-(1, 'Starter', 'Entrante'),
-(2, 'Main dish', 'Plato principal'),
-(3, 'Dessert', 'Postre'),
-(4, 'Step', 'Paso'),
-(5, 'Section', 'Sección'),
-(6, 'Note', 'Nota');
+INSERT INTO RECIPE_TYPES (number, name) VALUES
+(0, 'none'),
+(1, 'starter'),
+(2, 'main'),
+(3, 'dessert');
 
-INSERT INTO RECIPE_TYPES (number, name, translation) VALUES
-(0, 'none', 0),
-(1, 'starter', 1),
-(2, 'main', 2),
-(3, 'dessert', 3);
-
-INSERT INTO STEP_TYPES (number, name, translation) VALUES
-(0, 'step', 4),
-(1, 'section', 5),
-(2, 'note', 6);
+INSERT INTO STEP_TYPES (number, name) VALUES
+(0, 'step'),
+(1, 'section'),
+(2, 'note');
 
 CREATE TABLE RECIPES(
 	-- need autoincrement because I cannot reuse ids when one is deleted

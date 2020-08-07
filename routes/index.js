@@ -8,7 +8,11 @@ const { Step } = require("../models/step.model.js");
 router.get('/', function (req, res, next) {
 	const allRecipes = Recipe.getAll();
 
-	res.render('index', { title: 'Recetario', recipes: allRecipes });
+	res.render('index', {
+		title: 'Recetario',
+		recipes: allRecipes,
+		locale: res.locals.locale
+	});
 });
 
 router.get('/about', function (req, res, next) {
@@ -20,7 +24,7 @@ router.get('/create', function (req, res, next) {
 		title: 'Recetario - nueva receta',
 		recipeTypes: Recipe.recipeTypes,
 		stepTypes: Step.stepTypes,
-		localisation: res.localisation
+		locale: res.locals.locale
 	});
 });
 
@@ -32,6 +36,10 @@ router.get('/search', function (req, res, next) {
 		});
 	}
 
-	res.render('search', { title: 'Recetario - busqueda', results: results });
+	res.render('search', {
+		title: 'Recetario - busqueda',
+		results: results,
+		locale: res.locals.locale
+	});
 });
 module.exports = router;

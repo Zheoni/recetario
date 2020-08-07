@@ -9,7 +9,7 @@
     </li>
     <li class="search-container mobile-hidden">
       <form class="searchbox" action="/search" method="GET">
-        <input type="search" id="navbar-search-input" placeholder="Buscar" name="name">
+        <input type="search" id="navbar-search-input" placeholder="<%= locale.navigation.search %>" name="name">
         <button type="submit" id="search-button"><i class="fa fa-search"></i></button>
       </form>
     </li>
@@ -25,22 +25,22 @@
       <ul class="menu">
         <li id="nav-home" class="nav-item">
           <a href="/" class="nav-link">
-            <span class="link-text">Inicio</span>
+            <span class="link-text"><%= locale.navigation.home %></span>
           </a>
         </li>
         <li class="nav-item mobile-only">
           <a href="/search" class="nav-link">
-            <span class="link-text">Buscar</span>
+            <span class="link-text"><%= locale.navigation.search %></span>
           </a>
         </li>
         <li id="nav-create" class="nav-item">
           <a href="/create" class="nav-link">
-            <span class="link-text">Nueva</span>
+            <span class="link-text"><%= locale.navigation.create %></span>
           </a>
         </li>
-        <li id="nav-about" class="nav-item">
-          <a href="/about" class="nav-link">
-            <span class="link-text">Acerca de</span>
+        <li id="nav-settings" class="nav-item">
+          <a href="/settings" class="nav-link">
+            <span class="link-text"><%= locale.navigation.settings %></span>
           </a>
         </li>
       </ul>

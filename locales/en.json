@@ -1,0 +1,72 @@
+{
+	"locale": "en",
+	"fullLocale": "en_GB",
+	"navigation": {
+		"home": "Home",
+		"create": "Create",
+		"settings": "Settings",
+		"about": "About",
+		"search": "Search"
+	},
+	"title": {
+		"about": "About",
+		"create": "New recipe",
+		"edit": "Edit",
+		"search": "Search recipe",
+		"settings": "Settings"
+	},
+	"recipeType": {
+		"none": "Unspecified",
+		"starter": "Starter",
+		"main": "Main dish",
+		"dessert": "Dessert"
+	},
+	"stepType": {
+		"step": "Step",
+		"section": "Section",
+		"note": "Note"
+	},
+	"recipeForm": {
+		"createTitle": "Create new recipe",
+		"editTitle": "Edit:",
+		"nameLabel": "Name for the recipe",
+		"namePlaceholder": "Name",
+		"nameError": "Name is required.",
+		"authorLabel": "Author",
+		"authorPlaceholder": "Author",
+		"descriptionLabel": "Description",
+		"descriptionPlaceholder": "Description",
+		"descriptionError": "A description is required.",
+		"tagsLabel": "Tags",
+		"tagsPlaceholder": "Tags for the recipe",
+		"ingredientsLabel": "Ingredients",
+		"ingredientsError": "At least one ingredient.",
+		"amountColumnLabel": "Amount",
+		"unitColumnLabel": "Unit",
+		"ingredientColumnLabel": "Ingredient",
+		"addIngredientButton": "Add ingredient",
+		"methodLabel": "Method",
+		"methodError": "A method is required. At least a step. Each section has to have at least a step and a name.",
+		"imageLabel": "Image for the recipe",
+		"updateImageLabel": "Replace image",
+		"imageDeleteWarning": "Image will be deleted!",
+		"typeLabel": "Type",
+		"createRecipeButton": "Create recipe",
+		"saveEditButton": "Save changes",
+		"deleteImageButton": "Delete image",
+		"cancelImageChangeButton": "Cancel image change"
+	},
+	"recipeView": {
+		"ingredientsLabel": "Ingredients",
+		"publicationDate": "Posted on the",
+		"edited": "edited",
+		"methodLabel": "Method",
+		"editButton": "Edit",
+		"deleteButton": "Delete"
+	},
+	"search": {
+		"title": "Search",
+		"namePlaceholder": "Name of the recipe",
+		"searchButton": "Search!"
+	}
+}

@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="<%= locale.locale %>">
 
 <head>
 	<%- include("templates/head-template"); %>
   <meta id="current-page" content="search">
+  <title><%= locale.title.search %></title>
   <% if (results) { %>
     <script>
       const query_results = <%- JSON.stringify(results) %>;

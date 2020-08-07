@@ -66,10 +66,10 @@ class Recipe {
     return recipe;
   }
 
-  formattedTags(localisation) {
+  formattedTags(locale) {
     let tags = [];
     if (this.type !== 0) {      
-      const content = Recipe.recipeTypes[this.type][localisation];
+      const content = locale.recipeType[Recipe.recipeTypes[this.type].name];
       const classes = ["type-tag", `recipe-${Recipe.recipeTypes[this.type].name}`];
       tags.push({content, classes});
     }
@@ -81,10 +81,10 @@ class Recipe {
     return tags;
   }
 
-  formatted(localisation) {
+  formatted(locale) {
     let formattedRecipe = new Recipe({...this});
 
-    formattedRecipe.tags = this.formattedTags(localisation);
+    formattedRecipe.tags = this.formattedTags(locale);
 
     return formattedRecipe;
   }

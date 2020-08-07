@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="<%= locale.locale %>">
 
 <head>
 	<%- include("templates/head-template"); %>
@@ -7,6 +7,7 @@
   <script defer src="/vendor/Sortable.min.js"></script>
   <script defer src="/javascripts/recipe_form.js"></script>
   <meta id="current-page" content="create">
+  <title><%= locale.title.create %></title>
 </head>
 
 <body>
@@ -14,44 +15,44 @@
   <%- include("templates/navbar-template"); %>
 
   <main>
-    <h1>Crear nueva receta</h1>
+    <h1><%= locale.recipeForm.createTitle %></h1>
 
     <form class="recipe-form" action="/recipe" onsubmit="return validate()" novalidate method="POST" autocomplete="off"
       enctype="multipart/form-data">
       <div class="form-item name">
-        <label for="name">Nombre de la receta</label>
-        <input type="text" name="name" id="name" maxlength="128" required placeholder="Nombre">
-        <p class="error">El nombre es obligatorio.</p>
+        <label for="name"><%= locale.recipeForm.nameLabel %></label>
+        <input type="text" name="name" id="name" maxlength="128" required placeholder="<%= locale.recipeForm.namePlaceholder %>">
+        <p class="error"><%= locale.recipeForm.nameError %></p>
       </div>
 
       <div class="form-item author">
-        <label for="author">Autor</label>
-        <input type="text" name="author" id="author" maxlength="64" placeholder="Autor">
+        <label for="author"><%= locale.recipeForm.authorLabel %></label>
+        <input type="text" name="author" id="author" maxlength="64" placeholder="<%= locale.recipeForm.authorPlaceholder %>">
       </div>
 
       <div class="form-item description">
-        <label for="description">Descripción</label>
+        <label for="description"><%= locale.recipeForm.descriptionLabel %></label>
         <input type="text" name="description" id="description" maxlength="256" required
-          placeholder="Descripción">
-        <p class="error">Una descripción es obligatoria.</p>
+          placeholder="<%= locale.recipeForm.descriptionPlaceholder %>">
+        <p class="error"><%= locale.recipeForm.descriptionError %></p>
       </div>
 
       <div class="form-item tags">
-        <label for="tags">Etiquetas</label>
+        <label for="tags"><%= locale.recipeForm.tagsLabel %></label>
         <div class="tags-container form-input" id="tags-container">
-          <input type="text" id="tags-user-input" placeholder="etiquetas para la receta" list="tag-datalist">
+          <input type="text" id="tags-user-input" placeholder="<%= locale.recipeForm.tagsPlaceholder %>" list="tag-datalist">
           <datalist id="tag-datalist"></datalist>
           <input name="tags" type="text" id="tags-input" hidden>
         </div>
       </div>
 
       <div class="form-item ingredients">
-        <label for="ingredients">Ingredientes</label>
+        <label for="ingredients"><%= locale.recipeForm.ingredientsLabel %></label>
         <div class="ingredient-container ingredient-labels">
           <div></div>
-          <p class="amount">Cantidad</p>
-          <p class="unit">Unidad de medida</p>
-          <p class="ingredient">Ingrediente</p>
+          <p class="amount"><%= locale.recipeForm.amountColumnLabel %></p>
+          <p class="unit"><%= locale.recipeForm.unitColumnLabel %></p>
+          <p class="ingredient"><%= locale.recipeForm.ingredientColumnLabel %></p>
         </div>
         <ul class="ingredients-list" id="ingredients">
           <li class="form-item ingredient-container">
@@ -64,12 +65,12 @@
             <button class="button delete-button delete-cross" type="button" onclick="deleteThisIngredient(this);"></button>
           </li>
         </ul>
-        <p class="error">Al menos un ingrediente.</p>
-        <button class="button" type="button" onclick="addIngredient();">Añadir ingrediente</button>
+        <p class="error"><%= locale.recipeForm.ingredientsError %></p>
+        <button class="button" type="button" onclick="addIngredient();"><%= locale.recipeForm.addIngredientButton %></button>
       </div>
 
       <div class="form-item method">
-        <label for="method">Método</label>
+        <label for="method"><%= locale.recipeForm.methodLabel %></label>
         <ol id="method" class="steps-list">
           <li class="step form-item">
             <div class="handle">
@@ -80,34 +81,34 @@
             <input type="hidden" name="step_type[]" value="step">
           </li>
         </ol>
-        <p class="error">Un método es obligatorio. Al menos un paso. Cada sección ha de contener al menos un paso y tener un nombre.</p>
+        <p class="error"><%= locale.recipeForm.methodError %></p>
 
         <button type="button" role="button" class="button add-step-button">
           <i class="fas fa-plus" onclick="addStep();"></i>
           <select id="new-step-type">
             <% stepTypes.forEach(type => { %>
-              <option value="<%= type.name %>"><%= type[localisation] %></option>
+              <option value="<%= type.name %>"><%= locale.stepType[type.name] %></option>
             <% }) %>
           </select>
         </button>
       </div>
 
       <div class="form-item image">
-        <label for="image">Imagen para la receta</label>
+        <label for="image"><%= locale.recipeForm.imageLabel %></label>
         <input type="file" name="image" id="image">
       </div>
 
       <div class="form-item type">
-        <label for="type">Tipo de plato</label>
+        <label for="type"><%= locale.recipeForm.typeLabel %></label>
         <select name="type" id="type">
           <% recipeTypes.forEach(type => { %>
-            <option value="<%= type.name %>"><%= type[localisation] %></option>
+            <option value="<%= type.name %>"><%= locale.recipeType[type.name] %></option>
           <% }) %>
         </select>
       </div>
 
       <div class="form-item submit">
-        <button class="button main-button" type="submit">Crear receta</button>
+        <button class="button main-button" type="submit"><%= locale.recipeForm.createRecipeButton %></button>
       </div>
     </form>
   </main>

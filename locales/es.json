@@ -1,0 +1,72 @@
+{
+	"locale": "es",
+	"fullLocale": "es_ES",
+	"navigation": {
+		"home": "Inicio",
+		"create": "Nueva",
+		"settings": "Ajustes",
+		"about": "Acerca de",
+		"search": "Buscar"
+	},
+	"title": {
+		"about": "Acerca de",
+		"create": "Nueva receta",
+		"edit": "Editar ",
+		"search": "Buscar receta",
+		"settings": "Ajustes"
+	},
+	"recipeType": {
+		"none": "Sin especificar",
+		"starter": "Entrante",
+		"main": "Plato principal",
+		"dessert": "Postre"
+	},
+	"stepType": {
+		"step": "Paso",
+		"section": "Sección",
+		"note": "Nota"
+	},
+	"recipeForm": {
+		"createTitle": "Crear nueva receta",
+		"editTitle": "Editar:",
+		"nameLabel": "Nombre de la receta",
+		"namePlaceholder": "Nombre",
+		"nameError": "El nombre es obligatorio.",
+		"authorLabel": "Autor",
+		"authorPlaceholder": "Autor",
+		"descriptionLabel": "Descripción",
+		"descriptionPlaceholder": "Descripción",
+		"descriptionError": "Una descripción es obligatoria.",
+		"tagsLabel": "Etiquetas",
+		"tagsPlaceholder": "Etiquetas para la receta",
+		"ingredientsLabel": "Ingredientes",
+		"ingredientsError": "Al menos un ingrediente.",
+		"amountColumnLabel": "Cantidad",
+		"unitColumnLabel": "Unidad de medida",
+		"ingredientColumnLabel": "Ingrediente",
+		"addIngredientButton": "Añadir ingrediente",
+		"methodLabel": "Método",
+		"methodError": "Un método es obligatorio. Al menos un paso. Cada sección ha de contener al menos un paso y tener un nombre.",
+		"imageLabel": "Imagen para la receta",
+		"updateImageLabel": "Reemplazar la imagen",
+		"imageDeleteWarning": "¡La imagen se va a eliminar!",
+		"typeLabel": "Tipo de plato",
+		"createRecipeButton": "Crear receta",
+		"saveEditButton": "Guardar cambios",
+		"deleteImageButton": "Eliminar imagen",
+		"cancelImageChangeButton": "Cancelar cambio de imagen"
+	},
+	"recipeView": {
+		"ingredientsLabel": "Ingredientes",
+		"publicationDate": "Publicado el",
+		"edited": "editada",
+		"methodLabel": "Método",
+		"editButton": "Editar",
+		"deleteButton": "Eliminar"
+	},
+	"search": {
+		"title": "Búsqueda",
+		"namePlaceholder": "Nombre de la receta",
+		"searchButton": "Buscar!"
+	}
+}

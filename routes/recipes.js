@@ -59,8 +59,9 @@ router.get('/:id', parseRecipeId, function(req, res, next) {
 	}
 	res.render('recipe', {
 		title: recipe.name	|| "Receta",
-		recipe: recipe.formatted(res.localisation),
-		alerts: alerts
+		recipe: recipe.formatted(res.locals.locale),
+		alerts: alerts,
+		locale: res.locals.locale
 	});
 });
 
@@ -70,10 +71,10 @@ router.get('/:id/edit', parseRecipeId, function (req, res, next) {
 
 	res.render('edit', {
 		title: `Editar - ${recipe.name}`,
-		recipe: recipe.formatted(res.localisation),
+		recipe: recipe.formatted(res.locals.locale),
 		recipeTypes: Recipe.recipeTypes,
 		stepTypes: Step.stepTypes,
-		localisation: res.localisation
+		locale: res.locals.locale
 	});
 });
 
