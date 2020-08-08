@@ -1,8 +1,6 @@
 // Javascript that runs on every page
 
 // Give corrent format to date. Done in client due to timezones
-const monthNames = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
-
 const dates = document.getElementsByClassName("date-to-format");
 
 for (let element of dates) {
@@ -19,7 +17,12 @@ for (let element of dates) {
       match[5],
       match[6]));
 
-    const dateString = `${date.getDate()} de ${monthNames[date.getMonth()]} de ${date.getFullYear()}`;
+    const dateString = Intl.DateTimeFormat(document.documentElement.lang, {
+      weekday: "long",
+      day: "numeric",
+      year: "numeric",
+      month: "long"
+    }).format(date);
     element.textContent = dateString;
   }
 }

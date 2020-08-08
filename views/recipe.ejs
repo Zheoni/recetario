@@ -17,12 +17,12 @@
       <header class="recipe-header" style>
         <h1 id="recipe-name"><%= recipe.name %></h1>
         <% if (recipe.author) { %>
-        <p class="author">Por <%= recipe.author %></p>
+        <p class="author"><%= recipe.author %></p>
         <% } %>
-        <p class="date">Publicado el
+        <p class="date"><%= locale.recipeView.publicationDate %>
           <span class="date-to-format"><%= recipe.CREATED_AT %></span>
           <% if (recipe.CREATED_AT !== recipe.UPDATED_AT) { %>
-          (editada)
+          (<%= locale.recipeView.edited %>)
           <% } %>
         </p>
       </header>
