@@ -1,11 +1,29 @@
 <!DOCTYPE html>
 <html lang="<%= locale.locale %>">
+
 <head>
   <%- include("templates/head-template"); %>
   <meta id="current-page" content="settings">
+  <script defer src="/javascripts/settings.js"></script>
   <title><%= locale.title.settings %></title>
 </head>
+
 <body>
+  <%- include("templates/navbar-template"); %>
+
+  <main>
+    <h1><%= locale.settings.title %></h1>
   
+    <form>
+      <select name="locale" id="localeSelect">
+        <option selected value=""><%= locale.settings.defaultLanguageOption %></option>
+        <% allLocales.forEach(locale => { %>
+          <option value="<%= locale.code %>"><%= locale.language %></option>
+        <% }) %>
+      </select>
+    </form>
+  </main>
+
+  <%- include("templates/footer-template"); %>
 </body>
 </html>

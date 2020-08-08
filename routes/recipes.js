@@ -58,7 +58,6 @@ router.get('/:id', parseRecipeId, function(req, res, next) {
 		})
 	}
 	res.render('recipe', {
-		title: recipe.name	|| "Receta",
 		recipe: recipe.formatted(res.locals.locale),
 		alerts: alerts,
 		locale: res.locals.locale
@@ -70,7 +69,6 @@ router.get('/:id/edit', parseRecipeId, function (req, res, next) {
 	const recipe = Recipe.getById(res.recipeId, { all: true });
 
 	res.render('edit', {
-		title: `Editar - ${recipe.name}`,
 		recipe: recipe.formatted(res.locals.locale),
 		recipeTypes: Recipe.recipeTypes,
 		stepTypes: Step.stepTypes,

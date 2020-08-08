@@ -1,6 +1,7 @@
 {
 	"locale": "en",
 	"fullLocale": "en_GB",
+	"language": "English",
 	"navigation": {
 		"home": "Home",
 		"create": "Create",
@@ -68,5 +69,9 @@
 		"title": "Search",
 		"namePlaceholder": "Name of the recipe",
 		"searchButton": "Search!"
+	},
+	"settings": {
+		"title": "Settings",
+		"defaultLanguageOption": "Default"
 	}
 }

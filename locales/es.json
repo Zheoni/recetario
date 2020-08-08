@@ -1,6 +1,7 @@
 {
 	"locale": "es",
 	"fullLocale": "es_ES",
+	"language": "Español",
 	"navigation": {
 		"home": "Inicio",
 		"create": "Nueva",
@@ -68,5 +69,9 @@
 		"title": "Búsqueda",
 		"namePlaceholder": "Nombre de la receta",
 		"searchButton": "Buscar!"
+	},
+	"settings": {
+		"title": "Ajustes",
+		"defaultLanguageOption": "Por defecto"
 	}
 }
