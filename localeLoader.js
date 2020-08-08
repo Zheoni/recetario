@@ -1,12 +1,41 @@
-const locales = {};
+const fs = require("fs");
+const path = require("path");
+const debug = require("debug")("recetario:localeLoader")
 
-function getLocale(name) {
-  if (!locales[name]) {
-    const path = `./locales/${name}.json`;
-    locales[name] = require(path);
-  }
+const _locales = {};
 
-  return locales[name];
+function loadLoacales(directory) {
+  let count = 0;
+  fs.readdirSync(directory, { withFileTypes: true })
+    .filter(dirent => dirent.isFile() && dirent.name.endsWith(".json"))
+    .forEach(file => {
+      try {
+        const fullPath = path.resolve(directory, file.name);
+        const localeObject = require(fullPath);
+        _locales[localeObject.locale] = localeObject;
+        ++count;
+      } catch(err) {
+        debug(`Cannot load locale ${file.name}. Error: ${err.message}`);
+      }
+    });
+  return count;
 }
 
-module.exports = { getLocale };
+function getLocale(name) {
+  return _locales[name];
+}
+
+function availableLocales() {
+  const available = [];
+  for (const locale in _locales) {
+    available.push({ code: locale, language: _locales[locale].language });
+  }
+
+  return available;
+}
+
+module.exports = {
+  loadLoacales,
+  getLocale,
+  availableLocales
+};

@@ -10,10 +10,14 @@ initDB();
 debug("Connected to database.")
 
 const { loadQueriesFrom } = require("./queryLoader");
-const { getLocale } = require("./localeLoader.js");
+const { getLocale, loadLoacales } = require("./localeLoader.js");
 
-const amount = loadQueriesFrom("./queries", { recursive: true });
+let amount;
+amount = loadQueriesFrom("./queries", { recursive: true });
 debug("Loaded " + amount + " queries.");
+
+amount = loadLoacales("./locales")
+debug("Loaded " + amount + " locales.");
 
 const indexRouter = require('./routes/index.js');
 const recipesRouter = require('./routes/recipes.js');

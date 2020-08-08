@@ -22,7 +22,7 @@ async function promptNewString() {
   for (const locale of locales) {
     const translation = await input(locale + "? ");
 
-    const localeObj = getLocale(locale);
+    const localeObj = require(`./locales/${locale}.json`);
     let s = localeObj;
     for (let i = 0; i < stringPath.length - 1; ++i) {
       const key = stringPath[i];
