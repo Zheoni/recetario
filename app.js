@@ -6,8 +6,8 @@ const logger = require('morgan');
 const debug = require("debug")("recetario:app");
 
 const { initDB, closeDB } = require("./db");
-initDB();
-debug("Connected to database.")
+initDB(process.env.DATABASE_NAME ?? "recipes.db");
+debug("Connected to database.");
 
 const { loadQueriesFrom } = require("./queryLoader");
 const { getLocale, loadLoacales } = require("./localeLoader.js");
@@ -31,7 +31,8 @@ const app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-app.use(logger('dev'));
+if (process.env.USE_LOGGER !== "false")
+  app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());

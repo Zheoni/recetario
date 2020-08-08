@@ -4,14 +4,14 @@ const debug = require("debug")("recetario:db");
 
 let _db;
 
-function initDB(verbose = false) {
+function initDB(databaseName, verbose = false) {
   if (_db) {
     debug("WARNING: Tried to initialize DB again!")
   } else {
     if (verbose) {
-      _db = new Database('recipes.db', { verbose: console.log });
+      _db = new Database(databaseName, { verbose: console.log, fileMustExist: true });
     } else {
-      _db = new Database('recipes.db');
+      _db = new Database(databaseName, { fileMustExist: true });
     }
   }
 

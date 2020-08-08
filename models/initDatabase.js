@@ -2,11 +2,13 @@
 
 const Database = require('better-sqlite3');
 const fs = require('fs');
+require("dotenv").config();
 
+const databaseName = process.env.DATABASE_NAME ?? "recipes.db";
 
-if (fs.existsSync('recipes.db')) {
+if (fs.existsSync(databaseName)) {
 	if (process.argv.includes("--force")) {
-		fs.unlinkSync('recipes.db');
+		fs.unlinkSync(databaseName);
 	} else {
 		console.log("Database exists, exiting script");
 		process.exit(0);
@@ -15,7 +17,7 @@ if (fs.existsSync('recipes.db')) {
 
 console.log("Creating database file...")
 
-const db = new Database('recipes.db');
+const db = new Database(databaseName);
 	
 console.log("Reading input file...")
 const file = "models/recipes.sql";
