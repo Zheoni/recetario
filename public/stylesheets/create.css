@@ -9,6 +9,7 @@
                         "tags tags"
                         "ingr ingr"
                         "method method"
+                        "cooktime servings"
                         "image type"
                         "submit submit";
 }
@@ -94,11 +95,13 @@
   transition: border-color 300ms ease-out;
 }
 
-.validate:valid {
+.validate:valid,
+.validate:not(.invalid) {
   border-left-color: palegreen;
 }
 
-.validate:invalid {
+.validate:invalid,
+.validate.invalid {
   border-left-color: salmon;
 }
 
@@ -205,6 +208,14 @@ p.error {
   grid-area: method;
 }
 
+.cooktime {
+  grid-area: cooktime;
+}
+
+.servings {
+  grid-area: servings;
+}
+
 .image {
   grid-area: image;
 }
@@ -221,7 +232,36 @@ p.error {
   margin: 0 auto;
 }
 
-input {
+#cookingtime {
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+}
+
+#cookingtime label {
+  font-size: 1rem;
+  margin: 0;
+  margin-left: 0.5rem
+}
+
+#cookingtime label:not(:last-child) {
+  margin-right: 1rem;
+}
+
+#cookingtime input {
+  font-size: 1rem;
+  padding: 4px;
+  border: solid 1px var(--borders-color, black);
+  border-radius: 5px;
+  flex-grow: 1;
+  min-width: 20px;
+  max-width: 100px;
+  width: 100%;
+}
+
+input, textarea {
   -webkit-appearance: none;
 }
 

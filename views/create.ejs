@@ -93,6 +93,23 @@
         </button>
       </div>
 
+      <div class="form-item cookingtime">
+        <label for="cookingtime"><%= locale.recipeForm.cookingTimeLabel%></label>
+        <div class="form-input" id="cookingtime">
+          <input type="hidden" name="cookingTime" id="cookingtimeInput">
+          <input class="" type="number" id="h" step="1" min="0" pattern="\d*">
+          <label for="h">h</label>
+          <input class="" type="number" id="m" step="1" min="0" pattern="\d*">
+          <label for="m">m</label>
+        </div>
+        <p class="error"><%= locale.recipeForm.cookingTimeError %></p>
+      </div>
+
+      <div class="form-item servings">
+        <label for="servings"><%= locale.recipeForm.servingsLabel %></label>
+        <input type="number" name="servings" id="servings" step="1" min="1">
+      </div>
+
       <div class="form-item image">
         <label for="image"><%= locale.recipeForm.imageLabel %></label>
         <input type="file" name="image" id="image">

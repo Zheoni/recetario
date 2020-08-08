@@ -21,6 +21,8 @@ class Recipe {
     this.type = typeof data.type === "number"
       ? data.type
       : Recipe.recipeTypes.map(type => type.name).indexOf(data.type);
+    this.cookingTime = data.cookingTime;
+    this.servings = data.servings;
     this.CREATED_AT = data.CREATED_AT;
     this.UPDATED_AT = data.UPDATED_AT;
     
@@ -41,6 +43,8 @@ class Recipe {
       description: body.description,
       image: imageName,
       type: body.type,
+      cookingTime: body.cookingTime,
+      servings: body.servings,
       CREATED_AT: undefined,
       UPDATED_AT: undefined
     });
@@ -66,27 +70,37 @@ class Recipe {
     return recipe;
   }
 
-  formattedTags(locale) {
+  systemTags(locale) {
     let tags = [];
     if (this.type !== 0) {      
-      const content = locale.recipeType[Recipe.recipeTypes[this.type].name];
+      const name = locale.recipeType[Recipe.recipeTypes[this.type].name];
       const classes = ["type-tag", `recipe-${Recipe.recipeTypes[this.type].name}`];
-      tags.push({content, classes});
+      tags.push({ name, classes });
     }
 
-    for (const tag of this.tags) {
-      tags.push({content: tag.name, classes: ["user-tag"]});
+    if (this.cookingTime) {
+      const hours = Math.floor(this.cookingTime / 60);
+      const minutes = this.cookingTime % 60;
+
+      let name = "";
+      if (hours) {
+        name += hours + "h";
+      }
+      if (minutes) {
+        name += (name ? " " : "") + minutes + "m";
+      }
+
+      const classes = ["time-tag"];
+      tags.push({ name, classes });
+    }
+
+    if (this.servings) {
+      const name = this.servings.toString();
+      const classes = ["servings-tag"];
+      tags.push({ name, classes });
     }
 
     return tags;
-  }
-
-  formatted(locale) {
-    let formattedRecipe = new Recipe({...this});
-
-    formattedRecipe.tags = this.formattedTags(locale);
-
-    return formattedRecipe;
   }
 
   static checkIfExists(recipeId) {
@@ -132,7 +146,9 @@ class Recipe {
       author: this.author,
       desc: this.description,
       img: this.image,
-      type: this.type
+      type: this.type,
+      cookingTime: this.cookingTime,
+      servings: this.servings
     });
 
     this.id = info.lastInsertRowid;
@@ -150,7 +166,9 @@ class Recipe {
       name: this.name,
       author: this.author,
       description: this.description,
-      type: this.type
+      type: this.type,
+      cookingTime: this.cookingTime,
+      servings: this.servings
     };
 
     if (!this.image && !deleteImage) {
@@ -235,16 +253,20 @@ class Recipe {
   }
 }
 
+function emptyStringToNullSanitizer(value) {
+  return value.length > 0 ? value : null;
+}
+
 const bodyValidations = [
   body("name")
     .notEmpty()
     .isLength({ max: 128 })
     .trim(),
   body("author")
-    .optional()
+    .customSanitizer(emptyStringToNullSanitizer)
+    .optional({ nullable: true })
     .isLength({ max: 64 })
-    .trim()
-    .customSanitizer(author => author.length === 0 ? null : author),
+    .trim(),
   body("description")
     .notEmpty()
     .isLength({ max: 256 })
@@ -310,6 +332,16 @@ const bodyValidations = [
     }).withMessage("Bad step_type sequence"),
   body("step_type.*")
     .isIn(Step.stepTypes.map(type => type.name)),
+  body("cookingTime")
+    .customSanitizer(emptyStringToNullSanitizer)
+    .optional({ nullable: true })
+    .isInt({ min: 1 })
+    .toInt(),
+  body("servings")
+    .customSanitizer(emptyStringToNullSanitizer)
+    .optional({ nullable: true })
+    .isInt({ min: 1 })
+    .toInt(),
   body("type")
     .isIn(Recipe.recipeTypes.map(type => type.name)),
   body("delete_image")

@@ -55,7 +55,10 @@
 		"createRecipeButton": "Create recipe",
 		"saveEditButton": "Save changes",
 		"deleteImageButton": "Delete image",
-		"cancelImageChangeButton": "Cancel image change"
+		"cancelImageChangeButton": "Cancel image change",
+		"cookingTimeLabel": "Cooking time",
+		"servingsLabel": "Number of servings",
+		"cookingTimeError": "Invalid values. Check that they are positive numbers."
 	},
 	"recipeView": {
 		"ingredientsLabel": "Ingredients",

@@ -55,7 +55,10 @@
 		"createRecipeButton": "Crear receta",
 		"saveEditButton": "Guardar cambios",
 		"deleteImageButton": "Eliminar imagen",
-		"cancelImageChangeButton": "Cancelar cambio de imagen"
+		"cancelImageChangeButton": "Cancelar cambio de imagen",
+		"cookingTimeLabel": "Tiempo de cocinado",
+		"servingsLabel": "Número de raciones",
+		"cookingTimeError": "Valores inválidos. Comprueba que son números positivos."
 	},
 	"recipeView": {
 		"ingredientsLabel": "Ingredientes",

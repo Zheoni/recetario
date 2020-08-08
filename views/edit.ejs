@@ -41,17 +41,15 @@
         <label for="tags"><%= locale.recipeForm.tagsLabel %></label>
         <div class="tags-container form-input" id="tags-container">
           <% let tag_input_content = ""; %> 
-          <% recipe.tags
-            .filter((tag) => tag.classes.includes("user-tag"))
-            .forEach((tag) => { %>
+          <% recipe.tags.forEach((tag) => { %>
             <% 
               if (tag_input_content.length === 0) {
-                tag_input_content = tag.content;
+                tag_input_content = tag.name;
               } else {
-                tag_input_content += "," + tag.content;
+                tag_input_content += "," + tag.name;
               }
             %> 
-            <div class="tag-view" onclick="removeTagFromInput(this);"><%= tag.content %></div>
+            <div class="tag-view" onclick="removeTagFromInput(this);"><%= tag.name %></div>
           <% }) %>
           <input type="text" id="tags-user-input" placeholder="<%= locale.recipeForm.tagsPlaceholder %>" list="tag-datalist">
           <datalist id="tag-datalist"></datalist>
@@ -133,6 +131,27 @@
             <% }) %>
           </select>
         </button>
+      </div>
+
+      <div class="form-item cookingtime">
+        <label for="cookingtime"><%= locale.recipeForm.cookingTimeLabel%></label>
+        <div class="form-input" id="cookingtime">
+          <input type="hidden" name="cookingTime" id="cookingtimeInput" value="<%= recipe.cookingTime %>">
+          <%
+            const hours = Math.floor(recipe.cookingTime / 60);
+            const minutes = recipe.cookingTime % 60;
+          %>
+          <input type="number" id="h" step="1" min="0" pattern="\d*" value="<%= hours %>" >
+          <label for="h">h</label>
+          <input type="number" id="m" step="1" min="0" pattern="\d*" value="<%= minutes %>">
+          <label for="m">m</label>
+        </div>
+        <p class="error"><%= locale.recipeForm.cookingTimeError %></p>
+      </div>
+
+      <div class="form-item servings">
+        <label for="servings"><%= locale.recipeForm.servingsLabel %></label>
+        <input type="number" name="servings" id="servings" step="1" min="1" value="<%= recipe.servings %>">
       </div>
 
       <div class="form-item image">

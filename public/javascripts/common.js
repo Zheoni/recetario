@@ -115,3 +115,26 @@ for (let i = 0; i < alerts.length; ++i) {
 
   addAlert(content, {type, delay, candismiss});
 }
+
+
+// Tags icons
+function setTagIcon(tag, classes) {
+  const icon = document.createElement("i");
+  tag.insertBefore(icon, tag.firstChild);
+  icon.outerHTML = `<i class="${classes.join(" ")}"></i>`;
+}
+
+const timeTags = document.getElementsByClassName("time-tag");
+for (let i = 0; i < timeTags.length; ++i) {
+  setTagIcon(timeTags[i], ["far", "fa-clock"]);
+}
+
+const typeTags = document.getElementsByClassName("type-tag");
+for (let i = 0; i < typeTags.length; ++i) {
+  setTagIcon(typeTags[i], ["fas", "fa-concierge-bell"]);
+}
+
+const servingsTag = document.getElementsByClassName("servings-tag");
+for (let i = 0; i < servingsTag.length; ++i) {
+  setTagIcon(servingsTag[i], ["fas", "fa-users"]);
+}

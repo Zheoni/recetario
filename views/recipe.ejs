@@ -27,12 +27,22 @@
         </p>
       </header>
 
-      <div class="tags-container">
-        <% recipe.tags.forEach(tag => { %>
-        <span class="tag <%= tag.classes.join(' ') %>">
-          <%= tag.content %>
-        </span>
-        <% }) %>
+      <div class="recipe-tags">
+        <div class="system-tags tags-container">
+          <% recipe.systemTags(locale).forEach(tag => { %>
+            <span class="tag system-tag <%= tag.classes.join(' ') %>">
+              <%= tag.name %>
+            </span>
+            <% }) %>
+        </div>
+  
+        <div class="user-tags tags-container">
+          <% recipe.tags.forEach(tag => { %>
+            <span class="tag user-tag">
+              <%= tag.name %>
+            </span>
+          <% }) %>
+        </div>
       </div>
 
       <section class="recipe-about">

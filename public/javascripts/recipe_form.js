@@ -207,6 +207,22 @@ function deleteThisStep(step) {
   }
 }
 
+// Cooking time
+const cookingTimeDiv = document.getElementById("cookingtime");
+const cookingTimeInput = document.getElementById("cookingtimeInput");
+
+cookingTimeDiv.addEventListener("input", () => {
+  const hours = Number(cookingTimeDiv.querySelector("#h").value);
+  const minutes = Number(cookingTimeDiv.querySelector("#m").value);
+  
+  const totalTime = hours * 60 + minutes;
+  cookingTimeInput.value = totalTime;
+
+  if (cookingTimeDiv.classList.contains("validate")) {
+    validateCookingTime();
+  }
+});
+
 
 // Validation
 function validateIngredients() {
@@ -267,6 +283,17 @@ function validateSteps() {
   return valid;
 }
 
+function validateCookingTime() {
+  const valid = cookingTimeDiv.querySelectorAll(":invalid").length === 0;
+  if (valid) {
+    cookingTimeDiv.classList.remove("invalid");
+  } else {
+    cookingTimeDiv.classList.add("invalid");
+  }
+
+  return valid;
+}
+
 function validate() {
 
   // Remove empty ingredients, always keeping one
@@ -287,12 +314,15 @@ function validate() {
   }
   ingredients_list.classList.add("validate");
   steps_list.classList.add("validate");
+  cookingTimeDiv.classList.add("validate");
+  tags_container.classList.add("validate")
 
   // Validate
   const toValidate = [
     (document.querySelectorAll(".validate:invalid").length === 0),
     validateIngredients(),
-    validateSteps()
+    validateSteps(),
+    validateCookingTime()
   ];
 
   const isValid = toValidate.every(e => e);

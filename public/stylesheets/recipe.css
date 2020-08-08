@@ -181,12 +181,15 @@ hr {
   background-color: #c82333;
 }
 
+.recipe-tags {
+  margin: 10px 0;
+}
+
 .tags-container {
   display: flex;
   justify-content: flex-start;
   align-items: center;
   flex-wrap: wrap;
-  margin: 10px 0;
 }
 
 .tags-container.inline {
@@ -197,7 +200,7 @@ hr {
 .tag {
   margin: 2px;
   padding: 4px 10px;
-  color: var(--text-secondary, white);
+  color: white;
   background: var(--details-color, gray);
   white-space: nowrap;
   font-weight: bold;
@@ -207,8 +210,16 @@ hr {
   cursor: default;
 }
 
-.type-tag {
+.system-tags .tag {
   border: solid 1px var(--borders-color);
+}
+
+.time-tag {
+  background-color: darkseagreen;
+}
+
+.servings-tag {
+  background-color: lightsalmon;
 }
 
 .tag.recipe-starter {
