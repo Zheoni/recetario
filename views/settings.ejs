@@ -5,6 +5,7 @@
   <%- include("templates/head-template"); %>
   <meta id="current-page" content="settings">
   <script defer src="/javascripts/settings.js"></script>
+  <link rel="stylesheet" href="/stylesheets/settings.css">
   <title><%= locale.title.settings %></title>
 </head>
 
@@ -15,12 +16,53 @@
     <h1><%= locale.settings.title %></h1>
   
     <form>
-      <select name="locale" id="localeSelect">
-        <option selected value=""><%= locale.settings.defaultLanguageOption %></option>
-        <% allLocales.forEach(locale => { %>
-          <option value="<%= locale.code %>"><%= locale.language %></option>
-        <% }) %>
-      </select>
+      <fieldset>
+        <legend><%= locale.settings.language %></legend>
+        <select name="locale" id="localeSelect">
+          <option selected value=""><%= locale.settings.defaultLanguageOption %></option>
+          <% allLocales.forEach(locale => { %>
+            <option value="<%= locale.code %>"><%= locale.language %></option>
+          <% }) %>
+        </select>
+      </fieldset>
+
+      <fieldset id="unitsFieldset">
+        <legend><%= locale.settings.systemOfUnits %></legend>
+        
+        <input type="radio" name="units" id="metric">
+        <label for="metric"><%= locale.settings.units.metric %></label><br>
+
+        <input type="radio" name="units" id="imperial">
+        <label for="imperial"><%= locale.settings.units.imperial %></label><br>
+      </fieldset>
+
+      <fieldset id="temperatureFieldset">
+        <legend><%= locale.settings.temperatureUnit %></legend>
+
+        <input type="radio" name="temperature" id="celsius">
+        <label for="celsius"><%= locale.settings.temperatures.celsius %></label><br>
+
+        <input type="radio" name="temperature" id="fahrenheit">
+        <label for="fahrenheit"><%= locale.settings.temperatures.fahrenheit %></label><br>
+      </fieldset>
+
+      <label for="bestFit"><%= locale.settings.bestFitLabel %></label>
+      <div id="bestFit" class="settingDiv">
+        <p class="explanation"><%= locale.settings.bestFitExplanation %></p>
+        <label for="bestFitCheckbox"><%= locale.settings.bestFitCheckboxLabel %></label>
+        <input type="checkbox" id="bestFitCheckbox">
+      </div>
+
+      <label for="storedData"><%= locale.settings.storedDataLabel %></label>
+      <div id="storedData" class="settingDiv">
+        <p class="explanation"><%= locale.settings.storedDataExplanation %></p>
+        <button type="button" class="button delete-button" id="deleteCachesButton">
+          <%= locale.settings.deleteCaches %>
+        </button>
+        <button type="button" class="button delete-button" id="deleteSettingsButton">
+          <%= locale.settings.deleteSettings %>
+        </button>
+      </div>
     </form>
   </main>
 

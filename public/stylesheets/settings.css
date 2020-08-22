@@ -1,0 +1,12 @@
+fieldset {
+  margin: 10px 0;
+}
+
+div.settingDiv {
+  margin: 0px 5vw 10px 5vw;
+}
+
+p.explanation {
+  color: #555;
+  margin: 10px 0;
+}

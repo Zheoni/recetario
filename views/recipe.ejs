@@ -4,6 +4,7 @@
 <head>
   <%- include("templates/head-template"); %>
   <link rel="stylesheet" href="/stylesheets/recipe.css">
+  <script defer src="/javascripts/recipe_view.js"></script>
   <title><%= recipe.name %></title>
 </head>
 
@@ -58,16 +59,18 @@
         <input type="checkbox" id="ingredients-button" class="toggle">
         <label for="ingredients-button" class="mobile-only ingredients-button-label">🗒</label>
         <div class="ingredients">
+          <button type="button" id="convertUnitsButton" class="button"><i class="fas fa-exchange-alt"></i></button>
           <h2>Ingredientes</h2>
           <div class="ingredients-list">
             <table class="ingredients-table">
               <% for (const ingredient of recipe.ingredients) { %>
               <tr>
                 <td>
-                  <%= ingredient.amount %> <%= ingredient.unit %>
+                  <span class="ingredient-amount"><%= ingredient.amount %></span>
+                  <span class="ingredient-unit"><%= ingredient.unit %></span>
                 </td>
                 <td>
-                  <%= ingredient.name %>
+                  <span class="ingredient-name"><%= ingredient.name %></span>
                 </td>
               </tr>
               <% } %>
@@ -96,8 +99,8 @@
       </section>
 
       <div class="recipe-buttons">
-        <button type="button" class="edit-button" onclick="editRecipe();"><i class="fas fa-edit"></i> Editar</button>
-        <button type="button" class="delete-button" onclick="deleteRecipe();"><i class="fas fa-trash-alt"></i>
+        <button type="button" class="button edit-button" onclick="editRecipe();"><i class="fas fa-edit"></i> Editar</button>
+        <button type="button" class="button delete-button" onclick="deleteRecipe();"><i class="fas fa-trash-alt"></i>
           Eliminar</button>
       </div>
 
@@ -105,86 +108,6 @@
   </main>
 
   <%- include("templates/footer-template"); %>
-
-
-  <script>
-    // Tapping on an ingredient marks it
-    const rows = document.querySelectorAll(".ingredients-table tr");
-
-    for (let row of rows) {
-      row.addEventListener("click", (event) => {
-        event.currentTarget.classList.toggle("marked");
-      });
-    }
-  </script>
-  <script>
-    // When on mobile, rescale the title text to fit if needed
-    function rescaleMobileTitle() {
-      if (screen.width < 767) {
-        const title = document.getElementById("recipe-name");
-        const parent = title.parentElement;
-
-        let current_size = 50;
-        title.style.fontSize = current_size + "px";
-
-        while (current_size > 1 && (
-          title.offsetWidth > parent.offsetWidth ||
-          title.offsetHeight > parent.offsetHeight - 70 ||
-          title.scrollWidth > title.offsetWidth
-        )) {
-          current_size--;
-          title.style.fontSize = current_size + "px";
-        }
-      }
-    }
-    rescaleMobileTitle();
-    window.onresize = rescaleMobileTitle;
-  </script>
-
-  <script>
-    function editRecipe() {
-      const location = window.location;
-      const url = [location.protocol, '//', location.host, location.pathname].join('');
-      window.location.replace(url + "/edit");
-    }
-
-    function deleteRecipe() {
-      const r = confirm("¿Estás seguro de querer eliminar la receta?");
-
-      if (r) {
-        const location = window.location;
-        const url = [location.protocol, '//', location.host, location.pathname].join('');
-        const req = new Request(url, {
-          method: "DELETE"
-        });
-
-        fetch(req)
-          .then(response => {
-            if (response.status === 200) {
-              return response.json();
-            } else {
-              throw new Error("Error in delete request");
-            }
-          })
-          .then(response => {
-            // Notify to the user
-            addAlert("La receta se ha eliminado. Una vez salgas de esta página no podrás volver. Puede que algunos enlaces ya no funcionen.", {
-              type: "warning",
-              scrollback: true
-            });
-            // setTimeout(() => window.location.replace("/"), 1000);
-          })
-          .catch(error => {
-            console.error(error);
-            addAlert("No se pudo eliminar la receta.", {
-              type: "error",
-              scrollback: true,
-              candismiss: true
-            });
-          })
-      }
-    }
-  </script>
 </body>
 
 </html>

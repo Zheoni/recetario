@@ -75,6 +75,25 @@
 	},
 	"settings": {
 		"title": "Settings",
-		"defaultLanguageOption": "Default"
+		"defaultLanguageOption": "Default",
+		"language": "Language of Recetario",
+		"systemOfUnits": "Default system of units",
+		"units": {
+			"metric": "Metric",
+			"imperial": "Imperial",
+			"original": "Original of the recipe"
+		},
+		"temperatureUnit": "Temperature unit",
+		"temperatures": {
+			"celsius": "Celsius",
+			"fahrenheit": "Fahrenheit"
+		},
+		"deleteCaches": "Delete all cached data",
+		"bestFitLabel": "Best conversion fit",
+		"bestFitExplanation": "When converting units, Receatario will try to make the conversion make as much sense as possible. It can slow down the conversion. If it is disabled, the conversion will be correct, but it is probably not the conversion expected.",
+		"storedDataLabel": "Stored data",
+		"storedDataExplanation": "Recetario stores data in your browser for settings like the ones on this form, and to avoid downloading the same data many times. It is recommended to not delete it, but you can do it here.",
+		"deleteSettings": "Delete settings",
+		"bestFitCheckboxLabel": "Best fit"
 	}
 }

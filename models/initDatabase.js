@@ -26,5 +26,8 @@ const queries = fs.readFileSync(file, 'utf8');
 console.log("Creating table...")
 db.exec(queries)
 
+const timestamp = Date.now();
+db.prepare("UPDATE UNITS_LAST_UPDATE SET time = ?").run(timestamp);
+
 console.log("Closing database...")
 db.close();

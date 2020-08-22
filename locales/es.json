@@ -75,6 +75,25 @@
 	},
 	"settings": {
 		"title": "Ajustes",
-		"defaultLanguageOption": "Por defecto"
+		"defaultLanguageOption": "Por defecto",
+		"language": "Idioma de Recetario",
+		"systemOfUnits": "Sistema de unidades por defecto",
+		"units": {
+			"metric": "Métrico",
+			"imperial": "Imperial",
+			"original": "Original de la receta"
+		},
+		"temperatureUnit": "Unidad de temperatura",
+		"temperatures": {
+			"celsius": "Celsius",
+			"fahrenheit": "Fahrenheit"
+		},
+		"deleteCaches": "Eliminar todos los datos en cachés",
+		"bestFitLabel": "Mejor ajuste de conversión",
+		"bestFitExplanation": "A la hora de convertir unidades, Recetario intentará que la conversión tenga el máximo sentido posible. Puede ralentizar la conversión. Si está desactivada, la conversión será correcta, pero probablemente no sea la esperada.",
+		"storedDataLabel": "Datos almacenados",
+		"storedDataExplanation": "Recetario guarda datos en el buscador para ajustes como los que hay en este formulario y para evitar descargar los mismos datos muchas veces. Es recomendable no eliminarlos, pero puedes hacerlo aqui.",
+		"deleteSettings": "Eliminar ajustes",
+		"bestFitCheckboxLabel": "Mejor ajuste"
 	}
 }

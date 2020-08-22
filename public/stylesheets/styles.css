@@ -277,6 +277,51 @@ body {
   display: none;
 }
 
+.button {
+  cursor: pointer;
+  padding: 0.75rem 1rem;
+  border: solid 1px var(--borders-color, whitesmoke);
+  border-radius: 5px;
+  background-color: white;
+  font-size: 1rem;
+  transition: background-color 200ms ease;
+  margin: 5px;
+}
+
+.button:hover {
+  background-color: var(--borders-color, whitesmoke);
+}
+
+.main-button {
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+}
+
+.main-button:hover {
+  background-color: #0069d9;
+}
+
+.delete-button {
+  color: #dc3545;
+  border-color: #dc3545;
+}
+
+.delete-button:hover {
+  color: white;
+  background-color: #dc3545;
+}
+
+.edit-button {
+  color: goldenrod;
+  border-color: #ffc107;
+}
+
+.edit-button:hover {
+  color: white;
+  background-color: #ffc107;
+}
+
 /* Small screens */
 @media only screen and (max-width: 767px) {
   :root{
