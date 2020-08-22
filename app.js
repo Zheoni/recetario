@@ -75,8 +75,5 @@ debug("App configured!");
 
 // close db on exit
 process.on('exit', () => closeDB());
-process.on('SIGHUP', () => process.exit(128 + 1));
-process.on('SIGINT', () => process.exit(128 + 2));
-process.on('SIGTERM', () => process.exit(128 + 15));
 
 module.exports = app;
