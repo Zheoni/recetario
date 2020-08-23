@@ -14,10 +14,10 @@ localeSelect.addEventListener("change", (event) => {
     const expireDate = new Date();
     expireDate.setFullYear((expireDate.getFullYear + 1));
     document.cookie = `locale=${locale}; SameSite=strict; expires=${expireDate.toUTCString()}; Path=/;`;
-    location.reload();
   } else {
     document.cookie = "locale=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
   }
+  location.reload();
 });
 
 
@@ -89,6 +89,12 @@ async function deleteCaches() {
       window.console.log("Deleted cache " + key);
     }
   }
+  addAlert(bundledLocales["alerts.deletedCaches"], {
+    type: "success",
+    delay: 5000,
+    candismiss: true,
+    container: document.getElementById("storedData")
+  });
 }
 
 document.getElementById("deleteCachesButton")
@@ -99,7 +105,13 @@ function deleteSettings() {
   localStorage.removeItem("temperatureUnit");
   localStorage.removeItem("unitSystem");
   localStorage.removeItem("bestFit");
-  location.reload();
+  addAlert(bundledLocales["alerts.deletedSettings"], {
+    type: "success",
+    delay: 5000,
+    candismiss: true,
+    container: document.getElementById("storedData")
+  });
+  setTimeout(() => location.reload(), 5500);
 }
 
 document.getElementById("deleteSettingsButton")

@@ -13,6 +13,12 @@
 
 <script defer src="/javascripts/common.js"></script>
 
+<% if (locals.bundledLocales) { %>
+<script>
+      const bundledLocales = <%- JSON.stringify(locals.bundledLocales) %>;
+</script>
+<% } %>
+
 <% if (typeof alerts !== "undefined") { alerts.forEach(alert => { %>
 <meta name="alert"
       type="<%= alert.type || "success" %>"

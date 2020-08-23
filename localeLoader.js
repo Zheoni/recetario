@@ -34,8 +34,26 @@ function availableLocales() {
   return available;
 }
 
+function bundleLocales(strings) {
+	return function (req, res, next) {
+		const bundle = {};
+		strings.forEach(string => {
+			const route = string.split(".");
+			let current = res.locals.locale;
+
+			route.forEach(name => {
+				current = current[name]
+			});
+			bundle[string] = current;
+    });
+		res.locals.bundledLocales = bundle;
+		return next()
+	}
+}
+
 module.exports = {
   loadLoacales,
   getLocale,
-  availableLocales
+  availableLocales,
+  bundleLocales
 };

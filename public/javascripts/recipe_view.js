@@ -57,7 +57,7 @@ function deleteRecipe() {
       })
       .then(response => {
         // Notify to the user
-        addAlert("La receta se ha eliminado. Una vez salgas de esta página no podrás volver. Puede que algunos enlaces ya no funcionen.", {
+        addAlert(bundledLocales["alerts.recipeDeleted"], {
           type: "warning",
           scrollback: true
         });
@@ -65,7 +65,7 @@ function deleteRecipe() {
       })
       .catch(error => {
         console.error(error);
-        addAlert("No se pudo eliminar la receta.", {
+        addAlert(bundledLocales["alerts.recipeDeleteError"], {
           type: "error",
           scrollback: true,
           candismiss: true

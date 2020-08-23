@@ -95,5 +95,15 @@
 		"storedDataExplanation": "Recetario stores data in your browser for settings like the ones on this form, and to avoid downloading the same data many times. It is recommended to not delete it, but you can do it here.",
 		"deleteSettings": "Delete settings",
 		"bestFitCheckboxLabel": "Best fit"
+	},
+	"alerts": {
+		"recipeCreated": "Recipe created successfully.",
+		"recipeEdited": "Recipe edited successfully.",
+		"recipeDeleted": "The recipe has been deleted. Once you leave this page you will not be able to return. Some links may no longer work.",
+		"recipeDeleteError": "The recipe could not be deleted.",
+		"noRecipeFound": "No recipe found.",
+		"reviewRecipeForm": "Please review the fields in the form that are not correct and try again.",
+		"deletedCaches": "Cached data has been removed.",
+		"deletedSettings": "Settings have been removed. The default preferences will now apply."
 	}
 }

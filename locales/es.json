@@ -95,5 +95,15 @@
 		"storedDataExplanation": "Recetario guarda datos en el buscador para ajustes como los que hay en este formulario y para evitar descargar los mismos datos muchas veces. Es recomendable no eliminarlos, pero puedes hacerlo aqui.",
 		"deleteSettings": "Eliminar ajustes",
 		"bestFitCheckboxLabel": "Mejor ajuste"
+	},
+	"alerts": {
+		"recipeCreated": "Receta creada correctamente.",
+		"recipeEdited": "Receta editada correctamente.",
+		"recipeDeleted": "La receta se ha eliminado. Una vez salgas de esta página no podrás volver. Puede que algunos enlaces ya no funcionen.",
+		"recipeDeleteError": "No se pudo eliminar la receta.",
+		"noRecipeFound": "No se ha encontrado ninguna receta.",
+		"reviewRecipeForm": "Revise los campos del formulario que no son correctos e inténtelo de nuevo.",
+		"deletedCaches": "Se han eliminado los datos almacenados en caché.",
+		"deletedSettings": "Se han eliminado los ajustes. Ahora se aplicarán las preferencias por defecto."
 	}
 }

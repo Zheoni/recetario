@@ -7,18 +7,19 @@ const { validationResult } = require("express-validator")
 
 const { Recipe, bodyValidations } = require('../models/recipe.model.js');
 const { Step } = require('../models/step.model.js');
+const { bundleLocales } = require("../localeLoader.js");
 
 function validate(validations) {
-  return async (req, res, next) => {
-    await Promise.all(validations.map(validation => validation.run(req)));
+	return async (req, res, next) => {
+		await Promise.all(validations.map(validation => validation.run(req)));
 
-    const errors = validationResult(req);
-    if (errors.isEmpty()) {
-      return next();
-    }
+		const errors = validationResult(req);
+		if (errors.isEmpty()) {
+			return next();
+		}
 
-    res.status(400).json({ errors: errors.array() });
-  };
+		res.status(400).json({ errors: errors.array() });
+	};
 }
 
 function parseRecipeId(req, res, next) {
@@ -37,13 +38,16 @@ function parseRecipeId(req, res, next) {
 }
 
 /* GET Recipe */
-router.get('/:id', parseRecipeId, function(req, res, next) {
+router.get('/:id', parseRecipeId, bundleLocales([
+	"alerts.recipeDeleted",
+	"alerts.recipeDeleteError"
+]), function (req, res, next) {
 	const recipe = Recipe.getById(res.recipeId, { all: true });
 
 	let alerts = [];
 	if (req.query.hasOwnProperty("new")) {
 		alerts.push({
-			content: "Receta creada correctamente.",
+			content: res.locals.locale.alerts.recipeCreated,
 			type: "success",
 			delay: 10000,
 			candismiss: true
@@ -51,7 +55,7 @@ router.get('/:id', parseRecipeId, function(req, res, next) {
 	}
 	if (req.query.hasOwnProperty("edited")) {
 		alerts.push({
-			content: "Receta editada correctamente.",
+			content: res.locals.locale.alerts.recipeEdited,
 			type: "success",
 			delay: 10000,
 			candismiss: true
@@ -65,7 +69,9 @@ router.get('/:id', parseRecipeId, function(req, res, next) {
 });
 
 /* GET Recipe edit form */
-router.get('/:id/edit', parseRecipeId, function (req, res, next) {
+router.get('/:id/edit', parseRecipeId, bundleLocales([
+	"alerts.reviewRecipeForm"
+]), function (req, res, next) {
 	const recipe = Recipe.getById(res.recipeId, { all: true });
 
 	res.render('edit', {
@@ -88,20 +94,20 @@ router.post('/:id', parseRecipeId, upload.single('image'), validate(bodyValidati
 	res.redirect(`/recipe/${recipe.id}?edited`);
 });
 
-/* POST Recipe (new) */ 
+/* POST Recipe (new) */
 router.post('/', upload.single('image'), validate(bodyValidations), function (req, res, next) {
 	let recipe = Recipe.fromFormInput(req.body,
 		undefined,
 		req.file && req.file.filename);
 	const id = recipe.insert();
-	
+
 	res.redirect(`/recipe/${id}?new`);
 });
 
 /* DELETE Recipe */
 router.delete('/:id', parseRecipeId, function (req, res, next) {
 	Recipe.deleteById(res.recipeId);
-	res.status(200).json({ id: res.recipeId, msg: "delete ok"});
+	res.status(200).json({ id: res.recipeId, msg: "delete ok" });
 });
 
 module.exports = router;

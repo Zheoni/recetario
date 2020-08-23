@@ -331,7 +331,7 @@ function validate() {
   // Give user feedback
   if (!isValid) {
     dismissAlert(document.getElementById("incorrect-form-alert"));
-    addAlert("Revise los campos del formulario que no son correctos e inténtelo de nuevo.", {
+    addAlert(bundledLocales["alerts.reviewRecipeForm"], {
       type: "warning",
       scrollback: true,
       id: "incorrect-form-alert"

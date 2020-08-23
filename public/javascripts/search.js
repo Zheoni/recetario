@@ -29,7 +29,7 @@ function displaySearchResults(results) {
       list.appendChild(new_item);
     }
   } else {
-    addAlert("No se ha encontrado ninguna receta", {
+    addAlert(bundledLocales["alerts.noRecipeFound"], {
       type: "warning",
       delay: 5000,
       candismiss: true,
