@@ -31,14 +31,8 @@ window.onresize = rescaleMobileTitle;
 
 
 // Buttons
-function editRecipe() {
-  const location = window.location;
-  const url = [location.protocol, '//', location.host, location.pathname].join('');
-  window.location.assign(url + "/edit");
-}
-
 function deleteRecipe() {
-  const r = confirm("¿Estás seguro de querer eliminar la receta?");
+  const r = confirm(bundledLocales["recipeView.confirmDelete"]);
 
   if (r) {
     const location = window.location;

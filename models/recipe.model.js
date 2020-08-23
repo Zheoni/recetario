@@ -350,4 +350,19 @@ const bodyValidations = [
     .toBoolean()
 ];
 
-module.exports = { Recipe, bodyValidations };
+function parseRecipeId(req, res, next) {
+	const id = Number(req.params.id);
+	if (id && typeof id === "number" && id !== undefined) {
+		const exists = Recipe.checkIfExists(id);
+		if (exists) {
+			res.recipeId = id;
+			return next();
+		} else {
+			res.status(404).json({ error: "Recipe not found" });
+		}
+	} else {
+		res.status(400).json({ error: "Bad recipe id" });
+	}
+}
+
+module.exports = { Recipe, bodyValidations, parseRecipeId };

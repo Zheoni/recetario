@@ -31,17 +31,17 @@
       <div class="recipe-tags">
         <div class="system-tags tags-container">
           <% recipe.systemTags(locale).forEach(tag => { %>
-            <span class="tag system-tag <%= tag.classes.join(' ') %>">
-              <%= tag.name %>
-            </span>
-            <% }) %>
+          <span class="tag system-tag <%= tag.classes.join(' ') %>">
+            <%= tag.name %>
+          </span>
+          <% }) %>
         </div>
-  
+
         <div class="user-tags tags-container">
           <% recipe.tags.forEach(tag => { %>
-            <span class="tag user-tag">
-              <%= tag.name %>
-            </span>
+          <span class="tag user-tag">
+            <%= tag.name %>
+          </span>
           <% }) %>
         </div>
       </div>
@@ -85,23 +85,38 @@
         <h2>Método</h2>
         <ol>
           <% for (const step of recipe.steps) { %>
-            <% if (step.type === 0) { %>
-              <li class="step"><%= step.content %></li>
-            <% } else if (step.type === 1) { %>
-              </ol>
-              <h3><%= step.content %></h3>
-              <ol>
-            <% } else if (step.type === 2) { %>
-              <div class="step step-note"><%= step.content %></div>
-            <% } %>
+          <% if (step.type === 0) { %>
+          <li class="step"><%= step.content %></li>
+          <% } else if (step.type === 1) { %>
+        </ol>
+        <h3><%= step.content %></h3>
+        <ol>
+          <% } else if (step.type === 2) { %>
+          <div class="step step-note"><%= step.content %></div>
+          <% } %>
           <% } %>
         </ol>
       </section>
 
       <div class="recipe-buttons">
-        <button type="button" class="button edit-button" onclick="editRecipe();"><i class="fas fa-edit"></i> Editar</button>
-        <button type="button" class="button delete-button" onclick="deleteRecipe();"><i class="fas fa-trash-alt"></i>
-          Eliminar</button>
+        <% 
+          const filename = `${recipe.id}-${encodeURI(recipe.name.replace(/ /g, "_"))}.json`;
+        %>
+        <a href="/api/recipe/<%= recipe.id %>" download="<%= filename %>">
+          <button type="button" class="button">
+            <i class="fas fa-file-export"></i> JSON
+          </button>
+        </a>
+
+        <a href="/recipe/<%= recipe.id %>/edit">
+          <button type="button" class="button edit-button">
+            <i class="fas fa-edit"></i> Editar
+          </button>
+        </a>
+
+        <button type="button" class="button delete-button" onclick="deleteRecipe();">
+          <i class="fas fa-trash-alt"></i> Eliminar
+        </button>
       </div>
 
     </article>

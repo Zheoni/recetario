@@ -5,7 +5,7 @@ const multer = require('multer');
 const upload = multer({ dest: 'public/recipes/images' });
 const { validationResult } = require("express-validator")
 
-const { Recipe, bodyValidations } = require('../models/recipe.model.js');
+const { Recipe, bodyValidations, parseRecipeId } = require('../models/recipe.model.js');
 const { Step } = require('../models/step.model.js');
 const { bundleLocales } = require("../localeLoader.js");
 
@@ -22,25 +22,11 @@ function validate(validations) {
 	};
 }
 
-function parseRecipeId(req, res, next) {
-	const id = Number(req.params.id);
-	if (id && typeof id === "number" && id !== undefined) {
-		const exists = Recipe.checkIfExists(id);
-		if (exists) {
-			res.recipeId = id;
-			return next();
-		} else {
-			res.status(404).json({ error: "Recipe not found" });
-		}
-	} else {
-		res.status(400).json({ error: "Bad recipe id" });
-	}
-}
-
 /* GET Recipe */
 router.get('/:id', parseRecipeId, bundleLocales([
 	"alerts.recipeDeleted",
-	"alerts.recipeDeleteError"
+	"alerts.recipeDeleteError",
+	"recipeView.confirmDelete"
 ]), function (req, res, next) {
 	const recipe = Recipe.getById(res.recipeId, { all: true });
 

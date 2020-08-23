@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const { query, validationResult } = require("express-validator");
+const { Recipe, parseRecipeId } = require("../models/recipe.model.js");
 const { Tag } = require('../models/tag.model.js');
 const { Ingredient } = require('../models/ingredient.model.js');
 const { buildGraph, isValidCache, findUnit, getAllUnits } = require('../models/unitConversions.js');
@@ -85,6 +86,11 @@ router.get('/conversions/up-to-date', function (req, res, next) {
 
   res.set('Cache-Control', 'no-store')
     .json({ valid: isValidCache(date, name) });
+});
+
+router.get('/recipe/:id', parseRecipeId, function (req, res, next) {
+  const recipe = Recipe.getById(res.recipeId, { all: true });
+  res.json(recipe);
 });
 
 module.exports = router;
