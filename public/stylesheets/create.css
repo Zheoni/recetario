@@ -391,3 +391,54 @@ input, textarea {
 .sortable-drag {
   visibility: hidden;
 }
+
+#openJSONModalButton {
+  float: right;
+  margin-top: 15px;
+}
+
+#results-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+#results-list li {
+  height: 50px;
+  margin-top: 10px;
+  background: #ddd;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 20px;
+  border: 1px solid var(--borders-color, black);
+  border-radius: 3px;
+}
+
+#results-list li i {
+  display: inline-block;
+  width: 30px;
+  font-size: 20px;
+  margin-right: 5px;
+}
+
+#results-list li a {
+  text-decoration: none;
+  color: inherit;
+}
+
+#results-list li.correct {
+  background: #d0f0c0;
+}
+
+#results-list li.correct i.icon {
+  color: #32cd32;
+}
+
+#results-list li.error {
+  background: lightpink;
+}
+
+#results-list li.error i.icon {
+  color: crimson;
+}

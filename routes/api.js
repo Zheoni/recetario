@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
-const { query, validationResult } = require("express-validator");
-const { Recipe, parseRecipeId } = require("../models/recipe.model.js");
+const { Recipe, JSONValidations } = require("../models/recipe.model.js");
+const { validate, parseRecipeId } = require("../utils.js"); 
 const { Tag } = require('../models/tag.model.js');
 const { Ingredient } = require('../models/ingredient.model.js');
 const { buildGraph, isValidCache, findUnit, getAllUnits } = require('../models/unitConversions.js');
@@ -91,6 +91,12 @@ router.get('/conversions/up-to-date', function (req, res, next) {
 router.get('/recipe/:id', parseRecipeId, function (req, res, next) {
   const recipe = Recipe.getById(res.recipeId, { all: true });
   res.json(recipe);
+});
+
+router.post('/recipe', validate(JSONValidations), function (req, res, next) {
+  const recipe = Recipe.fromJSONData(req.body);
+  const recipeID = recipe.insert();
+  res.redirect("/api/recipe/" + recipeID);
 });
 
 module.exports = router;

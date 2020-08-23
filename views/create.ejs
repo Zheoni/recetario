@@ -14,7 +14,55 @@
 
   <%- include("templates/navbar-template"); %>
 
+  <div class="modal" id="uploadModal">
+    <div class="modal-card">
+      <span class="close">&times;</span>
+      <div class="modal-content">
+        <div id="modal-upload-form">
+          <p><%= locale.recipeForm.JSONUploadText %></p>
+          <input type="file" id="JSONFiles" style="display:none" multiple accept="application/json">
+          <button type="button" class="button main-button button-centered" id="uploadJSONFilesButton">
+            <%= locale.recipeForm.JSONUploadButton %>
+          </button>
+        </div>
+        <div id="modal-upload-results" style="display:none">
+          <div class="dummy" id="templateResults">
+            <li class="correct">
+              <span>
+                <i class="fas fa-check icon"></i>
+                <span name="fileName">Example</span>
+              </span>
+              <a href="">
+                <%= locale.recipeForm.seeRecipe %>
+                <i class="fas fa-chevron-right"></i>
+              </a>
+            </li>
+            <li class="error">
+              <span>
+                <i class="fas fa-times icon"></i>
+                <span name="fileName">Example</span>
+              </span>
+              <span>
+                  <%= locale.recipeForm.errorMessage %>
+              </span>
+            </li>
+          </div>
+
+          <ul id="results-list"></ul>
+
+          <button type="button" class="button button-centered" id="resetModalButton" hidden>
+            <i class="fas fa-redo"></i>
+            <%= locale.recipeForm.resetModal %>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <main>
+    <button class="button" id="openJSONModalButton">
+      <i class="fas fa-file-upload"></i> JSON
+    </button>
     <h1><%= locale.recipeForm.createTitle %></h1>
 
     <form class="recipe-form" action="/recipe" onsubmit="return validate()" novalidate method="POST" autocomplete="off"
@@ -112,7 +160,7 @@
 
       <div class="form-item image">
         <label for="image"><%= locale.recipeForm.imageLabel %></label>
-        <input type="file" name="image" id="image">
+        <input type="file" name="image" id="image" accept="image/*">
       </div>
 
       <div class="form-item type">

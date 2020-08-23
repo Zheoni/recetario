@@ -3,7 +3,8 @@ const router = express.Router();
 
 const { Recipe } = require("../models/recipe.model.js");
 const { Step } = require("../models/step.model.js");
-const { availableLocales, bundleLocales } = require("../localeLoader.js");
+const { availableLocales } = require("../localeLoader.js");
+const { bundleLocales } = require("../utils.js");
 
 /* GET home page. */
 router.get('/', function (req, res, next) {

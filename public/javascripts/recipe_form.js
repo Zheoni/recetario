@@ -387,3 +387,87 @@ function tagHinter(event) {
 }
 
 tags_user_input.addEventListener("input", tagHinter);
+
+
+// Upload JSON
+
+const jsonFilesElem = document.getElementById("JSONFiles"),
+  uploadJSONButton = document.getElementById("uploadJSONFilesButton"),
+  uploadModal = document.getElementById("uploadModal"),
+  openJSONModalButton = document.getElementById("openJSONModalButton"),
+  div1 = document.getElementById("modal-upload-form"),
+  div2 = document.getElementById("modal-upload-results"),
+  resultsListElement = document.getElementById("results-list"),
+  resetModalButton = document.getElementById("resetModalButton"),
+  templateSuccess = document.querySelector("#templateResults .correct"),
+  templateError = document.querySelector("#templateResults .error");
+
+jsonFilesElem.addEventListener("change", handleFiles);
+
+function handleFiles() {
+  const fileList = this.files;
+  if (fileList.length <= 0) return;
+
+  // Prevent the user from exit the modal while the files are loaded and sended.
+  canCloseModal(uploadModal, false);
+  uploadJSONButton.disabled = true;
+  div1.style.display = "none";
+  div2.style.display = "block";
+
+  // Proccess the files
+  for (let i = 0; i < fileList.length; ++i) {
+    readAndUploadJSONFile(fileList[i]);
+  }
+
+  // Restore normal behaviour
+  canCloseModal(uploadModal, true);
+  resetModalButton.hidden = false;
+}
+
+function readAndUploadJSONFile(file) {
+  const reader = new FileReader(file);
+  reader.onload = async function (event) {
+    const fileData = event.target.result;
+    const [correct, responseData] = await uploadJSON(fileData);
+    let element;
+    if (correct) {
+      element = templateSuccess.cloneNode(true);
+      element.querySelector("a").href = `/recipe/${responseData.id}`;
+    } else {
+      element = templateError.cloneNode(true);
+    }
+    element.querySelector("span[name=fileName]").textContent = file.name;
+    resultsListElement.appendChild(element);
+  }
+  reader.readAsText(file);
+}
+
+async function uploadJSON(data) {
+  const response = await fetch("/api/recipe", {
+    method: "POST",
+    body: data,
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    }
+  });
+  const responseData = await response.json();
+  return [response.ok, responseData];
+}
+
+uploadJSONButton.addEventListener("click", () => {
+  if (jsonFilesElem) {
+    jsonFilesElem.click();
+  }
+});
+
+resetModalButton.addEventListener("click", () => {
+  div2.style.display = "none";
+  div1.style.display = "block";
+  resultsListElement.innerHTML = "";
+  jsonFilesElem.value = "";
+  resetModalButton.hidden = true;
+  uploadJSONButton.disabled = false;
+})
+
+openJSONModalButton.addEventListener("click", () => showModal(uploadModal));

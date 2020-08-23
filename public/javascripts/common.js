@@ -51,7 +51,7 @@ const main_element = document.getElementsByTagName("main")[0];
 
 function dismissAlert(alert_div, withDelay = false) {
   if (!alert_div) return;
-  
+
   if (withDelay) {
     alert_div.classList.add("fade-out");
     setTimeout((element) => {
@@ -62,7 +62,7 @@ function dismissAlert(alert_div, withDelay = false) {
   }
 }
 
-function addAlert(content, options = {type, delay, candismiss, container, scrollback, id}) {
+function addAlert(content, options = { type, delay, candismiss, container, scrollback, id }) {
   const defaults = {
     type: "default",
     delay: -1,
@@ -116,7 +116,7 @@ for (let i = 0; i < alerts.length; ++i) {
   const delay = Number(meta_element.getAttribute("delay")) || -1;
   const candismiss = meta_element.getAttribute("candismiss") === "true" || false;
 
-  addAlert(content, {type, delay, candismiss});
+  addAlert(content, { type, delay, candismiss });
 }
 
 
@@ -141,3 +141,41 @@ const servingsTag = document.getElementsByClassName("servings-tag");
 for (let i = 0; i < servingsTag.length; ++i) {
   setTagIcon(servingsTag[i], ["fas", "fa-users"]);
 }
+
+
+// Modals
+function showModal(modal) {
+  modal.style.display = "block";
+}
+
+function hideModal(modal) {
+  if (modal.getAttribute("prevent-closing") !== "true") {
+    modal.style.display = "none";
+  }
+}
+
+function canCloseModal(modal, value) {
+  modal.setAttribute("prevent-closing", !value);
+  const closeElements = modal.querySelectorAll(".close");
+  closeElements.forEach(element => {
+    element.disabled = !value;
+    if (value) {
+      element.classList.remove("disabled");
+    } else {
+      element.classList.add("disabled");
+    }
+  });
+}
+
+const modals = document.querySelectorAll(".modal");
+modals.forEach(modal => {
+  const closeElements = modal.querySelectorAll(".close");
+  closeElements.forEach(element => {
+    element.addEventListener("click", () => hideModal(modal))
+  });
+  window.addEventListener("click", (event) => {
+    if (event.target == modal) {
+      hideModal(modal)
+    }
+  });
+});

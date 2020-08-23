@@ -25,7 +25,7 @@ class Recipe {
     this.servings = data.servings;
     this.CREATED_AT = data.CREATED_AT;
     this.UPDATED_AT = data.UPDATED_AT;
-    
+
     this.ingredients = data.ingredients;
     this.steps = data.steps;
     this.tags = data.tags;
@@ -70,9 +70,27 @@ class Recipe {
     return recipe;
   }
 
+  static fromJSONData(data) {
+    data.id = undefined;
+    let recipe = new Recipe(data);
+    recipe.ingredients = recipe.ingredients.map(igr => {
+      igr.recipe = undefined;
+      return new Ingredient(igr);
+    });
+    recipe.steps = recipe.steps.map(step => {
+      step.recipe = undefined;
+      return new Step(step);
+    });
+    recipe.tags = recipe.tags.map(tag => {
+      tag.recipe = undefined;
+      return new Tag(tag);
+    });
+    return recipe;
+  }
+
   systemTags(locale) {
     let tags = [];
-    if (this.type !== 0) {      
+    if (this.type !== 0) {
       const name = locale.recipeType[Recipe.recipeTypes[this.type].name];
       const classes = ["type-tag", `recipe-${Recipe.recipeTypes[this.type].name}`];
       tags.push({ name, classes });
@@ -111,14 +129,14 @@ class Recipe {
     const recipes = q["sAllRecipes"]
       .all()
       .map(row => new Recipe(row));
-  
+
     return recipes;
   }
 
   static getById(id, options = {}) {
     const row = q["sRecipe"].get(id);
-    const recipe =  new Recipe(row);
-  
+    const recipe = new Recipe(row);
+
     const defaults = {
       loadIngredients: false,
       loadTags: false,
@@ -126,7 +144,7 @@ class Recipe {
       all: false
     };
     options = Object.assign({}, defaults, options);
-    
+
     if (options.loadIngredients || options.all) {
       recipe.ingredients = Ingredient.loadIngredients(recipe.id);
     }
@@ -136,7 +154,7 @@ class Recipe {
     if (options.loadSteps || options.all) {
       recipe.steps = Step.loadSteps(recipe.id);
     }
-  
+
     return recipe;
   }
 
@@ -156,7 +174,7 @@ class Recipe {
     Ingredient.insertMany(this.ingredients, this.id);
     Tag.insertMany(this.tags, this.id);
     Step.insertMany(this.steps, this.id);
-  
+
     return this.id;
   }
 
@@ -215,7 +233,7 @@ class Recipe {
   static deleteById(id, imageName = undefined) {
     // Delete the image
     imageName = imageName || q["sRecipeImage"].pluck().get(id)
-    
+
     if (imageName && imageName !== "noimage.jpeg") {
       const path = "./public" + Recipe.baseImagePath + imageName;
       fs.unlink(path, (err) => {
@@ -226,7 +244,7 @@ class Recipe {
         }
       });
     }
-    
+
     // Delete the recipe
     q["dRecipe"].run(id);
 
@@ -242,13 +260,13 @@ class Recipe {
       name: `%${str}%`,
       limit: limit
     });
-  
+
     if (includeTags) {
       for (let i = 0; i < results.length; ++i) {
         results[i].tags = Tag.loadTags(results[i].id);
       }
     }
-  
+
     return results;
   }
 }
@@ -272,7 +290,7 @@ const bodyValidations = [
     .isLength({ max: 256 })
     .trim(),
   body("tags")
-    .optional({ checkFalsy: true})
+    .optional({ checkFalsy: true })
     .customSanitizer(tags => tags
       .split(",")
       .map(tag => tag.trim())
@@ -286,48 +304,48 @@ const bodyValidations = [
     .toArray()
     .customSanitizer(tags => tags.filter(tag => tag.length > 0)),
   body("ingredient")
-    .isArray({min: 1}),
+    .isArray({ min: 1 }),
   body("ingredient.*")
     .notEmpty()
     .trim(),
   body("amount")
-    .isArray({min: 1})
+    .isArray({ min: 1 })
     .custom((amounts, { req }) => amounts.length === req.body.ingredient.length),
   body("amount.*")
-    .optional({checkFalsy: true})
+    .optional({ checkFalsy: true })
     .isNumeric()
     .toFloat(),
   body("unit")
-    .isArray({min: 1})
+    .isArray({ min: 1 })
     .custom((units, { req }) => units.length === req.body.ingredient.length),
   body("unit.*")
-    .optional({checkFalsy: true})
+    .optional({ checkFalsy: true })
     .trim(),
   body("step")
-    .isArray({min: 1}),
+    .isArray({ min: 1 }),
   body("step.*")
     .notEmpty()
     .trim(),
   body("step_type")
-    .isArray({min: 1})
+    .isArray({ min: 1 })
     .custom((types, { req }) => types.length === req.body.step.length)
     .custom(types => {
       let foundOne = false;
       let emptySection = false;
       for (let i = 0; i < types.length; ++i) {
         const type = types[i];
-    
+
         if (type === "step") foundOne = true;
-    
+
         if (emptySection) {
           if (type === "section") return false;
-    
+
           if (type === "step") emptySection = false;
         } else if (type === "section") {
           emptySection = true;
         }
       }
-  
+
       return foundOne && !emptySection
     }).withMessage("Bad step_type sequence"),
   body("step_type.*")
@@ -350,19 +368,78 @@ const bodyValidations = [
     .toBoolean()
 ];
 
-function parseRecipeId(req, res, next) {
-	const id = Number(req.params.id);
-	if (id && typeof id === "number" && id !== undefined) {
-		const exists = Recipe.checkIfExists(id);
-		if (exists) {
-			res.recipeId = id;
-			return next();
-		} else {
-			res.status(404).json({ error: "Recipe not found" });
-		}
-	} else {
-		res.status(400).json({ error: "Bad recipe id" });
-	}
-}
+const JSONValidations = [
+  body("name")
+    .notEmpty()
+    .isLength({ max: 128 })
+    .trim(),
+  body("author")
+    .customSanitizer(emptyStringToNullSanitizer)
+    .optional({ nullable: true })
+    .isLength({ max: 64 })
+    .trim(),
+  body("description")
+    .notEmpty()
+    .isLength({ max: 256 })
+    .trim(),
+  body("image")
+    .optional({ nullable: true })
+    .matches(/^[\w\d]+(.[\w\d]+)?$/),
+  body("type")
+    .isInt({ min: 0, max: Recipe.recipeTypes.length - 1 }),
+  body("cookingTime")
+    .optional({ nullable: true })
+    .isInt({ min: 1 }),
+  body("servings")
+    .optional({ nullable: true })
+    .isInt({ min: 1 }),
+  body(["CREATED_AT", "UPDATED_AT"])
+    .customSanitizer(emptyStringToNullSanitizer)
+    .optional({ nullable: true})
+    .matches(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/),
+  body("ingredients")
+    .isArray({ min: 1 }),
+  body("ingredients.*.name")
+    .notEmpty(),
+  body("ingredients.*.amount")
+    .optional({ nullable: true })
+    .isFloat({ min: 0 }),
+  body("ingredients.*.unit")
+    .isString(),
+  body("steps")
+    .isArray({ min: 1 })
+    .custom(steps => {
+      let foundOne = false;
+      let emptySection = false;
+      for (let i = 0; i < steps.length; ++i) {
+        const type = steps[i]?.type;
 
-module.exports = { Recipe, bodyValidations, parseRecipeId };
+        if (type === 0) foundOne = true;
+
+        if (emptySection) {
+          if (type === 1) return false;
+
+          if (type === 0) emptySection = false;
+        } else if (type === 1) {
+          emptySection = true;
+        }
+      }
+
+      return foundOne && !emptySection
+    }).withMessage("Bad step_type sequence"),
+  body("steps.*.type")
+    .isInt({ min: 0, max: Recipe.recipeTypes.length - 1 }),
+  body("steps.*.content")
+    .notEmpty(),
+  body("tags")
+    .isArray(),
+  body("tags.*.name")
+    .notEmpty()
+    .matches(/^[0-9A-Za-zñáéíóúäëïöüàèìòùâêîôû\- ]+$/)
+];
+
+module.exports = {
+  Recipe,
+  bodyValidations,
+  JSONValidations
+};

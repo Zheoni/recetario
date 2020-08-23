@@ -3,24 +3,10 @@ var router = express.Router();
 
 const multer = require('multer');
 const upload = multer({ dest: 'public/recipes/images' });
-const { validationResult } = require("express-validator")
 
-const { Recipe, bodyValidations, parseRecipeId } = require('../models/recipe.model.js');
+const { Recipe, bodyValidations } = require('../models/recipe.model.js');
 const { Step } = require('../models/step.model.js');
-const { bundleLocales } = require("../localeLoader.js");
-
-function validate(validations) {
-	return async (req, res, next) => {
-		await Promise.all(validations.map(validation => validation.run(req)));
-
-		const errors = validationResult(req);
-		if (errors.isEmpty()) {
-			return next();
-		}
-
-		res.status(400).json({ errors: errors.array() });
-	};
-}
+const { bundleLocales, parseRecipeId, validate } = require("../utils.js");
 
 /* GET Recipe */
 router.get('/:id', parseRecipeId, bundleLocales([

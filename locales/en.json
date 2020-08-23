@@ -58,7 +58,12 @@
 		"cancelImageChangeButton": "Cancel image change",
 		"cookingTimeLabel": "Cooking time",
 		"servingsLabel": "Number of servings",
-		"cookingTimeError": "Invalid values. Check that they are positive numbers."
+		"cookingTimeError": "Invalid values. Check that they are positive numbers.",
+		"JSONUploadText": "Upload a JSON file of a recipe to import. The file must have the same format as the ones you can download for any recipe. You can upload multiple files at the same time.",
+		"JSONUploadButton": "Select JSON files",
+		"seeRecipe": "Go to new recipe",
+		"errorMessage": "Could not process the file.",
+		"resetModal": "Reset"
 	},
 	"recipeView": {
 		"ingredientsLabel": "Ingredients",
