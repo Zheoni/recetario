@@ -320,7 +320,22 @@ const bodyValidations = [
     .custom((units, { req }) => units.length === req.body.ingredient.length),
   body("unit.*")
     .optional({ checkFalsy: true })
-    .trim(),
+    .trim()
+    .custom((unit, { req, path }) => {
+      unit = unit + "";
+      if (unit.length > 0) {
+        const match = path.match(/unit\[(\d+)\]/);
+        if (!match || match.length < 1) return false;
+
+        const index = Number(match[1]);
+        if (index < 0 || req.body.amount.length < index) return false;
+
+        const amount = Number(req.body.amount[index]);
+        if (amount <= 0 || amount === null || amount === undefined) return false;
+      }
+
+      return true;
+    }),
   body("step")
     .isArray({ min: 1 }),
   body("step.*")
@@ -398,7 +413,16 @@ const JSONValidations = [
     .optional({ nullable: true})
     .matches(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/),
   body("ingredients")
-    .isArray({ min: 1 }),
+    .isArray({ min: 1 })
+    .custom((igr) => {
+      const unit = igr.unit + "";
+      const amount = Number(igr.amount);
+      if (unit.length > 0 && (amount <= 0 || amount === null || amount === undefined)) {
+        return false;
+      } else {
+        return true;
+      }
+    }),
   body("ingredients.*.name")
     .notEmpty(),
   body("ingredients.*.amount")

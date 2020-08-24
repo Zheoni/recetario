@@ -41,7 +41,7 @@
 		"tagsLabel": "Etiquetas",
 		"tagsPlaceholder": "Etiquetas para la receta",
 		"ingredientsLabel": "Ingredientes",
-		"ingredientsError": "Al menos un ingrediente.",
+		"ingredientsError": "Al menos un ingrediente. Los ingredientes tienen que tener al menos un nombre y si tienen unidad también necesitan una cantidad.",
 		"amountColumnLabel": "Cantidad",
 		"unitColumnLabel": "Unidad de medida",
 		"ingredientColumnLabel": "Ingrediente",

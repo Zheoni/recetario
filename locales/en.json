@@ -41,7 +41,7 @@
 		"tagsLabel": "Tags",
 		"tagsPlaceholder": "Tags for the recipe",
 		"ingredientsLabel": "Ingredients",
-		"ingredientsError": "At least one ingredient.",
+		"ingredientsError": "At least one ingredient. The ingredients have to have at least a name and if they have a unit they also need a quantity.",
 		"amountColumnLabel": "Amount",
 		"unitColumnLabel": "Unit",
 		"ingredientColumnLabel": "Ingredient",

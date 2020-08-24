@@ -228,19 +228,22 @@ cookingTimeDiv.addEventListener("input", () => {
 function validateIngredients() {
   const ingredients = ingredients_list.children;
 
-  let empty = true;
-  for (let i = 0; i < ingredients.length && empty; ++i) {
+  let empty = false, unitNoValue = false;
+  for (let i = 0; i < ingredients.length && !empty && !unitNoValue; ++i) {
     const ingredient = ingredients[i];
 
-    if (ingredient
-      .querySelector('input[name="ingredient[]"]')
-      .value.length > 0) {
+    if (ingredient.querySelector('input[name="ingredient[]"]')?.value.length <= 0) {
+      empty = true;
+    }
 
-      empty = false;
+    // If unit is given but no value.
+    if (ingredient.querySelector('input[name="unit[]"]')?.value.length > 0
+      && ingredient.querySelector('input[name="amount[]"]')?.value.length <= 0) {
+      unitNoValue = true;
     }
   }
 
-  const valid = !empty;
+  const valid = !empty && !unitNoValue;
   if (valid) {
     ingredients_list.classList.remove("invalid");
   } else {
