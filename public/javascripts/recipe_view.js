@@ -70,7 +70,7 @@ function deleteRecipe() {
 
 // Load conversion data
 async function clearOldCache() {
-  if (!window.caches) return;
+  if (!window.caches || window.location.protocol !== "https:") return;
   async function check(name) {
     const date = localStorage.getItem(`${name}CacheDate`);
     let data;
@@ -96,7 +96,7 @@ async function clearOldCache() {
 }
 
 async function fetchFromCache(url, cacheName) {
-  if (window.caches) {
+  if (window.caches && document.location.protocol === "https:") {
     const cache = await window.caches.open(`recetario-${cacheName}`);
     let response = await cache.match(url);
   
@@ -150,7 +150,10 @@ async function parseIngredients() {
       originalUnit: unitSpan?.textContent,
       originalUnitId: undefined
     }
-    ingredient.originalUnitId = await getUnitID(ingredient.originalUnit);
+
+    if (ingredient.originalValue >= 0 && ingredient.originalUnit.length >= 0) {
+      ingredient.originalUnitId = await getUnitID(ingredient.originalUnit);
+    }
     ingredients.push(ingredient);
   }
 
@@ -341,7 +344,9 @@ async function convertToUserUnits(ingredients, graph, units) {
 
 function restoreOriginalUnits(ingredients) {
   for (const ingredient of ingredients) {
-    ingredient.amountSpan.textContent = ingredient.originalValue;
+    ingredient.amountSpan.textContent = ingredient.originalValue > 0
+      ? ingredient.originalValue
+      : "";
     ingredient.unitSpan.textContent = ingredient.originalUnit;
   }
 }

@@ -81,7 +81,7 @@ bestFitCheckbox.addEventListener("change", () => {
 
 // Delete things
 async function deleteCaches() {
-  if (!window.caches) return;
+  if (!window.caches || document.location.protocol !== "https:") return;
   const keys = await window.caches.keys();
   for (const key of keys) {
     if (key.startsWith("recetario-")) {

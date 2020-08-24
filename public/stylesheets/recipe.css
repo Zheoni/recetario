@@ -374,6 +374,7 @@ hr {
     position: sticky;
     top: 5rem;
     max-width: 20vw;
+    min-width: 240px;
     max-height: calc(100vh - (var(--navbar-size, 4rem) + 2rem));
   }
 

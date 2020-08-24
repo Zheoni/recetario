@@ -43,7 +43,7 @@ This will start the server. By default it will listen on port 3000, it can be ch
 
 ### .env Variables
 
-- `PORT` port the application will listen to. *Default: 3000*
+- `PORT` port the HTTP server will listen to. *Default: 3000*
 - `DEFAULT_LOCALE` default language of the website. This can be any of the file names (without the extension) in the locales folder. *Default: es*
 - `DEBUG` used to show debug messages. By default no messages are shown. To show some, I would set it to `recetario:*`. More on this [here](https://github.com/visionmedia/debug).
 - `USE_LOGGER` wheter to log all requests to the server or not. *Default: true*
@@ -52,6 +52,7 @@ This will start the server. By default it will listen on port 3000, it can be ch
 - `HTTPS_CERT` is the path to the file where the certificate is stored.
 - `HTTPS_KEY` is the path to the file where the key is stored.
 - `HTTPS_PASSPHRASE` is the passphrase for the key.
+- `HTTPS_PORT` port the HTTPS server will listen to. *Default: 3001*
 
 ### npm scripts
 
