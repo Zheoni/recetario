@@ -41,7 +41,7 @@ npm start
 
 This will start the server. By default it will listen on port 3000, it can be changed in the `.env` file.
 
-### .env Variables
+### Environment variables
 
 - `PORT` port the HTTP server will listen to. *Default: 3000*
 - `DEFAULT_LOCALE` default language of the website. This can be any of the file names (without the extension) in the locales folder. *Default: es*
@@ -59,6 +59,10 @@ This will start the server. By default it will listen on port 3000, it can be ch
 - `npm run initDatabase` will initialize the SQLite database if it does not exist. It will create all the tables.
 - `npm run forceInitDatabase` will do the same as `initDatabase` but if the database file exists it will overwrite it.
 - `npm addString` is a script for development that will add a new string to all the locale files, asking for input for each translation.
+
+## Run it with Docker 🐳
+
+I also included simple Dockerfile to build an image. The container will expose the port 80 for HTTP and 443 for https. All the other environment variables will be taken when you build the image from the `.env` file.
 
 ## Dependencies
 
