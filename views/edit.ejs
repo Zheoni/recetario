@@ -151,7 +151,7 @@
 
       <div class="form-item servings">
         <label for="servings"><%= locale.recipeForm.servingsLabel %></label>
-        <input type="number" name="servings" id="servings" step="1" min="1" value="<%= recipe.servings %>">
+        <input type="number" name="servings" id="servings" step="1" min="1" pattern="\d*" value="<%= recipe.servings %>">
       </div>
 
       <div class="form-item image">
