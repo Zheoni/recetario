@@ -6,7 +6,8 @@ const logger = require('morgan');
 const debug = require("debug")("recetario:app");
 
 const { initDB, closeDB } = require("./db");
-initDB(process.env.DATABASE_NAME ?? "recipes.db");
+const databasePath = path.join(process.env.DATABASE_DIR ?? ".", process.env.DATABASE_NAME ?? "recipes.db");
+initDB(databasePath);
 debug("Connected to database.");
 
 const { loadQueriesFrom } = require("./queryLoader");

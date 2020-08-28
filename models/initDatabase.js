@@ -2,29 +2,33 @@
 
 const Database = require('better-sqlite3');
 const fs = require('fs');
+const path = require('path');
 require("dotenv").config();
 
-const databaseName = process.env.DATABASE_NAME ?? "recipes.db";
+const databaseDir = process.env.DATABASE_DIR ?? ".";
+const databasePath = path.join(databaseDir, process.env.DATABASE_NAME ?? "recipes.db");
 
-if (fs.existsSync(databaseName)) {
+if (fs.existsSync(databasePath)) {
 	if (process.argv.includes("--force")) {
-		fs.unlinkSync(databaseName);
+		fs.unlinkSync(databasePath);
 	} else {
 		console.log("Database exists, exiting script");
 		process.exit(0);
 	}
 }
 
-console.log("Creating database file...")
+fs.mkdirSync(databaseDir, { recursive: true });
 
-const db = new Database(databaseName);
+console.log("Creating database file...");
+
+const db = new Database(databasePath);
 	
-console.log("Reading input file...")
+console.log("Reading input file...");
 const file = "models/recipes.sql";
 const queries = fs.readFileSync(file, 'utf8');
 	
-console.log("Creating table...")
-db.exec(queries)
+console.log("Creating table...");
+db.exec(queries);
 
 const timestamp = Date.now();
 db.prepare("UPDATE UNITS_LAST_UPDATE SET time = ?").run(timestamp);

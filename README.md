@@ -45,6 +45,8 @@ This will start the server. By default it will listen on port 3000, it can be ch
 
 - `PORT` port the HTTP server will listen to. *Default: 3000*
 - `DEFAULT_LOCALE` default language of the website. This can be any of the file names (without the extension) in the locales folder. *Default: es*
+- `DATABASE_NAME` name of the database file. *Default: recipes.db*
+- `DATABASE_DIR` path to the database directory where the database file is stored. *Default: .*
 - `DEBUG` used to show debug messages. By default no messages are shown. To show some, I would set it to `recetario:*`. More on this [here](https://github.com/visionmedia/debug).
 - `USE_LOGGER` wheter to log all requests to the server or not. *Default: true*
 - `NODE_ENV` to use it, set it to `production`. More on this [here](https://expressjs.com/en/advanced/best-practice-performance.html#set-node_env-to-production).
@@ -58,11 +60,37 @@ This will start the server. By default it will listen on port 3000, it can be ch
 
 - `npm run initDatabase` will initialize the SQLite database if it does not exist. It will create all the tables.
 - `npm run forceInitDatabase` will do the same as `initDatabase` but if the database file exists it will overwrite it.
-- `npm addString` is a script for development that will add a new string to all the locale files, asking for input for each translation.
+- `npm run addString` is a script for development that will add a new string to all the locale files, asking for input for each translation.
 
 ## Run it with Docker 🐳
 
-I also included simple Dockerfile to build an image. The container will expose the port 80 for HTTP and 443 for https. All the other environment variables will be taken when you build the image from the `.env` file.
+I also included simple Dockerfile to build an image.
+
+Two ports will be exposed the port 80 for HTTP and 443 for HTTPS.
+
+The container will use two volumes:
+
+- `/data/database` where the database file will be stored.
+- `/data/images` where the recipe images will be store.
+
+When building the image, the `NODE_ENV` environment variable will be ignored and set to `production`. To change this, a the `NODE_ENV` build argument can be used.
+
+Also, `PORT`, `HTTPS_PORT` and `DATABASE_DIR` environment variables will be ignored. All the other environment variables will be taken when you build the image from the `.env` file.
+
+Example commands to build and run the image using the `recetario_database` and `recetario_images` volumes:
+
+```sh
+docker build -t zheoni/recetario .
+
+docker run \
+    -v recetario_database:/data/database \
+    -v recetario_images:/data/images \
+    -p 3000:80 \
+    --restart on-failure:10 \
+    -d \
+    --name recetario-server \
+    zheoni/recetario
+```
 
 ## Dependencies
 
