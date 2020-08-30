@@ -129,17 +129,17 @@ function setTagIcon(tag, classes) {
 
 const timeTags = document.getElementsByClassName("time-tag");
 for (let i = 0; i < timeTags.length; ++i) {
-  setTagIcon(timeTags[i], ["far", "fa-clock"]);
+  setTagIcon(timeTags[i], ["bx", "bx-time"]);
 }
 
 const typeTags = document.getElementsByClassName("type-tag");
 for (let i = 0; i < typeTags.length; ++i) {
-  setTagIcon(typeTags[i], ["fas", "fa-concierge-bell"]);
+  setTagIcon(typeTags[i], ["bx", "bxs-collection"]);
 }
 
 const servingsTag = document.getElementsByClassName("servings-tag");
 for (let i = 0; i < servingsTag.length; ++i) {
-  setTagIcon(servingsTag[i], ["fas", "fa-users"]);
+  setTagIcon(servingsTag[i], ["bx", "bxs-group"]);
 }
 
 

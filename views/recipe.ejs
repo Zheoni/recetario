@@ -59,7 +59,7 @@
         <input type="checkbox" id="ingredients-button" class="toggle">
         <label for="ingredients-button" class="mobile-only ingredients-button-label">🗒</label>
         <div class="ingredients">
-          <button type="button" id="convertUnitsButton" class="button"><i class="fas fa-exchange-alt"></i></button>
+          <button type="button" id="convertUnitsButton" class="button"><i class="bx bx-transfer bx-sm"></i></button>
           <h2>Ingredientes</h2>
           <div class="ingredients-list">
             <table class="ingredients-table">
@@ -104,18 +104,18 @@
         %>
         <a href="/api/recipe/<%= recipe.id %>" download="<%= filename %>">
           <button type="button" class="button">
-            <i class="fas fa-file-export"></i> JSON
+            <i class="bx bx-download"></i> JSON
           </button>
         </a>
 
         <a href="/recipe/<%= recipe.id %>/edit">
           <button type="button" class="button edit-button">
-            <i class="fas fa-edit"></i> Editar
+            <i class="bx bxs-edit"></i> Editar
           </button>
         </a>
 
         <button type="button" class="button delete-button" onclick="deleteRecipe();">
-          <i class="fas fa-trash-alt"></i> Eliminar
+          <i class="bx bxs-trash"></i> Eliminar
         </button>
       </div>
 

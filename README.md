@@ -73,6 +73,8 @@ The container will use two volumes:
 - `/data/database` where the database file will be stored.
 - `/data/images` where the recipe images will be store.
 
+> ⚠️ `/data/database` contains the initialized database, so be careful if you use a bind mount.
+
 When building the image, the `NODE_ENV` environment variable will be ignored and set to `production`. To change this, a the `NODE_ENV` build argument can be used.
 
 Also, `PORT`, `HTTPS_PORT` and `DATABASE_DIR` environment variables will be ignored. All the other environment variables will be taken when you build the image from the `.env` file.
@@ -85,8 +87,8 @@ docker build -t zheoni/recetario .
 docker run \
     -v recetario_database:/data/database \
     -v recetario_images:/data/images \
-    -p 3000:80 \
-    --restart on-failure:10 \
+    -p 80:80 \
+    --restart unless-stopped \
     -d \
     --name recetario-server \
     zheoni/recetario
@@ -95,4 +97,5 @@ docker run \
 ## Dependencies
 
 - All listed in `package.json`.
-- SortableJS (minified in vendor directory)
+- [SortableJS](https://github.com/SortableJS/Sortable) (minified in vendor directory)
+- [Boxicons](https://github.com/atisawd/boxicons) (in vendor directory)

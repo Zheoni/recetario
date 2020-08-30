@@ -69,7 +69,7 @@
           <% recipe.ingredients.forEach(ingredient => { %>
             <li class="form-item ingredient-container">
               <div class="handle">
-                <i class="fas fa-bars fa-lg"></i>
+                <i class="bx bx-menu"></i>
               </div>
               <input type="number" name="amount[]" class="amount" min=0 step="any" value="<%= ingredient.amount %>">
               <input type="text" name="unit[]" class="unit" value="<%= ingredient.unit %>">
@@ -79,7 +79,7 @@
           <% }) %>
           <li class="form-item ingredient-container">
             <div class="handle">
-              <i class="fas fa-bars fa-lg"></i>
+              <i class="bx bx-menu"></i>
             </div>
             <input type="number" name="amount[]" class="amount" min=0 step="any">
             <input type="text" name="unit[]" class="unit">
@@ -100,7 +100,7 @@
             %>
             <li class="step form-item <%= extraClass %>">
               <div class="handle">
-                <i class="fas fa-bars fa-lg"></i>
+                <i class="bx bx-menu"></i>
               </div>
               <% if (step.type === 1) { %>
                 <strong>Sección:</strong>
@@ -114,7 +114,7 @@
           <% } %>
           <li class="step form-item">
             <div class="handle">
-              <i class="fas fa-bars fa-lg"></i>
+              <i class="bx bx-menu"></i>
             </div>
             <textarea name="step" rows="5" required></textarea>
             <button class="button delete-button delete-cross" type="button" onclick="deleteThisStep(this);"></button>
@@ -124,7 +124,7 @@
         <p class="error"><%= locale.recipeForm.methodError %></p>
 
         <button type="button" role="button" class="button add-step-button">
-          <i class="fas fa-plus" onclick="addStep();"></i>
+          <i class="bx bx-plus" onclick="addStep();"></i>
           <select id="new-step-type">
             <% stepTypes.forEach(type => { %>
               <option value="<%= type.name %>"><%= locale.stepType[type.name] %></option>

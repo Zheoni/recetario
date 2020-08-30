@@ -29,17 +29,17 @@
           <div class="dummy" id="templateResults">
             <li class="correct">
               <span>
-                <i class="fas fa-check icon"></i>
+                <i class="bx bx-check icon"></i>
                 <span name="fileName">Example</span>
               </span>
               <a href="">
                 <%= locale.recipeForm.seeRecipe %>
-                <i class="fas fa-chevron-right"></i>
+                <i class="bx bxs-chevron-right"></i>
               </a>
             </li>
             <li class="error">
               <span>
-                <i class="fas fa-times icon"></i>
+                <i class="bx bx-x"></i>
                 <span name="fileName">Example</span>
               </span>
               <span>
@@ -51,7 +51,7 @@
           <ul id="results-list"></ul>
 
           <button type="button" class="button button-centered" id="resetModalButton" hidden>
-            <i class="fas fa-redo"></i>
+            <i class="bx bx-reset"></i>
             <%= locale.recipeForm.resetModal %>
           </button>
         </div>
@@ -61,7 +61,7 @@
 
   <main>
     <button class="button" id="openJSONModalButton">
-      <i class="fas fa-file-upload"></i> JSON
+      <i class="bx bx-upload"></i> JSON
     </button>
     <h1><%= locale.recipeForm.createTitle %></h1>
 
@@ -105,7 +105,7 @@
         <ul class="ingredients-list" id="ingredients">
           <li class="form-item ingredient-container">
             <div class="handle">
-              <i class="fas fa-bars fa-lg"></i>
+              <i class="bx bx-menu"></i>
             </div>
             <input type="number" name="amount[]" class="amount" min=0 step="any">
             <input type="text" name="unit[]" class="unit">
@@ -122,7 +122,7 @@
         <ol id="method" class="steps-list">
           <li class="step form-item">
             <div class="handle">
-              <i class="fas fa-bars fa-lg"></i>
+              <i class="bx bx-menu"></i>
             </div>
             <textarea name="step[]" rows="5" required></textarea>
             <button class="button delete-button delete-cross" type="button" onclick="deleteThisStep(this);"></button>
@@ -132,7 +132,7 @@
         <p class="error"><%= locale.recipeForm.methodError %></p>
 
         <button type="button" role="button" class="button add-step-button">
-          <i class="fas fa-plus" onclick="addStep();"></i>
+          <i class="bx bx-plus" onclick="addStep();"></i>
           <select id="new-step-type">
             <% stepTypes.forEach(type => { %>
               <option value="<%= type.name %>"><%= locale.stepType[type.name] %></option>
