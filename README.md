@@ -34,6 +34,7 @@ currently in mind.
 ## How to run it
 
 ```sh
+git clone --recursive https://github.com/Zheoni/recetario
 npm install
 npm run initDatabase
 npm start
