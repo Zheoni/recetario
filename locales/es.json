@@ -63,7 +63,8 @@
 		"JSONUploadButton": "Escoger archivos JSON",
 		"seeRecipe": "Ir a la nueva receta",
 		"errorMessage": "No se pudo procesar el fichero.",
-		"resetModal": "Reiniciar"
+		"resetModal": "Reiniciar",
+		"tagsError": "No se permiten más de 5 etiquetas."
 	},
 	"recipeView": {
 		"ingredientsLabel": "Ingredientes",

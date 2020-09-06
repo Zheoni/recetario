@@ -295,9 +295,11 @@ const bodyValidations = [
       .split(",")
       .map(tag => tag.trim())
     )
+    .custom(tags => tags.length <= 5)
     .custom(tags => tags.every(tag => [
       tag.length > 0,
-      tag.match(/^[0-9A-Za-zñáéíóúäëïöüàèìòùâêîôû\- ]+$/)
+      tag.length <= 20,
+      tag.match(/^[0-9A-Za-zñáéíóúäëïöüàèìòùâêîôû\-\+]+$/)
     ].every(val => val)))
     .customSanitizer(tags => tags),
   body("tags")
@@ -410,7 +412,7 @@ const JSONValidations = [
     .isInt({ min: 1 }),
   body(["CREATED_AT", "UPDATED_AT"])
     .customSanitizer(emptyStringToNullSanitizer)
-    .optional({ nullable: true})
+    .optional({ nullable: true })
     .matches(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/),
   body("ingredients")
     .isArray({ min: 1 })
@@ -456,10 +458,10 @@ const JSONValidations = [
   body("steps.*.content")
     .notEmpty(),
   body("tags")
-    .isArray(),
+    .isArray({ max: 5 }),
   body("tags.*.name")
-    .notEmpty()
-    .matches(/^[0-9A-Za-zñáéíóúäëïöüàèìòùâêîôû\- ]+$/)
+    .isLength({ min: 1, max: 20 })
+    .matches(/^[0-9A-Za-zñáéíóúäëïöüàèìòùâêîôû\-\+]+$/)
 ];
 
 module.exports = {

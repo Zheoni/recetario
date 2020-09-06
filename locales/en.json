@@ -63,7 +63,8 @@
 		"JSONUploadButton": "Select JSON files",
 		"seeRecipe": "Go to new recipe",
 		"errorMessage": "Could not process the file.",
-		"resetModal": "Reset"
+		"resetModal": "Reset",
+		"tagsError": "Cannot have more than 5 tags."
 	},
 	"recipeView": {
 		"ingredientsLabel": "Ingredients",
