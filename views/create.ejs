@@ -65,8 +65,7 @@
     </button>
     <h1><%= locale.recipeForm.createTitle %></h1>
 
-    <form class="recipe-form" action="/recipe" onsubmit="return validate()" novalidate method="POST" autocomplete="off"
-      enctype="multipart/form-data">
+    <form class="recipe-form" action="/recipe" onsubmit="return validate()" novalidate method="POST" autocomplete="off" spellcheck="false" enctype="multipart/form-data">
       <div class="form-item name">
         <label for="name"><%= locale.recipeForm.nameLabel %></label>
         <input type="text" name="name" id="name" maxlength="128" required placeholder="<%= locale.recipeForm.namePlaceholder %>">
@@ -106,7 +105,7 @@
         <ul class="ingredients-list" id="ingredients">
           <li class="form-item ingredient-container">
             <div class="handle">
-              <i class="bx bx-menu"></i>
+              <i class='bx bx-grid-vertical bx-sm drag-handle-dots'></i>
             </div>
             <input type="number" name="amount[]" class="amount" min=0 step="any">
             <input type="text" name="unit[]" class="unit">
@@ -123,7 +122,7 @@
         <ol id="method" class="steps-list">
           <li class="step form-item">
             <div class="handle">
-              <i class="bx bx-menu"></i>
+              <i class='bx bx-grid-vertical bx-sm drag-handle-dots'></i>
             </div>
             <textarea name="step[]" rows="5" required></textarea>
             <button class="button delete-button delete-cross" type="button" onclick="deleteThisStep(this);"></button>
@@ -161,7 +160,11 @@
 
       <div class="form-item image">
         <label for="image"><%= locale.recipeForm.imageLabel %></label>
-        <input type="file" name="image" id="image" accept="image/*">
+        <div class="form-input">
+          <button class="button" type="button" id="chooseImageButton"><%= locale.recipeForm.chooseImageButton %></button>
+          <span id="selected-image"><%= locale.recipeForm.choosenImagePlaceholder %></span>
+        </div>
+        <input type="file" name="image" id="image" style="display:none" accept="image/*">
       </div>
 
       <div class="form-item type">

@@ -57,10 +57,10 @@
 
       <section class="ingredients-container">
         <input type="checkbox" id="ingredients-button" class="toggle">
-        <label for="ingredients-button" class="mobile-only ingredients-button-label">🗒</label>
+        <label for="ingredients-button" class="mobile-only ingredients-button-label"><i class='bx bx-basket'></i></label>
         <div class="ingredients">
-          <button type="button" id="convertUnitsButton" class="button"><i class="bx bx-transfer bx-sm"></i></button>
-          <h2>Ingredientes</h2>
+          <button type="button" id="convertUnitsButton" class="button no-print"><i class="bx bx-transfer bx-sm"></i></button>
+          <h2><%= locale.recipeView.ingredientsLabel %></h2>
           <div class="ingredients-list">
             <table class="ingredients-table">
               <% for (const ingredient of recipe.ingredients) { %>
@@ -82,7 +82,7 @@
       <hr>
 
       <section class="method">
-        <h2>Método</h2>
+        <h2><%= locale.recipeView.methodLabel %></h2>
         <ol>
           <% for (const step of recipe.steps) { %>
           <% if (step.type === 0) { %>
@@ -98,7 +98,7 @@
         </ol>
       </section>
 
-      <div class="recipe-buttons">
+      <div class="recipe-buttons no-print">
         <% 
           const filename = `${recipe.id}-${encodeURI(recipe.name.replace(/ /g, "_"))}.json`;
         %>
@@ -110,12 +110,12 @@
 
         <a href="/recipe/<%= recipe.id %>/edit">
           <button type="button" class="button edit-button">
-            <i class="bx bxs-edit"></i> Editar
+            <i class="bx bxs-edit"></i> <%= locale.recipeView.editButton %>
           </button>
         </a>
 
         <button type="button" class="button delete-button" onclick="deleteRecipe();">
-          <i class="bx bxs-trash"></i> Eliminar
+          <i class="bx bxs-trash"></i> <%= locale.recipeView.deleteButton %>
         </button>
       </div>
 

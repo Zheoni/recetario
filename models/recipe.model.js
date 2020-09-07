@@ -105,7 +105,7 @@ class Recipe {
         name += hours + "h";
       }
       if (minutes) {
-        name += (name ? " " : "") + minutes + "m";
+        name += (name ? " " : "") + minutes + "min";
       }
 
       const classes = ["time-tag"];

@@ -17,8 +17,7 @@
   <main>
     <h1><%= locale.recipeForm.editTitle %> <%= recipe.name %></h1>
 
-    <form class="recipe-form" action="/recipe/<%= recipe.id %>" onsubmit="return validate()" novalidate method="POST" autocomplete="off"
-      enctype="multipart/form-data">
+    <form class="recipe-form" action="/recipe/<%= recipe.id %>" onsubmit="return validate()" novalidate method="POST" autocomplete="off" spellcheck="false" enctype="multipart/form-data">
       <div class="form-item name">
         <label for="name"><%= locale.recipeForm.nameLabel %></label>
         <input type="text" name="name" id="name" maxlength="128" required placeholder="<%= locale.recipeForm.namePlaceholder %>" value="<%= recipe.name %>">
@@ -70,7 +69,7 @@
           <% recipe.ingredients.forEach(ingredient => { %>
             <li class="form-item ingredient-container">
               <div class="handle">
-                <i class="bx bx-menu"></i>
+                <i class='bx bx-grid-vertical bx-md drag-handle-dots'></i>
               </div>
               <input type="number" name="amount[]" class="amount" min=0 step="any" value="<%= ingredient.amount %>">
               <input type="text" name="unit[]" class="unit" value="<%= ingredient.unit %>">
@@ -80,7 +79,7 @@
           <% }) %>
           <li class="form-item ingredient-container">
             <div class="handle">
-              <i class="bx bx-menu"></i>
+              <i class='bx bx-grid-vertical bx-md drag-handle-dots'></i>
             </div>
             <input type="number" name="amount[]" class="amount" min=0 step="any">
             <input type="text" name="unit[]" class="unit">
@@ -101,7 +100,7 @@
             %>
             <li class="step form-item <%= extraClass %>">
               <div class="handle">
-                <i class="bx bx-menu"></i>
+                <i class='bx bx-grid-vertical bx-sm drag-handle-dots'></i>
               </div>
               <% if (step.type === 1) { %>
                 <strong>Sección:</strong>
@@ -115,7 +114,7 @@
           <% } %>
           <li class="step form-item">
             <div class="handle">
-              <i class="bx bx-menu"></i>
+              <i class='bx bx-grid-vertical bx-md drag-handle-dots'></i>
             </div>
             <textarea name="step" rows="5" required></textarea>
             <button class="button delete-button delete-cross" type="button" onclick="deleteThisStep(this);"></button>
@@ -157,7 +156,11 @@
 
       <div class="form-item image">
         <label for="image"><%= locale.recipeForm.updateImageLabel %></label>
-        <input type="file" name="image" id="image">
+        <div class="form-input">
+          <button class="button" type="button" id="chooseImageButton"><%= locale.recipeForm.chooseImageButton %></button>
+          <span id="selected-image"><%= locale.recipeForm.choosenImagePlaceholder %></span>
+        </div>
+        <input type="file" name="image" id="image" style="display:none" accept="image/*">
         <div class="row">
           <button type="button" onclick="resetImage();" class="button"><%= locale.recipeForm.cancelImageChangeButton %></button>
           <button type="button" onclick="deleteImage();" class="button delete-button"><%= locale.recipeForm.deleteImageButton %></button>

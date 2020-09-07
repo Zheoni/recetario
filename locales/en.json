@@ -64,7 +64,9 @@
 		"seeRecipe": "Go to new recipe",
 		"errorMessage": "Could not process the file.",
 		"resetModal": "Reset",
-		"tagsError": "Cannot have more than 5 tags."
+		"tagsError": "Cannot have more than 5 tags.",
+		"chooseImageButton": "Choose image",
+		"choosenImagePlaceholder": "No image chosen"
 	},
 	"recipeView": {
 		"ingredientsLabel": "Ingredients",

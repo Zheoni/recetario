@@ -1,3 +1,11 @@
+const imageButton = document.getElementById("chooseImageButton");
+const imageInput = document.getElementById("image");
+const imageName = document.getElementById("selected-image");
+imageButton.addEventListener("click", () => imageInput.click());
+imageInput.addEventListener("change", () => {
+  imageName.textContent = imageInput.files[0].name;
+});
+
 function isEmpty(element) {
   let fields;
   if (["INPUT", "TEXTAREA", "SELECT"].includes(element.nodeName)) {
@@ -442,72 +450,74 @@ const jsonFilesElem = document.getElementById("JSONFiles"),
   templateSuccess = document.querySelector("#templateResults .correct"),
   templateError = document.querySelector("#templateResults .error");
 
-jsonFilesElem.addEventListener("change", handleFiles);
+if (jsonFilesElem) {
+  jsonFilesElem.addEventListener("change", handleFiles);
 
-function handleFiles() {
-  const fileList = this.files;
-  if (fileList.length <= 0) return;
-
-  // Prevent the user from exit the modal while the files are loaded and sended.
-  canCloseModal(uploadModal, false);
-  uploadJSONButton.disabled = true;
-  div1.style.display = "none";
-  div2.style.display = "block";
-
-  // Proccess the files
-  for (let i = 0; i < fileList.length; ++i) {
-    readAndUploadJSONFile(fileList[i]);
-  }
-
-  // Restore normal behaviour
-  canCloseModal(uploadModal, true);
-  resetModalButton.hidden = false;
-}
-
-function readAndUploadJSONFile(file) {
-  const reader = new FileReader(file);
-  reader.onload = async function (event) {
-    const fileData = event.target.result;
-    const [correct, responseData] = await uploadJSON(fileData);
-    let element;
-    if (correct) {
-      element = templateSuccess.cloneNode(true);
-      element.querySelector("a").href = `/recipe/${responseData.id}`;
-    } else {
-      element = templateError.cloneNode(true);
+  function handleFiles() {
+    const fileList = this.files;
+    if (fileList.length <= 0) return;
+  
+    // Prevent the user from exit the modal while the files are loaded and sended.
+    canCloseModal(uploadModal, false);
+    uploadJSONButton.disabled = true;
+    div1.style.display = "none";
+    div2.style.display = "block";
+  
+    // Proccess the files
+    for (let i = 0; i < fileList.length; ++i) {
+      readAndUploadJSONFile(fileList[i]);
     }
-    element.querySelector("span[name=fileName]").textContent = file.name;
-    resultsListElement.appendChild(element);
+  
+    // Restore normal behaviour
+    canCloseModal(uploadModal, true);
+    resetModalButton.hidden = false;
   }
-  reader.readAsText(file);
-}
-
-async function uploadJSON(data) {
-  const response = await fetch("/api/recipe", {
-    method: "POST",
-    body: data,
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json"
+  
+  function readAndUploadJSONFile(file) {
+    const reader = new FileReader(file);
+    reader.onload = async function (event) {
+      const fileData = event.target.result;
+      const [correct, responseData] = await uploadJSON(fileData);
+      let element;
+      if (correct) {
+        element = templateSuccess.cloneNode(true);
+        element.querySelector("a").href = `/recipe/${responseData.id}`;
+      } else {
+        element = templateError.cloneNode(true);
+      }
+      element.querySelector("span[name=fileName]").textContent = file.name;
+      resultsListElement.appendChild(element);
+    }
+    reader.readAsText(file);
+  }
+  
+  async function uploadJSON(data) {
+    const response = await fetch("/api/recipe", {
+      method: "POST",
+      body: data,
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      }
+    });
+    const responseData = await response.json();
+    return [response.ok, responseData];
+  }
+  
+  uploadJSONButton.addEventListener("click", () => {
+    if (jsonFilesElem) {
+      jsonFilesElem.click();
     }
   });
-  const responseData = await response.json();
-  return [response.ok, responseData];
+  
+  resetModalButton.addEventListener("click", () => {
+    div2.style.display = "none";
+    div1.style.display = "block";
+    resultsListElement.innerHTML = "";
+    jsonFilesElem.value = "";
+    resetModalButton.hidden = true;
+    uploadJSONButton.disabled = false;
+  })
+  
+  openJSONModalButton.addEventListener("click", () => showModal(uploadModal));  
 }
-
-uploadJSONButton.addEventListener("click", () => {
-  if (jsonFilesElem) {
-    jsonFilesElem.click();
-  }
-});
-
-resetModalButton.addEventListener("click", () => {
-  div2.style.display = "none";
-  div1.style.display = "block";
-  resultsListElement.innerHTML = "";
-  jsonFilesElem.value = "";
-  resetModalButton.hidden = true;
-  uploadJSONButton.disabled = false;
-})
-
-openJSONModalButton.addEventListener("click", () => showModal(uploadModal));

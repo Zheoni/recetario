@@ -2,7 +2,7 @@
   width: 100%;
 
   display: grid;
-  gap: 1.5rem;
+  gap: 10px;
   grid-template-columns: 1fr 1fr;
   grid-template-areas:  "name author"
                         "desc desc"
@@ -33,7 +33,7 @@
 }
 
 .form-item label {
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   white-space: nowrap;
 }
 
@@ -105,6 +105,7 @@ p.error {
   grid-template-rows: auto;
   column-gap: 5px;
   justify-items: stretch;
+  align-items: center;
 
   border: 2px dashed transparent;
   border-radius: 7px;
@@ -133,10 +134,38 @@ p.error {
 }
 
 .handle {
-  cursor: move;
+  cursor: move; /* fallback if grab cursor is unsupported */
+  cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+
   display: flex;
+  align-content: center;
   justify-content: center;
-  align-items: center;
+
+  width: 20px;
+  height: 1.8rem;
+  border-radius: 3px;
+  transition: background-color 200ms;
+}
+
+.handle:active {
+  cursor: grabbing;
+  cursor: -moz-grabbing;
+  cursor: -webkit-grabbing;
+}
+
+.handle:hover {
+  background-color: var(--borders-color, gray);
+}
+
+.handle:hover .drag-handle-dots {
+  color: #6c757d;
+}
+
+.drag-handle-dots {
+  color: var(--borders-color, #6c757d);
+  transition: color 200ms;
 }
 
 .ingredient-labels {
@@ -226,6 +255,7 @@ p.error {
 }
 
 input, textarea {
+  font-family: 'Noto Sans', sans-serif;
   -webkit-appearance: none;
 }
 
@@ -381,8 +411,7 @@ input, textarea {
   -moz-appearance: none;
 }
 
-.sortable-chosen,
-.sortable-ghost {
+.sortable-chosen {
   border-color: black;
   opacity: 0.7;
   background-color: var(--details-color, gray);
@@ -441,4 +470,18 @@ input, textarea {
 
 #results-list li.error i.icon {
   color: crimson;
+}
+
+#chooseImageButton {
+  padding: 5px;
+}
+
+@media only screen and (max-width: 767px) {
+  .recipe-form {
+    display: initial;
+  }
+
+  .form-item {
+    margin-bottom: 10px;
+  }
 }

@@ -64,7 +64,9 @@
 		"seeRecipe": "Ir a la nueva receta",
 		"errorMessage": "No se pudo procesar el fichero.",
 		"resetModal": "Reiniciar",
-		"tagsError": "No se permiten más de 5 etiquetas."
+		"tagsError": "No se permiten más de 5 etiquetas.",
+		"chooseImageButton": "Escoger imagen",
+		"choosenImagePlaceholder": "Ninguna imagen elegida"
 	},
 	"recipeView": {
 		"ingredientsLabel": "Ingredientes",

@@ -134,7 +134,7 @@ for (let i = 0; i < timeTags.length; ++i) {
 
 const typeTags = document.getElementsByClassName("type-tag");
 for (let i = 0; i < typeTags.length; ++i) {
-  setTagIcon(typeTags[i], ["bx", "bxs-collection"]);
+  setTagIcon(typeTags[i], ["bx", "bxs-dish"]);
 }
 
 const servingsTag = document.getElementsByClassName("servings-tag");
