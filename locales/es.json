@@ -114,5 +114,12 @@
 		"reviewRecipeForm": "Revise los campos del formulario que no son correctos e inténtelo de nuevo.",
 		"deletedCaches": "Se han eliminado los datos almacenados en caché.",
 		"deletedSettings": "Se han eliminado los ajustes. Ahora se aplicarán las preferencias por defecto."
+	},
+	"about": {
+		"title": "Acerca de",
+		"whatis": "Recetario es una aplicación web para usar en una casa con el propósito de almacenar recetas en un lugar privado y ser accesibles en cualquier momento que sea necesario.",
+		"creator": "Creado por Francisco J. Sánchez. Código fuente disponible en",
+		"frontDependencies": "Dependencias de código abierto del sitio web:",
+		"backDependencies": "Las dependencias de código abierto del servidor están listadas en el repositorio de Github."
 	}
 }

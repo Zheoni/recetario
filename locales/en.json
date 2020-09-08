@@ -114,5 +114,12 @@
 		"reviewRecipeForm": "Please review the fields in the form that are not correct and try again.",
 		"deletedCaches": "Cached data has been removed.",
 		"deletedSettings": "Settings have been removed. The default preferences will now apply."
+	},
+	"about": {
+		"title": "About",
+		"whatis": "Recetario is a web application for use in a home to store recipes in a private place and be accesible at any time that is necessary.",
+		"creator": "Created by Francisco J. Sánchez. See source code at",
+		"frontDependencies": "Open source dependencies of the website:",
+		"backDependencies": "Open source dependencies of the server are listed in the Github repository."
 	}
 }

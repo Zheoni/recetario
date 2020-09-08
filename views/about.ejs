@@ -11,7 +11,24 @@
 	<%- include("templates/navbar-template"); %>
 	
 	<main>
-		<h1>Acerca de</h1>
+		<h1><%= locale.about.title %></h1>
+
+		<p><%= locale.about.whatis %></p>
+
+		<ul class="bx-ul">
+			<li><i class='bx bx-sm bxl-github'></i> <%= locale.about.creator %> <a href="https://github.com/Zheoni/recetario/">Github</a>.</li>
+			<li><i class='bx bx-sm bxs-component'></i><%= locale.about.frontDependencies %>
+				<ul class="bx-ul">
+					<li>Boxicons <a href="https://github.com/atisawd/boxicons"><i class='bx bx-link'></i></a></li>
+					<li>SortableJS <a href="https://github.com/SortableJS/Sortable"><i class='bx bx-link'></i></a></li>
+					<li></li>
+				</ul>
+			</li>
+			<li><i class='bx bx-sm bxs-terminal'></i><%= locale.about.backDependencies %></li>
+
+		</ul>
+		
+
 	</main>
 
 	<%- include("templates/footer-template"); %>

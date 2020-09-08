@@ -39,8 +39,8 @@ if (currentPage) {
     case "create":
       document.getElementById("nav-create").classList.add('active');
       break;
-    case "about":
-      document.getElementById("nav-about").classList.add('active');
+    case "settings":
+      document.getElementById("nav-settings").classList.add('active');
       break;
   }
 }
