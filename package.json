@@ -1,7 +1,9 @@
 {
   "name": "recetario",
-  "version": "0.0.1",
+  "version": "0.7.0-beta",
   "private": true,
+  "description": "Cookbook web application designed for a home network",
+  "license": "MIT",
   "scripts": {
     "start": "node ./bin/www",
     "initDatabase": "node ./models/initDatabase.js",
