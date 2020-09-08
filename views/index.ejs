@@ -4,6 +4,7 @@
 <head>
 	<%- include("templates/head-template"); %>
   <link rel="stylesheet" href="/stylesheets/grid.css">
+  <script defer src="/javascripts/grid.js"></script>
   <meta id="current-page" content="index">
   <title>Recetario</title>
 </head>
@@ -17,12 +18,16 @@
       <% for (const recipe of recipes) { %>
       <a href="/recipe/<%= recipe.id %>" alt="<%= recipe.name %>" class="card-link">
         <div class="card" id="<%= recipe.id %>">
-          <div class="card-image" style="background-image: url(<%= recipe.imageURL; %>);" alt=""></div>
-          <div class="card-name">
-            <h3><%= recipe.name %></h3>
+          <div class="card-image">
+            <img src="<%= recipe.imageURL; %>" alt="">
           </div>
-          <div class="card-description">
-            <p><%= recipe.description %></p>
+          <div class="card-body">
+            <div class="card-name">
+              <h3><%= recipe.name %></h3>
+            </div>
+            <div class="card-description">
+              <%= recipe.description %>
+            </div>
           </div>
         </div>
       </a>

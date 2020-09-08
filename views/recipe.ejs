@@ -12,115 +12,118 @@
 
   <%- include("templates/navbar-template"); %>
 
-  <main>
-    <article class="recipe" style="--recipe-image: url(/recipes/images/<%= recipe.image %>);">
-
-      <header class="recipe-header" style>
-        <h1 id="recipe-name"><%= recipe.name %></h1>
-        <% if (recipe.author) { %>
-        <p class="author"><%= recipe.author %></p>
-        <% } %>
-        <p class="date"><%= locale.recipeView.publicationDate %>
-          <span class="date-to-format"><%= recipe.CREATED_AT %></span>
-          <% if (recipe.CREATED_AT !== recipe.UPDATED_AT) { %>
-          (<%= locale.recipeView.edited %>)
-          <% } %>
-        </p>
-      </header>
-
-      <div class="recipe-tags">
-        <div class="system-tags tags-container">
-          <% recipe.systemTags(locale).forEach(tag => { %>
-          <span class="tag system-tag <%= tag.classes.join(' ') %>">
-            <%= tag.name %>
-          </span>
-          <% }) %>
-        </div>
-
-        <div class="user-tags tags-container">
-          <% recipe.tags.forEach(tag => { %>
-          <span class="tag user-tag">
-            <%= tag.name %>
-          </span>
-          <% }) %>
-        </div>
-      </div>
-
-      <section class="recipe-about">
-        <div class="about-text">
-          <p class="description"><%= recipe.description %></p>
-        </div>
-        <div class="image-container mobile-hidden">
-          <img class="recipe-image" src="<%= recipe.imageURL %>" alt="Image of the recipe">
-        </div>
-      </section>
-
-      <section class="ingredients-container">
-        <input type="checkbox" id="ingredients-button" class="toggle">
-        <label for="ingredients-button" class="mobile-only ingredients-button-label"><i class='bx bx-basket'></i></label>
-        <div class="ingredients">
-          <button type="button" id="convertUnitsButton" class="button no-print"><i class="bx bx-transfer bx-sm"></i></button>
-          <h2><%= locale.recipeView.ingredientsLabel %></h2>
-          <div class="ingredients-list">
-            <table class="ingredients-table">
-              <% for (const ingredient of recipe.ingredients) { %>
-              <tr>
-                <td>
-                  <span class="ingredient-amount"><%= ingredient.amount %></span>
-                  <span class="ingredient-unit"><%= ingredient.unit %></span>
-                </td>
-                <td>
-                  <span class="ingredient-name"><%= ingredient.name %></span>
-                </td>
-              </tr>
-              <% } %>
-            </table>
+  <div class="fg-wrapper">
+    <main>
+      <article class="recipe">
+        <header class="recipe-header">
+          <div class="image-container">
+            <div class="image-content">
+              <img class="recipe-image" src="<%= recipe.imageURL %>" alt="" onerror="recipeImageNotLoaded();">
+            </div>
           </div>
+          <h1 id="recipe-name"><%= recipe.name %></h1>
+        </header>
+  
+        <section class="recipe-about">
+          <% if (recipe.author) { %>
+            <p class="author"><%= recipe.author %></p>
+            <% } %>
+          <p class="date"><%= locale.recipeView.publicationDate %>
+            <span class="date-to-format"><%= recipe.CREATED_AT %></span>
+            <% if (recipe.CREATED_AT !== recipe.UPDATED_AT) { %>
+            (<%= locale.recipeView.edited %>)
+            <% } %>
+          </p>
+          <div class="about-text">
+            <p class="description"><%= recipe.description %></p>
+          </div>
+        </section>
+  
+        <section class="recipe-tags">
+          <div class="system-tags tags-container">
+            <% recipe.systemTags(locale).forEach(tag => { %>
+            <span class="tag system-tag <%= tag.classes.join(' ') %>">
+              <%= tag.name %>
+            </span>
+            <% }) %>
+          </div>
+  
+          <div class="user-tags tags-container">
+            <% recipe.tags.forEach(tag => { %>
+            <span class="tag user-tag">
+              <%= tag.name %>
+            </span>
+            <% }) %>
+          </div>
+        </section>
+  
+        <section class="ingredients-container">
+          <input type="checkbox" id="ingredients-button" class="toggle">
+          <label for="ingredients-button" class="mobile-only ingredients-button-label"><i class='bx bx-basket'></i></label>
+          <div class="ingredients">
+            <button type="button" id="convertUnitsButton" class="button no-print"><i class="bx bx-transfer bx-sm"></i></button>
+            <h2><%= locale.recipeView.ingredientsLabel %></h2>
+            <div class="ingredients-list">
+              <table class="ingredients-table">
+                <% for (const ingredient of recipe.ingredients) { %>
+                <tr>
+                  <td>
+                    <span class="ingredient-amount"><%= ingredient.amount %></span>
+                    <span class="ingredient-unit"><%= ingredient.unit %></span>
+                  </td>
+                  <td>
+                    <span class="ingredient-name"><%= ingredient.name %></span>
+                  </td>
+                </tr>
+                <% } %>
+              </table>
+            </div>
+          </div>
+        </section>
+  
+        <hr>
+  
+        <section class="method">
+          <h2><%= locale.recipeView.methodLabel %></h2>
+          <ol>
+            <% for (const step of recipe.steps) { %>
+            <% if (step.type === 0) { %>
+            <li class="step"><%= step.content %></li>
+            <% } else if (step.type === 1) { %>
+          </ol>
+          <h3><%= step.content %></h3>
+          <ol>
+            <% } else if (step.type === 2) { %>
+            <div class="step step-note"><%= step.content %></div>
+            <% } %>
+            <% } %>
+          </ol>
+        </section>
+  
+        <div class="recipe-buttons no-print">
+          <% 
+            const filename = `${recipe.id}-${encodeURI(recipe.name.replace(/ /g, "_"))}.json`;
+          %>
+          <a href="/api/recipe/<%= recipe.id %>" download="<%= filename %>">
+            <button type="button" class="button">
+              <i class="bx bx-download"></i> JSON
+            </button>
+          </a>
+  
+          <a href="/recipe/<%= recipe.id %>/edit">
+            <button type="button" class="button edit-button">
+              <i class="bx bxs-edit"></i> <%= locale.recipeView.editButton %>
+            </button>
+          </a>
+  
+          <button type="button" class="button delete-button" onclick="deleteRecipe();">
+            <i class="bx bxs-trash"></i> <%= locale.recipeView.deleteButton %>
+          </button>
         </div>
-      </section>
-
-      <hr>
-
-      <section class="method">
-        <h2><%= locale.recipeView.methodLabel %></h2>
-        <ol>
-          <% for (const step of recipe.steps) { %>
-          <% if (step.type === 0) { %>
-          <li class="step"><%= step.content %></li>
-          <% } else if (step.type === 1) { %>
-        </ol>
-        <h3><%= step.content %></h3>
-        <ol>
-          <% } else if (step.type === 2) { %>
-          <div class="step step-note"><%= step.content %></div>
-          <% } %>
-          <% } %>
-        </ol>
-      </section>
-
-      <div class="recipe-buttons no-print">
-        <% 
-          const filename = `${recipe.id}-${encodeURI(recipe.name.replace(/ /g, "_"))}.json`;
-        %>
-        <a href="/api/recipe/<%= recipe.id %>" download="<%= filename %>">
-          <button type="button" class="button">
-            <i class="bx bx-download"></i> JSON
-          </button>
-        </a>
-
-        <a href="/recipe/<%= recipe.id %>/edit">
-          <button type="button" class="button edit-button">
-            <i class="bx bxs-edit"></i> <%= locale.recipeView.editButton %>
-          </button>
-        </a>
-
-        <button type="button" class="button delete-button" onclick="deleteRecipe();">
-          <i class="bx bxs-trash"></i> <%= locale.recipeView.deleteButton %>
-        </button>
-      </div>
-
-    </article>
-  </main>
+  
+      </article>
+    </main>
+  </div>
 
   <%- include("templates/footer-template"); %>
 </body>

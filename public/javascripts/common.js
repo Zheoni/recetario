@@ -179,3 +179,91 @@ modals.forEach(modal => {
     }
   });
 });
+
+
+// Emojis backgrounds
+
+function charBackgroundDataURL(chars, width, height, options = {
+  sepx, sepy, offset, fontSize, fontFamily, backgroundColor
+}) {
+  const defaults = {
+    sepx: 60,
+    sepy: 60,
+    offset: 25,
+    fontSize: 40,
+    fontFamily: "sans-serif",
+    backgroundColor: null
+  }
+
+  options = Object.assign({}, defaults, options);
+
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  const ratio = (() => {
+    const dpr = window.devicePixelRatio || 1;
+    const bsr = ctx.webkitBackingStorePixelRatio ||
+      ctx.mozBackingStorePixelRatio ||
+      ctx.msBackingStorePixelRatio ||
+      ctx.oBackingStorePixelRatio ||
+      ctx.backingStorePixelRatio || 1;
+
+    return dpr / bsr;
+  })();
+
+  canvas.width = width * ratio;
+  canvas.height = height * ratio;
+  // canvas.style.width = width + "px";
+  // canvas.style.height = height + "px";
+  ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+  ctx.font = options.fontSize + "px " + options.fontFamily;
+  ctx.textBaseline = "middle";
+  ctx.textAlign = "center";
+  if (options.backgroundColor) {
+    ctx.fillStyle = options.backgroundColor;
+    ctx.fillRect(0, 0, width, height);
+  }
+
+  let idx = 0, line = 0;
+  for (let y = options.fontSize; y <= height; y += options.sepy, ++line) {
+    for (let x = - (options.offset * line) % width; x <= width; x += options.sepx, ++idx) {
+      if (x >= -options.fontSize) ctx.fillText(chars[idx % chars.length], x, y);
+    }
+  }
+
+  return canvas.toDataURL();
+}
+
+function getRandomEmojis(count) {
+  const chars = ["🍏", "🍎", "🍐", "🍊", "🍋", "🍌", "🍉", "🍇", "🍓", "🍈", "🍒", "🍑", "🥭", "🍍", "🥥", "🥝", "🍅", "🍆", "🥑", "🥦", "🥬", "🥒", "🌶", "🌽", "🥕", "🧄", "🧅", "🥔", "🍠", "🥐", "🥯", "🍞", "🥖", "🥨", "🧀", "🥚", "🍳", "🧈", "🥞", "🧇", "🥓", "🥩", "🍗", "🍖", "🦴", "🌭", "🍔", "🍟", "🍕", "🥪", "🥙", "🧆", "🌮", "🌯", "🥗", "🥘", "🥫", "🍝", "🍜", "🍲", "🍛", "🍣", "🍱", "🥟", "🍤", "🍙", "🍚", "🍘", "🍥", "🥠", "🍧", "🍢", "🍡", "🍨", "🍦", "🥧", "🧁", "🍰", "🍫", "🍿", "🍩", "🍪", "🌰", "🥜", "🍯", "🥛", "☕", "🍵", "🧃", "🥤", "🍺", "🍷", "🍹", "🍸", "🧉", "🍾", "🧊", "🥡", "🐟", "🦐", "🦀", "🦞", "🐙"];
+
+  const charset = [];
+  while (charset.length < count) {
+    const emoji = chars[Math.floor(Math.random() * chars.length)];
+    if (charset.indexOf(emoji) == -1) charset.push(emoji);
+  }
+
+  return charset;
+}
+
+function generateEmojiBackground(width, height, options = {
+  sepx, sepy, offset, fontSize, fontFamily, backgroundColor, distinct, charset
+} = {}) {
+  options = Object.assign({}, options, { distinct: 13 });
+
+  if (!options.charset) {
+    options.charset = getRandomEmojis(options.distinct);
+  }
+
+  const data = charBackgroundDataURL(options.charset, width, height, options);
+
+  return { charset: options.charset, data };
+}
+
+function applyEmojiBackground(element, charset) {
+  const width = element.clientWidth;
+  const height = element.clientHeight;
+  let { charset: newCharset, data } = generateEmojiBackground(width, height, { charset });
+  element.style.backgroundImage = `url(${data})`;
+  return { charset: newCharset, data };
+}

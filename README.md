@@ -56,6 +56,7 @@ This will start the server. By default it will listen on port 3000, it can be ch
 - `HTTPS_KEY` is the path to the file where the key is stored.
 - `HTTPS_PASSPHRASE` is the passphrase for the key.
 - `HTTPS_PORT` port the HTTPS server will listen to. *Default: 3001*
+- `DEFAULT_IMAGE` a default image name used when a recipe has no image. The name has to be the file name of an image inside `public/recipes/images/`. *Default: undefined*
 
 ### npm scripts
 

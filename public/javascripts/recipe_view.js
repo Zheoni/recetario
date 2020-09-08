@@ -7,27 +7,32 @@ for (let row of ingredient_rows) {
   });
 }
 
-// When on mobile, rescale the title text to fit if needed
-function rescaleMobileTitle() {
-  if (screen.width < 767) {
-    const title = document.getElementById("recipe-name");
-    const parent = title.parentElement;
 
-    let current_size = 50;
-    title.style.fontSize = current_size + "px";
+// Emojis background if needed
 
-    while (current_size > 1 && (
-      title.offsetWidth > parent.offsetWidth ||
-      title.offsetHeight > parent.offsetHeight - 70 ||
-      title.scrollWidth > title.offsetWidth
-    )) {
-      current_size--;
-      title.style.fontSize = current_size + "px";
-    }
-  }
+const imageContainer = document.querySelector(".image-container");
+const image = document.querySelector(".recipe-image");
+if (document.body.clientWidth > 1920) {
+  useEmojiBackground()
+} 
+function recipeImageNotLoaded() {
+  useEmojiBackground()
+  image.hidden = true;
 }
-rescaleMobileTitle();
-window.onresize = rescaleMobileTitle;
+
+function useEmojiBackground() {
+  const { charset } = applyEmojiBackground(imageContainer);
+
+  let doit;
+  window.onresize = () => {
+    clearTimeout(doit);
+    doit = setTimeout(resizedw, 500, charset);
+  };
+}
+
+function resizedw(charset){
+  applyEmojiBackground(imageContainer, charset);
+}
 
 
 // Buttons
