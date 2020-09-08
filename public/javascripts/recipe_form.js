@@ -87,7 +87,10 @@ tags_user_input.addEventListener("keydown", (event) => {
 
 tags_user_input.addEventListener("focusout", (event) => {
   event.preventDefault();
-  addTagToInput();
+  if (tags_user_input.value.length > 0) {
+    addTagToInput();
+    tags_user_input.focus();
+  }
 });
 
 // Ingredients
