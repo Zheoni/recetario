@@ -4,3 +4,6 @@
 [submodule "public/vendor/Sortable"]
 	path = public/vendor/Sortable
 	url = https://github.com/SortableJS/Sortable.git
+[submodule "public/vendor/unicode-patterns"]
+	path = public/vendor/unicode-patterns
+	url = https://github.com/Zheoni/unicode-patterns.git

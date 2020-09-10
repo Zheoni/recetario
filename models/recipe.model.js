@@ -32,7 +32,11 @@ class Recipe {
   }
 
   get imageURL() {
-    return Recipe.baseImagePath + (this.image || process.env.DEFAULT_IMAGE);
+    if (this.image) {
+      return Recipe.baseImagePath + (this.image || process.env.DEFAULT_IMAGE);
+    } else {
+      return "";
+    }
   }
 
   static fromFormInput(body, id = undefined, imageName = undefined) {

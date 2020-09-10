@@ -47,9 +47,7 @@ main {
 }
 
 .card-image {
-  background-position: center;
-  background-size: cover;
-  overflow: hidden;
+  background: #2f2f2f;
 }
 
 .card-image img {

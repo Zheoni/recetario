@@ -10,29 +10,56 @@ for (let row of ingredient_rows) {
 
 // Emojis background if needed
 
+const minWidth = 1924; // 4 px of margin
+const minEmojis = 8, maxEmojis = 14;
+const emojiOptions = {
+  initialy: 20
+}
+
 const imageContainer = document.querySelector(".image-container");
 const image = document.querySelector(".recipe-image");
-if (document.body.clientWidth > 1920) {
-  useEmojiBackground()
-} 
+
+if (document.body.clientWidth > minWidth) {
+  useEmojiBackground();
+} else {
+  window.addEventListener("resize", checkBodyWidth);
+}
+
+function checkBodyWidth() {
+  if (document.body.clientWidth > minWidth) {
+    useEmojiBackground();
+  }
+}
+
 function recipeImageNotLoaded() {
-  useEmojiBackground()
   image.hidden = true;
+  useEmojiBackground();
 }
 
 function useEmojiBackground() {
-  const { charset } = applyEmojiBackground(imageContainer);
+  window.removeEventListener("resize", checkBodyWidth);
+  const count = Math.floor(Math.random() * (maxEmojis - minEmojis + 1) + maxEmojis);
+  const charset = getRandomFoodEmojis(count);
+
+  applyUnicodeBackground(imageContainer, charset, emojiOptions);
 
   let doit;
-  window.onresize = () => {
+  window.addEventListener("resize", () => {
     clearTimeout(doit);
     doit = setTimeout(resizedw, 500, charset);
-  };
+  });
 }
 
-function resizedw(charset){
-  applyEmojiBackground(imageContainer, charset);
+function resizedw(charset) {
+  applyUnicodeBackground(imageContainer, charset, emojiOptions);
 }
+
+document.querySelectorAll("img.recipe-image").forEach(img => {
+  if (img.naturalWidth === 0) {
+    img.addEventListener('error', recipeImageNotLoaded);
+    img.src = img.src;
+  }
+});
 
 
 // Buttons
@@ -104,14 +131,14 @@ async function fetchFromCache(url, cacheName) {
   if (window.caches && document.location.protocol === "https:") {
     const cache = await window.caches.open(`recetario-${cacheName}`);
     let response = await cache.match(url);
-  
+
     if (response === undefined) {
       response = await fetch(url);
       cache.put(url, response.clone());
       const timestamp = Date.now();
       localStorage.setItem(`${cacheName}CacheDate`, timestamp);
     }
-    
+
     return response;
   } else {
     return fetch(url);
@@ -123,7 +150,7 @@ async function getData(response) {
     try {
       const data = await response.json();
       return data;
-    } catch(err) {
+    } catch (err) {
       return null;
     }
   } else {
@@ -230,14 +257,14 @@ function searchConversion(graph, units, startUnitID, value, { system = "metric",
   const queue = [currentNode];
 
   let validConversions = [];
-  
+
   while (queue.length > 0) {
     currentNode = queue.shift();
 
     if (isUnitSystem(units, currentNode.id, system)) {
       if (bestFit) {
         const newValue = value * getFactor(graph, currentNode);
-        
+
         validConversions.push({
           node: deepCopyFunction(currentNode),
           value: newValue
@@ -246,7 +273,7 @@ function searchConversion(graph, units, startUnitID, value, { system = "metric",
         return currentNode;
       }
     }
-    
+
     graph[currentNode.id].forEach(edge => {
       const nodeTo = {
         id: edge.to,
@@ -306,9 +333,9 @@ function convertToSystem(graph, units, value, unitID, { system, bestFit = true }
 async function loadData() {
   if (!(loadData.ingredients && loadData.graph && loadData.units)) {
     await clearOldCache();
-  
+
     [loadData.ingredients, loadData.graph, loadData.units] = await Promise.all([
-      parseIngredients(), 
+      parseIngredients(),
       loadGraph(),
       loadUnits()
     ]);
@@ -327,12 +354,12 @@ async function convertToUserUnits(ingredients, graph, units) {
 
   for (const ingredient of ingredients) {
     if (ingredient.originalValue && ingredient.originalUnitId) {
-      if (ingredient.newUnit === undefined) {
+      if (ingredient.newUnit === undefined) {
         const result = convertToSystem(graph, units, ingredient.originalValue, ingredient.originalUnitId, {
           system: userUnits,
           bestFit: userBestFit === "true"
         });
-  
+
         ingredient.newUnit = getUnitFromID(units, result.unit);
         ingredient.newValue = result.value;
       }
@@ -362,7 +389,7 @@ const convertButton = document.getElementById("convertUnitsButton");
 let converted = false;
 convertButton.addEventListener("click", async () => {
   const data = await loadData();
-  
+
   if (converted) {
     restoreOriginalUnits(data.ingredients);
     convertButton.classList.remove("activated");
