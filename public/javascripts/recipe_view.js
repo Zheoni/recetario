@@ -11,7 +11,6 @@ for (let row of ingredient_rows) {
 // Emojis background if needed
 
 const minWidth = 1924; // 4 px of margin
-const minEmojis = 8, maxEmojis = 14;
 const emojiOptions = {
   initialy: 20
 }
@@ -19,28 +18,14 @@ const emojiOptions = {
 const imageContainer = document.querySelector(".image-container");
 const image = document.querySelector(".recipe-image");
 
-if (document.body.clientWidth > minWidth) {
-  useEmojiBackground();
-} else {
-  window.addEventListener("resize", checkBodyWidth);
-}
-
-function checkBodyWidth() {
-  if (document.body.clientWidth > minWidth) {
-    useEmojiBackground();
-  }
-}
-
-function recipeImageNotLoaded() {
-  image.hidden = true;
-  useEmojiBackground();
-}
-
 function useEmojiBackground() {
-  window.removeEventListener("resize", checkBodyWidth);
-  const count = Math.floor(Math.random() * (maxEmojis - minEmojis + 1) + maxEmojis);
-  const charset = getRandomFoodEmojis(count);
-
+  window.removeEventListener("load", useEmojiBackground);
+  const seed = window.location.toString()
+    .split('')
+    .map(s => s.charCodeAt(0))
+    .reduce((acc, curr) => acc + curr);
+  const charset = getRandomFoodEmojis(14, seed);
+console.log(charset)
   applyUnicodeBackground(imageContainer, charset, emojiOptions);
 
   let doit;
@@ -54,12 +39,7 @@ function resizedw(charset) {
   applyUnicodeBackground(imageContainer, charset, emojiOptions);
 }
 
-document.querySelectorAll("img.recipe-image").forEach(img => {
-  if (img.naturalWidth === 0) {
-    img.addEventListener('error', recipeImageNotLoaded);
-    img.src = img.src;
-  }
-});
+window.addEventListener("load", useEmojiBackground);
 
 
 // Buttons

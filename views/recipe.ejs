@@ -13,22 +13,28 @@
 
   <%- include("templates/navbar-template"); %>
 
-  <div class="fg-wrapper">
-    <main>
-      <article class="recipe">
+  <article>
+    <header class="banner">
+      <div class="image-container">
+        <img class="recipe-image" src="<%= recipe.imageURL %>" alt="">
+      </div>
+      <div class="banner-content">
+        <div class="chevron">
+          <i class='bx bx-chevron-down' ></i>
+        </div>
+      </div>
+    </header>
+
+    <div class="fg-wrapper">
+      <main class="recipe">
         <header class="recipe-header">
-          <div class="image-container">
-            <div class="image-content">
-              <img class="recipe-image" src="<%= recipe.imageURL %>" alt="">
-            </div>
-          </div>
           <h1 id="recipe-name"><%= recipe.name %></h1>
         </header>
-  
+
         <section class="recipe-about">
           <% if (recipe.author) { %>
-            <p class="author"><%= recipe.author %></p>
-            <% } %>
+          <p class="author"><%= recipe.author %></p>
+          <% } %>
           <p class="date"><%= locale.recipeView.publicationDate %>
             <span class="date-to-format"><%= recipe.CREATED_AT %></span>
             <% if (recipe.CREATED_AT !== recipe.UPDATED_AT) { %>
@@ -39,7 +45,7 @@
             <p class="description"><%= recipe.description %></p>
           </div>
         </section>
-  
+
         <section class="recipe-tags">
           <div class="system-tags tags-container">
             <% recipe.systemTags(locale).forEach(tag => { %>
@@ -48,7 +54,7 @@
             </span>
             <% }) %>
           </div>
-  
+
           <div class="user-tags tags-container">
             <% recipe.tags.forEach(tag => { %>
             <span class="tag user-tag">
@@ -57,12 +63,14 @@
             <% }) %>
           </div>
         </section>
-  
+
         <section class="ingredients-container">
           <input type="checkbox" id="ingredients-button" class="toggle">
-          <label for="ingredients-button" class="mobile-only ingredients-button-label"><i class='bx bx-basket'></i></label>
+          <label for="ingredients-button" class="mobile-only ingredients-button-label"><i
+              class='bx bx-basket'></i></label>
           <div class="ingredients">
-            <button type="button" id="convertUnitsButton" class="button no-print"><i class="bx bx-transfer bx-sm"></i></button>
+            <button type="button" id="convertUnitsButton" class="button no-print"><i
+                class="bx bx-transfer bx-sm"></i></button>
             <h2><%= locale.recipeView.ingredientsLabel %></h2>
             <div class="ingredients-list">
               <table class="ingredients-table">
@@ -81,9 +89,9 @@
             </div>
           </div>
         </section>
-  
+
         <hr>
-  
+
         <section class="method">
           <h2><%= locale.recipeView.methodLabel %></h2>
           <ol>
@@ -100,7 +108,7 @@
             <% } %>
           </ol>
         </section>
-  
+
         <div class="recipe-buttons no-print">
           <% 
             const filename = `${recipe.id}-${encodeURI(recipe.name.replace(/ /g, "_"))}.json`;
@@ -110,21 +118,20 @@
               <i class="bx bx-download"></i> JSON
             </button>
           </a>
-  
+
           <a href="/recipe/<%= recipe.id %>/edit">
             <button type="button" class="button edit-button">
               <i class="bx bxs-edit"></i> <%= locale.recipeView.editButton %>
             </button>
           </a>
-  
+
           <button type="button" class="button delete-button" onclick="deleteRecipe();">
             <i class="bx bxs-trash"></i> <%= locale.recipeView.deleteButton %>
           </button>
         </div>
-  
-      </article>
-    </main>
-  </div>
+      </main>
+    </div>
+  </article>
 
   <%- include("templates/footer-template"); %>
 </body>

@@ -183,13 +183,20 @@ modals.forEach(modal => {
 
 // Emojis backgrounds
 
-function getRandomFoodEmojis(count) {
+function getRandomFoodEmojis(count, seed) {
+  if (!seed) seed = Math.floor(Math.random()*1000 % 100);
+
   const chars = ["🍏", "🍎", "🍐", "🍊", "🍋", "🍌", "🍉", "🍇", "🍓", "🍈", "🍒", "🍑", "🥭", "🍍", "🥥", "🥝", "🍅", "🍆", "🥑", "🥦", "🥬", "🥒", "🌶", "🌽", "🥕", "🧄", "🧅", "🥔", "🍠", "🥐", "🥯", "🍞", "🥖", "🥨", "🧀", "🥚", "🍳", "🧈", "🥞", "🧇", "🥓", "🥩", "🍗", "🍖", "🦴", "🌭", "🍔", "🍟", "🍕", "🥪", "🥙", "🧆", "🌮", "🌯", "🥗", "🥘", "🥫", "🍝", "🍜", "🍲", "🍛", "🍣", "🍱", "🥟", "🍤", "🍙", "🍚", "🍘", "🍥", "🥠", "🍧", "🍢", "🍡", "🍨", "🍦", "🥧", "🧁", "🍰", "🍫", "🍿", "🍩", "🍪", "🌰", "🥜", "🍯", "🥛", "☕", "🍵", "🧃", "🥤", "🍺", "🍷", "🍹", "🍸", "🧉", "🍾", "🧊", "🥡", "🐟", "🦐", "🦀", "🦞", "🐙"];
 
+  let x = seed;
+  const a = Math.pow(2, 16) + 3;
+  const m = Math.pow(2, 31);
+  
   const charset = [];
   while (charset.length < count) {
-    const emoji = chars[Math.floor(Math.random() * chars.length)];
+    const emoji = chars[x % chars.length];
     if (charset.indexOf(emoji) == -1) charset.push(emoji);
+    x = Math.abs(Math.imul(x, a) % m);
   }
 
   return charset;
