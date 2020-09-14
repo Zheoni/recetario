@@ -23,6 +23,7 @@ debug("Loaded " + amount + " locales.");
 const indexRouter = require('./routes/index.js');
 const recipesRouter = require('./routes/recipes.js');
 const apiRouter = require('./routes/api.js');
+const dependenciesRouter = require('./routes/dependecies.js');
 debug("Loaded routers.");
 
 debug("Configuring app...");
@@ -55,6 +56,12 @@ app.use(function(req, res, next) {
 app.use('/', indexRouter);
 app.use('/recipe', recipesRouter);
 app.use('/api', apiRouter);
+app.use('/vendor', dependenciesRouter);
+app.use('/fonts', express.static(path.join(__dirname,
+  "vendor", "boxicons", "fonts"), {
+  immutable: true,
+  maxAge: 604800
+}));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
