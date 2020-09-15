@@ -14,7 +14,7 @@ router.get('/boxicons.min.css', (req, res) => {
 
 router.get('/Sortable.min.js', (req, res) => {
   res.sendFile(path.join(__dirname, "..",
-    "vendor", "Sortable", "Sortable.min.css"));
+    "vendor", "Sortable", "Sortable.min.js"));
 })
 
 router.get('/unicodePatterns.min.js', (req, res) => {
