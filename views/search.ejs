@@ -2,7 +2,7 @@
 <html lang="<%= locale.locale %>">
 
 <head>
-	<%- include("templates/head-template"); %>
+	<%- include("elements/head"); %>
   <meta id="current-page" content="search">
   <title><%= locale.title.search %></title>
   <% if (results) { %>
@@ -17,7 +17,7 @@
 </head>
 
 <body>
-  <%- include("templates/navbar-template"); %>
+  <%- include("elements/navbar"); %>
 	
 	<main>
     <h1>Búsqueda</h1>
@@ -33,6 +33,6 @@
 
 	</main>
 
-	<%- include("templates/footer-template"); %>
+	<%- include("elements/footer"); %>
 </body>
 </html>

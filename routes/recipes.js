@@ -35,8 +35,7 @@ router.get('/:id', parseRecipeId, bundleLocales([
 	}
 	res.render('recipe', {
 		recipe: recipe,
-		alerts: alerts,
-		locale: res.locals.locale
+		alerts: alerts
 	});
 });
 
@@ -49,8 +48,7 @@ router.get('/:id/edit', parseRecipeId, bundleLocales([
 	res.render('edit', {
 		recipe: recipe,
 		recipeTypes: Recipe.recipeTypes,
-		stepTypes: Step.stepTypes,
-		locale: res.locals.locale
+		stepTypes: Step.stepTypes
 	});
 });
 

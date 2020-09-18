@@ -2,7 +2,7 @@
 <html lang="<%= locale.locale %>">
 
 <head>
-  <%- include("templates/head-template"); %>
+  <%- include("elements/head"); %>
   <meta id="current-page" content="settings">
   <script defer src="/js/settings.js"></script>
   <link rel="stylesheet" href="/css/settings.css">
@@ -10,7 +10,7 @@
 </head>
 
 <body>
-  <%- include("templates/navbar-template"); %>
+  <%- include("elements/navbar"); %>
 
   <main>
     <h1><%= locale.settings.title %></h1>
@@ -19,7 +19,12 @@
       <fieldset>
         <legend><%= locale.settings.language %></legend>
         <select name="locale" id="localeSelect">
-          <option selected value=""><%= locale.settings.defaultLanguageOption %></option>
+          <option value="">
+            <%= locale.settings.autoLanguageOption %>
+          </option>
+          <option selected value="_default">
+            <%= locale.settings.defaultLanguageOption %>
+          </option>
           <% allLocales.forEach(locale => { %>
             <option value="<%= locale.code %>"><%= locale.language %></option>
           <% }) %>
@@ -66,6 +71,6 @@
     </form>
   </main>
 
-  <%- include("templates/footer-template"); %>
+  <%- include("elements/footer"); %>
 </body>
 </html>

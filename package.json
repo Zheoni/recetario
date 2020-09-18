@@ -8,7 +8,7 @@
     "start": "node ./bin/www",
     "initDatabase": "node ./models/initDatabase.js",
     "forceInitDatabase": "node ./models/initDatabase.js --force",
-    "addString": "node ./localeHelper.js"
+    "addString": "node ./addLocaleString.js"
   },
   "dependencies": {
     "better-sqlite3": "^7.1.0",

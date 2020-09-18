@@ -2,7 +2,7 @@
 <html lang="<%= locale.locale %>">
 
 <head>
-  <%- include("templates/head-template"); %>
+  <%- include("elements/head"); %>
   <link rel="stylesheet" href="/css/recipe.css">
   <script defer src="/vendor/unicodePatterns.min.js"></script>
   <script defer src="/js/recipe_view.js"></script>
@@ -11,7 +11,7 @@
 
 <body>
 
-  <%- include("templates/navbar-template"); %>
+  <%- include("elements/navbar"); %>
 
   <article>
     <header class="banner">
@@ -133,7 +133,7 @@
     </div>
   </article>
 
-  <%- include("templates/footer-template"); %>
+  <%- include("elements/footer"); %>
 </body>
 
 </html>

@@ -103,7 +103,8 @@
 		"storedDataLabel": "Datos almacenados",
 		"storedDataExplanation": "Recetario guarda datos en el buscador para ajustes como los que hay en este formulario y para evitar descargar los mismos datos muchas veces. Es recomendable no eliminarlos, pero puedes hacerlo aqui.",
 		"deleteSettings": "Eliminar ajustes",
-		"bestFitCheckboxLabel": "Mejor ajuste"
+		"bestFitCheckboxLabel": "Mejor ajuste",
+		"autoLanguageOption": "Automático"
 	},
 	"alerts": {
 		"recipeCreated": "Receta creada correctamente.",

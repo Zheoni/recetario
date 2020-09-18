@@ -2,7 +2,7 @@
 <html lang="<%= locale.locale %>">
 
 <head>
-	<%- include("templates/head-template"); %>
+	<%- include("elements/head"); %>
   <link rel="stylesheet" href="/css/grid.css">
   <script defer src="/vendor/unicodePatterns.min.js"></script>
   <script defer src="/js/grid.js"></script>
@@ -12,7 +12,7 @@
 
 <body>
 
-  <%- include("templates/navbar-template"); %>
+  <%- include("elements/navbar"); %>
 
   <main>
     <section class="basic-grid">
@@ -36,7 +36,7 @@
     </section>
   </main>
 
-  <%- include("templates/footer-template"); %>
+  <%- include("elements/footer"); %>
 
 </body>
 

@@ -2,13 +2,13 @@
 <html lang="<%= locale.locale %>">
 
 <head>
-	<%- include("templates/head-template"); %>
+	<%- include("elements/head"); %>
 	<meta id="current-page" content="about">
 	<title><%= locale.title.about %></title>
 </head>
 
 <body>
-	<%- include("templates/navbar-template"); %>
+	<%- include("elements/navbar"); %>
 	
 	<main>
 		<h1><%= locale.about.title %></h1>
@@ -31,6 +31,6 @@
 
 	</main>
 
-	<%- include("templates/footer-template"); %>
+	<%- include("elements/footer"); %>
 </body>
 </html>

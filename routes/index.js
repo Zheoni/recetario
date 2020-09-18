@@ -11,13 +11,12 @@ router.get('/', function (req, res, next) {
 	const allRecipes = Recipe.getAll();
 
 	res.render('index', {
-		recipes: allRecipes,
-		locale: res.locals.locale
+		recipes: allRecipes
 	});
 });
 
 router.get('/about', function (req, res, next) {
-	res.render('about', { title: 'Recetario - acerca de' });
+	res.render('about');
 });
 
 router.get('/create', bundleLocales([
@@ -25,8 +24,7 @@ router.get('/create', bundleLocales([
 ]), function (req, res, next) {
 	res.render('create', {
 		recipeTypes: Recipe.recipeTypes,
-		stepTypes: Step.stepTypes,
-		locale: res.locals.locale
+		stepTypes: Step.stepTypes
 	});
 });
 
@@ -41,8 +39,7 @@ router.get('/search', bundleLocales([
 	}
 
 	res.render('search', {
-		results: results,
-		locale: res.locals.locale
+		results: results
 	});
 });
 
@@ -51,7 +48,6 @@ router.get('/settings', bundleLocales([
 	"alerts.deletedSettings"
 ]), function (req, res, next) {
 	res.render('settings', {
-		locale: res.locals.locale,
 		allLocales: availableLocales()
 	});
 });

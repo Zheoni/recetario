@@ -45,7 +45,7 @@ This will start the server. By default it will listen on port 3000, it can be ch
 ### Environment variables
 
 - `PORT` port the HTTP server will listen to. *Default: 3000*
-- `DEFAULT_LOCALE` default language of the website. This can be any of the file names (without the extension) in the locales folder. *Default: es*
+- `DEFAULT_LOCALE` default language of the website. This can be any of the file names (without the extension) in the locales folder. *Default: en*
 - `DATABASE_NAME` name of the database file. *Default: recipes.db*
 - `DATABASE_DIR` path to the database directory where the database file is stored. *Default: .*
 - `DEBUG` used to show debug messages. By default no messages are shown. To show some, I would set it to `recetario:*`. More on this [here](https://github.com/visionmedia/debug).

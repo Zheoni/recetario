@@ -2,7 +2,7 @@
 <html lang="<%= locale.locale %>">
 
 <head>
-  <%- include("templates/head-template"); %>
+  <%- include("elements/head"); %>
   <link rel="stylesheet" href="/css/create.css">
   <script defer src="/vendor/Sortable.min.js"></script>
   <script defer src="/js/recipe_form.js"></script>
@@ -12,7 +12,7 @@
 
 <body>
 
-  <%- include("templates/navbar-template"); %>
+  <%- include("elements/navbar"); %>
 
   <main>
     <h1><%= locale.recipeForm.editTitle %> <%= recipe.name %></h1>
@@ -184,7 +184,7 @@
     </form>
   </main>
 
-  <%- include("templates/footer-template"); %>
+  <%- include("elements/footer"); %>
   
   <script>
     document.getElementById("type").selectedIndex = <%= recipe.type || 0 %>;

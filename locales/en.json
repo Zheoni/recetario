@@ -103,7 +103,8 @@
 		"storedDataLabel": "Stored data",
 		"storedDataExplanation": "Recetario stores data in your browser for settings like the ones on this form, and to avoid downloading the same data many times. It is recommended to not delete it, but you can do it here.",
 		"deleteSettings": "Delete settings",
-		"bestFitCheckboxLabel": "Best fit"
+		"bestFitCheckboxLabel": "Best fit",
+		"autoLanguageOption": "Auto"
 	},
 	"alerts": {
 		"recipeCreated": "Recipe created successfully.",

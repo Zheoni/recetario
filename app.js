@@ -11,7 +11,7 @@ initDB(databasePath);
 debug("Connected to database.");
 
 const { loadQueriesFrom } = require("./queryLoader");
-const { getLocale, loadLoacales } = require("./localeLoader.js");
+const { getLocale, loadLoacales, availableLocales } = require("./localeLoader.js");
 
 let amount;
 amount = loadQueriesFrom("./queries", { recursive: true });
@@ -39,16 +39,24 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.locals.locale = process.env.DEFAULT_LOCALE ?? "en";
+app.locals.availableLocales = availableLocales().map((loc) => loc.code);
 app.use(function(req, res, next) {
-  let locale = process.env.DEFAULT_LOCALE ?? "es";
-  if (req.cookies["locale"]) {
-    if (["es", "en"].includes(req.cookies["locale"])) {
+  let locale = req.acceptsLanguages(app.locals.availableLocales);
+  let cookieLocale = req.cookies["locale"];
+  if (cookieLocale) {
+    if (app.locals.availableLocales.includes(req.cookies["locale"])) {
       locale = req.cookies["locale"];
+    } else if (cookieLocale === "_default") {
+      locale = app.locals.locale;
     } else {
+      locale = false;
       res.clearCookie("locale");
     }
+  } else if (locale === false) {
+    locale = app.locals.locale
   }
-
+  console.log(cookieLocale, locale);
   res.locals.locale = getLocale(locale);
   return next();
 });
