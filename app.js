@@ -5,13 +5,13 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const debug = require("debug")("recetario:app");
 
-const { initDB, closeDB } = require("./db");
+const { initDB, closeDB } = require("./utils/db.js");
 const databasePath = path.join(process.env.DATABASE_DIR ?? ".", process.env.DATABASE_NAME ?? "recipes.db");
 initDB(databasePath);
 debug("Connected to database.");
 
-const { loadQueriesFrom } = require("./queryLoader");
-const { getLocale, loadLoacales, availableLocales } = require("./localeLoader.js");
+const { loadQueriesFrom } = require("./utils/queryLoader.js");
+const { getLocale, loadLoacales, availableLocales } = require("./utils/localeLoader.js");
 
 let amount;
 amount = loadQueriesFrom("./queries", { recursive: true });
@@ -56,7 +56,6 @@ app.use(function(req, res, next) {
   } else if (locale === false) {
     locale = app.locals.locale
   }
-  console.log(cookieLocale, locale);
   res.locals.locale = getLocale(locale);
   return next();
 });

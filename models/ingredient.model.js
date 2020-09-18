@@ -1,4 +1,4 @@
-const q = require("../queryLoader.js").getQueries();
+const q = require("../utils/queryLoader.js").getQueries();
 
 class Ingredient {
   constructor(data) {

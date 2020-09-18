@@ -1,5 +1,5 @@
 const { validationResult } = require("express-validator");
-const { Recipe } = require("./models/recipe.model.js"); 
+const { Recipe } = require("../models/recipe.model.js"); 
 
 function validate(validations) {
 	return async (req, res, next) => {

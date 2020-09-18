@@ -1,8 +1,8 @@
 const { body } = require("express-validator");
 const fs = require("fs");
 
-const db = require("../db.js").getDB();
-const q = require("../queryLoader.js").getQueries();
+const db = require("../utils/db.js").getDB();
+const q = require("../utils/queryLoader.js").getQueries();
 
 const { Step } = require("./step.model.js");
 const { Ingredient } = require("./ingredient.model.js");

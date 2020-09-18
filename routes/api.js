@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const { Recipe, JSONValidations } = require("../models/recipe.model.js");
-const { validate, parseRecipeId } = require("../utils.js"); 
+const { validate, parseRecipeId } = require("../utils/utils.js"); 
 const { Tag } = require('../models/tag.model.js');
 const { Ingredient } = require('../models/ingredient.model.js');
 const { buildGraph, isValidCache, findUnit, getAllUnits } = require('../models/unitConversions.js');

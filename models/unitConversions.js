@@ -1,4 +1,4 @@
-const q = require("../queryLoader.js").getQueries().conversions;
+const q = require("../utils/queryLoader.js").getQueries().conversions;
 
 
 function buildGraph() {

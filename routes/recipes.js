@@ -6,7 +6,7 @@ const upload = multer({ dest: 'public/recipes/images' });
 
 const { Recipe, bodyValidations } = require('../models/recipe.model.js');
 const { Step } = require('../models/step.model.js');
-const { bundleLocales, parseRecipeId, validate } = require("../utils.js");
+const { bundleLocales, parseRecipeId, validate } = require("../utils/utils.js");
 
 /* GET Recipe */
 router.get('/:id', parseRecipeId, bundleLocales([
