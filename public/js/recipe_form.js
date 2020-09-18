@@ -450,8 +450,8 @@ const jsonFilesElem = document.getElementById("JSONFiles"),
   div2 = document.getElementById("modal-upload-results"),
   resultsListElement = document.getElementById("results-list"),
   resetModalButton = document.getElementById("resetModalButton"),
-  templateSuccess = document.querySelector("#templateResults .correct"),
-  templateError = document.querySelector("#templateResults .error");
+  templateSuccess = document.getElementById("correctResultTemplate"),
+  templateError = document.getElementById("errorResultTemplate");
 
 if (jsonFilesElem) {
   jsonFilesElem.addEventListener("change", handleFiles);
@@ -483,10 +483,10 @@ if (jsonFilesElem) {
       const [correct, responseData] = await uploadJSON(fileData);
       let element;
       if (correct) {
-        element = templateSuccess.cloneNode(true);
+        element = templateSuccess.content.cloneNode(true);
         element.querySelector("a").href = `/recipe/${responseData.id}`;
       } else {
-        element = templateError.cloneNode(true);
+        element = templateError.content.cloneNode(true);
       }
       element.querySelector("span[name=fileName]").textContent = file.name;
       resultsListElement.appendChild(element);

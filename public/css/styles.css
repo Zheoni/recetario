@@ -386,7 +386,7 @@ body {
   text-decoration: none;
 }
 
-.modal .modal-card .close.disabled {
+.modal[data-prevent-closing="true"] .modal-card .close {
   color: #ddd;
   cursor: not-allowed;
 }

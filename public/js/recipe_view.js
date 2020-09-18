@@ -10,22 +10,19 @@ for (let row of ingredient_rows) {
 
 // Emojis background if needed
 
-const minWidth = 1924; // 4 px of margin
 const emojiOptions = {
   initialy: 20
 }
 
 const imageContainer = document.querySelector(".image-container");
-const image = document.querySelector(".recipe-image");
 
 function useEmojiBackground() {
   window.removeEventListener("load", useEmojiBackground);
-  const seed = window.location.toString()
+  const seed = window.location.href.split(/[?#]/)[0]
     .split('')
     .map(s => s.charCodeAt(0))
     .reduce((acc, curr) => acc + curr);
   const charset = getRandomFoodEmojis(14, seed);
-console.log(charset)
   applyUnicodeBackground(imageContainer, charset, emojiOptions);
 
   let doit;

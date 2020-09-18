@@ -1,5 +1,4 @@
 const emojiImages = [];
-const notLoadedImages = [];
 const distinctImages = 3;
 let usedImages = 0;
 let imageIndex = 0;

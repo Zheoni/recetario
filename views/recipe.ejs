@@ -36,7 +36,9 @@
           <p class="author"><%= recipe.author %></p>
           <% } %>
           <p class="date"><%= locale.recipeView.publicationDate %>
-            <span class="date-to-format"><%= recipe.CREATED_AT %></span>
+            <time datetime="<%= recipe.CREATED_AT %>" class="date-to-format">
+              <%= recipe.CREATED_AT %>
+            </time>
             <% if (recipe.CREATED_AT !== recipe.UPDATED_AT) { %>
             (<%= locale.recipeView.edited %>)
             <% } %>

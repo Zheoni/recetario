@@ -149,21 +149,16 @@ function showModal(modal) {
 }
 
 function hideModal(modal) {
-  if (modal.getAttribute("prevent-closing") !== "true") {
+  if (modal.dataset.preventClosing !== "true") {
     modal.style.display = "none";
   }
 }
 
 function canCloseModal(modal, value) {
-  modal.setAttribute("prevent-closing", !value);
+  modal.dataset.preventClosing = !value;
   const closeElements = modal.querySelectorAll(".close");
   closeElements.forEach(element => {
     element.disabled = !value;
-    if (value) {
-      element.classList.remove("disabled");
-    } else {
-      element.classList.add("disabled");
-    }
   });
 }
 

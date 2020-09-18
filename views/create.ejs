@@ -26,7 +26,7 @@
           </button>
         </div>
         <div id="modal-upload-results" style="display:none">
-          <div class="dummy" id="templateResults">
+          <template id="correctResultTemplate">
             <li class="correct">
               <span>
                 <i class="bx bx-check icon"></i>
@@ -37,6 +37,8 @@
                 <i class="bx bxs-chevron-right"></i>
               </a>
             </li>
+          </template>
+          <template id="errorResultTemplate">
             <li class="error">
               <span>
                 <i class="bx bx-x"></i>
@@ -46,8 +48,7 @@
                   <%= locale.recipeForm.errorMessage %>
               </span>
             </li>
-          </div>
-
+          </template>
           <ul id="results-list"></ul>
 
           <button type="button" class="button button-centered" id="resetModalButton" hidden>
