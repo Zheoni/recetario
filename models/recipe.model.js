@@ -1,4 +1,4 @@
-const { body } = require("express-validator");
+const { body, oneOf } = require("express-validator");
 const fs = require("fs");
 
 const db = require("../utils/db.js").getDB();
@@ -39,54 +39,20 @@ class Recipe {
     }
   }
 
-  static fromFormInput(body, id = undefined, imageName = undefined) {
-    let recipe = new Recipe({
-      id: id,
-      name: body.name,
-      author: body.author,
-      description: body.description,
-      image: imageName,
-      type: body.type,
-      cookingTime: body.cookingTime,
-      servings: body.servings,
-      CREATED_AT: undefined,
-      UPDATED_AT: undefined
-    });
-
-    recipe.ingredients = body.ingredient.map((igr, i) => new Ingredient({
-      recipe: recipe.id,
-      name: igr,
-      amount: body.amount[i],
-      unit: body.unit[i]
-    }));
-
-    recipe.steps = body.step.map((step, i) => new Step({
-      recipe: recipe.id,
-      content: step,
-      type: body.step_type[i]
-    }));
-
-    recipe.tags = body.tags.map(tag => new Tag({
-      recipe: recipe.id,
-      name: tag
-    }));
-
-    return recipe;
-  }
-
-  static fromJSONData(data) {
-    data.id = undefined;
+  static fromJSONData(data, id = undefined, image = undefined) {
+    data.id = id;
+    data.image = image;
     let recipe = new Recipe(data);
     recipe.ingredients = recipe.ingredients.map(igr => {
-      igr.recipe = undefined;
+      igr.recipe = id;
       return new Ingredient(igr);
     });
     recipe.steps = recipe.steps.map(step => {
-      step.recipe = undefined;
+      step.recipe = id;
       return new Step(step);
     });
     recipe.tags = recipe.tags.map(tag => {
-      tag.recipe = undefined;
+      tag.recipe = id;
       return new Tag(tag);
     });
     return recipe;
@@ -279,115 +245,6 @@ function emptyStringToNullSanitizer(value) {
   return value.length > 0 ? value : null;
 }
 
-const bodyValidations = [
-  body("name")
-    .notEmpty()
-    .isLength({ max: 128 })
-    .trim(),
-  body("author")
-    .customSanitizer(emptyStringToNullSanitizer)
-    .optional({ nullable: true })
-    .isLength({ max: 64 })
-    .trim(),
-  body("description")
-    .notEmpty()
-    .isLength({ max: 256 })
-    .trim(),
-  body("tags")
-    .optional({ checkFalsy: true })
-    .customSanitizer(tags => tags
-      .split(",")
-      .map(tag => tag.trim())
-    )
-    .custom(tags => tags.length <= 5)
-    .custom(tags => tags.every(tag => [
-      tag.length > 0,
-      tag.length <= 20,
-      tag.match(/^[0-9A-Za-zñáéíóúäëïöüàèìòùâêîôû\-\+]+$/)
-    ].every(val => val)))
-    .customSanitizer(tags => tags),
-  body("tags")
-    .toArray()
-    .customSanitizer(tags => tags.filter(tag => tag.length > 0)),
-  body("ingredient")
-    .isArray({ min: 1 }),
-  body("ingredient.*")
-    .notEmpty()
-    .trim(),
-  body("amount")
-    .isArray({ min: 1 })
-    .custom((amounts, { req }) => amounts.length === req.body.ingredient.length),
-  body("amount.*")
-    .optional({ checkFalsy: true })
-    .isNumeric()
-    .toFloat(),
-  body("unit")
-    .isArray({ min: 1 })
-    .custom((units, { req }) => units.length === req.body.ingredient.length),
-  body("unit.*")
-    .optional({ checkFalsy: true })
-    .trim()
-    .custom((unit, { req, path }) => {
-      unit = unit + "";
-      if (unit.length > 0) {
-        const match = path.match(/unit\[(\d+)\]/);
-        if (!match || match.length < 1) return false;
-
-        const index = Number(match[1]);
-        if (index < 0 || req.body.amount.length < index) return false;
-
-        const amount = Number(req.body.amount[index]);
-        if (amount <= 0 || amount === null || amount === undefined) return false;
-      }
-
-      return true;
-    }),
-  body("step")
-    .isArray({ min: 1 }),
-  body("step.*")
-    .notEmpty()
-    .trim(),
-  body("step_type")
-    .isArray({ min: 1 })
-    .custom((types, { req }) => types.length === req.body.step.length)
-    .custom(types => {
-      let foundOne = false;
-      let emptySection = false;
-      for (let i = 0; i < types.length; ++i) {
-        const type = types[i];
-
-        if (type === "step") foundOne = true;
-
-        if (emptySection) {
-          if (type === "section") return false;
-
-          if (type === "step") emptySection = false;
-        } else if (type === "section") {
-          emptySection = true;
-        }
-      }
-
-      return foundOne && !emptySection
-    }).withMessage("Bad step_type sequence"),
-  body("step_type.*")
-    .isIn(Step.stepTypes.map(type => type.name)),
-  body("cookingTime")
-    .customSanitizer(emptyStringToNullSanitizer)
-    .optional({ nullable: true })
-    .isInt({ min: 1 })
-    .toInt(),
-  body("servings")
-    .customSanitizer(emptyStringToNullSanitizer)
-    .optional({ nullable: true })
-    .isInt({ min: 1 })
-    .toInt(),
-  body("type")
-    .isIn(Recipe.recipeTypes.map(type => type.name)),
-  body("delete_image")
-    .optional()
-    .isBoolean()
-    .toBoolean()
-];
 
 const JSONValidations = [
   body("name")
@@ -406,14 +263,25 @@ const JSONValidations = [
   body("image")
     .optional({ nullable: true })
     .matches(/^[\w\d]+(.[\w\d]+)?$/),
-  body("type")
-    .isInt({ min: 0, max: Recipe.recipeTypes.length - 1 }),
+  oneOf([
+    body("type")
+      .isInt({ min: 0, max: Recipe.recipeTypes.length - 1 })
+      .toInt()
+      .withMessage("Type is not int"),
+    body("type")
+      .isIn(Recipe.recipeTypes.map(t => t.name))
+      .withMessage("Type is not in recipeTypes")
+  ]),
   body("cookingTime")
+    .customSanitizer(emptyStringToNullSanitizer)
     .optional({ nullable: true })
-    .isInt({ min: 1 }),
+    .isInt({ min: 1 })
+    .toInt(),
   body("servings")
+    .customSanitizer(emptyStringToNullSanitizer)
     .optional({ nullable: true })
-    .isInt({ min: 1 }),
+    .isInt({ min: 1 })
+    .toInt(),
   body(["CREATED_AT", "UPDATED_AT"])
     .customSanitizer(emptyStringToNullSanitizer)
     .optional({ nullable: true })
@@ -430,46 +298,58 @@ const JSONValidations = [
       }
     }),
   body("ingredients.*.name")
-    .notEmpty(),
+    .notEmpty()
+    .trim(),
   body("ingredients.*.amount")
+    .customSanitizer(emptyStringToNullSanitizer)
     .optional({ nullable: true })
-    .isFloat({ min: 0 }),
+    .isFloat({ min: 0 })
+    .toFloat(),
   body("ingredients.*.unit")
-    .isString(),
+    .isString()
+    .trim(),
   body("steps")
     .isArray({ min: 1 })
     .custom(steps => {
       let foundOne = false;
       let emptySection = false;
       for (let i = 0; i < steps.length; ++i) {
-        const type = steps[i]?.type;
+        let type = steps[i]?.type;      
 
-        if (type === 0) foundOne = true;
+        if (type === 0 || type === "step") foundOne = true;
 
         if (emptySection) {
-          if (type === 1) return false;
+          if (type === 1 || type === "section") return false;
 
-          if (type === 0) emptySection = false;
-        } else if (type === 1) {
+          if (type === 0 || type === "step") emptySection = false;
+        } else if (type === 1 || type === "section") {
           emptySection = true;
         }
       }
 
       return foundOne && !emptySection
     }).withMessage("Bad step_type sequence"),
-  body("steps.*.type")
-    .isInt({ min: 0, max: Recipe.recipeTypes.length - 1 }),
+  oneOf([
+    body("steps.*.type")
+      .isIn(Step.stepTypes.map(t => t.name)),
+    body("steps.*.type")
+      .isInt({ min: 0, max: Step.stepTypes.length - 1 })
+      .toInt()
+  ]),
   body("steps.*.content")
     .notEmpty(),
   body("tags")
     .isArray({ max: 5 }),
   body("tags.*.name")
     .isLength({ min: 1, max: 20 })
-    .matches(/^[0-9A-Za-zñáéíóúäëïöüàèìòùâêîôû\-\+]+$/)
+    .matches(/^[0-9A-Za-zñáéíóúäëïöüàèìòùâêîôû\-\+]+$/),
+  body("delete_image")
+    .optional()
+    .isBoolean()
+    .toBoolean()
 ];
 
 module.exports = {
   Recipe,
-  bodyValidations,
   JSONValidations
 };

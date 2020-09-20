@@ -93,10 +93,11 @@ router.get('/recipe/:id', parseRecipeId, function (req, res, next) {
   res.json(recipe);
 });
 
-router.post('/recipe', validate(JSONValidations), function (req, res, next) {
+router.post('/recipe', JSONValidations, validate, function (req, res, next) {
   const recipe = Recipe.fromJSONData(req.body);
   const recipeID = recipe.insert();
-  res.redirect("/api/recipe/" + recipeID);
+  const newRecipe = Recipe.getById(recipeID, { all: true });
+  res.json(newRecipe);
 });
 
 module.exports = router;
