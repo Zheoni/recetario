@@ -44,8 +44,17 @@ function reinitializeDatabase() {
   db.exec(data);
 }
 
-
+const { Tag } = require("../models/tag.model.js");
+const { Step } = require("../models/step.model.js");
 const { Ingredient } = require("../models/ingredient.model.js");
+const { Recipe } = require("../models/recipe.model.js");
+
+try {
+  fs.mkdirSync(path.join(__dirname, "..", "public", Recipe.baseImagePath), { recursive: true });
+} catch (error) {
+  console.error(error);
+  process.exit(1);
+}
 
 describe('ingredient', () => {
   const ingredients = Ingredient.loadIngredients(1);
@@ -93,8 +102,6 @@ describe('ingredient', () => {
   });
 });
 
-const { Step } = require("../models/step.model.js");
-
 describe('step', () => {
   const steps = Step.loadSteps(1);
   describe('step constructors', () => {
@@ -131,8 +138,6 @@ describe('step', () => {
     });
   });
 });
-
-const { Tag } = require("../models/tag.model.js");
 
 describe('tag', () => {
   const tags = Tag.loadTags(1);
@@ -177,9 +182,6 @@ describe('tag', () => {
     });
   });
 });
-
-
-const { Recipe } = require("../models/recipe.model.js");
 
 describe('recipe', () => {
   const recipe = Recipe.getById(1, { all: true });
