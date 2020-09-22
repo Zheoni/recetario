@@ -4,7 +4,8 @@ const router = express.Router();
 const { Recipe } = require("../models/recipe.model.js");
 const { Step } = require("../models/step.model.js");
 const { availableLocales } = require("../utils/localeLoader.js");
-const { bundleLocales } = require("../utils/utils.js");
+const { bundleLocales, validate } = require("../utils/utils.js");
+const { query } = require("express-validator");
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
@@ -30,7 +31,9 @@ router.get('/create', bundleLocales([
 
 router.get('/search', bundleLocales([
 	"alerts.noRecipeFound"
-]),function (req, res, next) {
+]), [
+	query("name").optional().isString()
+], validate, function (req, res, next) {
 	let results = null;
 	if (req.query.name) {
 		results = Recipe.searchByName(req.query.name, {

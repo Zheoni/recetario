@@ -3,49 +3,46 @@ const router = express.Router();
 
 const { Recipe, JSONValidations } = require("../models/recipe.model.js");
 const { validate, parseRecipeId } = require("../utils/utils.js"); 
+const { query, body } = require("express-validator");
 const { Tag } = require('../models/tag.model.js');
 const { Ingredient } = require('../models/ingredient.model.js');
 const { buildGraph, isValidCache, findUnit, getAllUnits } = require('../models/unitConversions.js');
 
-router.get('/autocomplete/ingredient', function (req, res, next) {
+router.get('/autocomplete/ingredient', [
+  body("name").isString(),
+  body("limit").optional().isInt({ min: 0 }).toInt()
+], validate, function (req, res, next) {
   try {
     const { name, limit } = req.query;
-    if (name) {
-      const ingredients = Ingredient.searchByName(name, limit);
-      res.json({ ingredients });
-    } else {
-      res.status(400).json({ message: "No name given" });
-    }
+    const ingredients = Ingredient.searchByName(name, limit);
+    res.json({ ingredients });
   } catch(err) {
     res.status(500).json({ message: "Could not process request", error: err });
   }
 });
 
-router.get('/autocomplete/tag', function (req, res, next) {
+router.get('/autocomplete/tag', [
+  body("name").isString(),
+  body("limit").optional().isInt({ min: 0 }).toInt()
+], validate, function (req, res, next) {
   try {
     const { name, limit } = req.query;
-    if (name) {
-      const tags = Tag.searchByName(name, limit);
-      res.json({ tags });
-    } else {
-      res.status(400).json({ message: "No name given" });
-    }
+    const tags = Tag.searchByName(name, limit);
+    res.json({ tags });
   } catch(err) {
     res.status(500).json({ message: "Could not process request", error: err })
   }
 });
 
-router.get('/conversions/find-unit', function (req, res, next) {
+router.get('/conversions/find-unit', [
+  body("name").isString()
+], validate, function (req, res, next) {
   let { name } = req.query;
-  if (name) {
-    const unit = findUnit(name);
-    if (unit) {
-      res.json(unit);
-    } else {
-      res.status(404).json({ message: "Cannot match with any unit" });
-    }
+  const unit = findUnit(name);
+  if (unit) {
+    res.json(unit);
   } else {
-    res.status(400).json({ message: "Need a name to find the unit" });
+    res.status(404).json({ message: "Cannot match with any unit" });
   }
 });
 
@@ -81,7 +78,10 @@ router.get('/conversions/units', function (req, res, next) {
   }
 });
 
-router.get('/conversions/up-to-date', function (req, res, next) {
+router.get('/conversions/up-to-date', [
+  query("date").isInt({ min: 1 }),
+  query("name").isString().isAlpha().isAscii()
+], validate, function (req, res, next) {
   const { name, date } = req.query;
 
   res.set('Cache-Control', 'no-store')
