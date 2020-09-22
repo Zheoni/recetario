@@ -1,18 +1,18 @@
-const assert = require('assert')
-const Database = require('better-sqlite3')
+const assert = require('assert');
+const Database = require('better-sqlite3');
 const debug = require("debug")("recetario:db");
 
-let _db;
+let _db = null;
 
-function initDB(databaseName, verbose = false) {
+function initDB(databaseName, options) {
   if (_db) {
     debug("WARNING: Tried to initialize DB again!")
   } else {
-    if (verbose) {
-      _db = new Database(databaseName, { verbose: console.log, fileMustExist: true });
-    } else {
-      _db = new Database(databaseName, { fileMustExist: true });
-    }
+    options = Object.assign({}, {
+      fileMustExist: true
+    }, options);
+    _db = new Database(databaseName, options);
+    _db.pragma("foreign_keys = 1");
   }
 
   debug("Initialized database, new status: %o", _db.open)
@@ -29,6 +29,8 @@ function closeDB() {
   if (_db) {
     try {
       _db.close();
+      assert.ok(!_db.open);
+      _db = null;
       debug("Closed database");
       if (!debug.enabled) console.log("Closed database");
     } catch (err) {

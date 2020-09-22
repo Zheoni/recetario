@@ -1,11 +1,23 @@
 const q = require("../utils/queryLoader.js").getQueries();
 
 class Tag {
+
+  /**
+   * 
+   * @param {Object} data Data of the tag
+   * @param {string} data.name Tag name
+   * @param {number} data.recipe ID of the recipe
+   */
   constructor(data) {
     this.name = data.name;
     this.recipe = data.recipe;
   }
 
+  /**
+   * Load the tags for a recipe
+   * @param {number} recipeId ID of the recipe
+   * @returns {Tag[]} Tags
+   */
   static loadTags(recipeId) {
     return q["sRecipeTags"]
       .all(recipeId)
@@ -23,7 +35,7 @@ class Tag {
 
   static insertMany(tags, recipeId = undefined) {
     for (const tag of tags) {
-      if (!tag.recipe) tag.recipe = recipeId;
+      if (recipeId !== undefined) tag.recipe = recipeId;
       tag.insert();
     }
   }

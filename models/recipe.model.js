@@ -9,9 +9,31 @@ const { Ingredient } = require("./ingredient.model.js");
 const { Tag } = require("./tag.model.js");
 
 class Recipe {
+
+  /**
+   * @type {{name: string}[]}
+   */
   static recipeTypes = q["sRecipeTypes"].all();
   static baseImagePath = "/recipes/images/";
 
+  /**
+   * Creates a recipe in memory. Nothing is validated.
+   * 
+   * @param {Object} data Object with the recipe properties
+   * @param {number?} data.id ID. Should be an unique integer greater than 0. `undefined` or `null` if it's a new recipe.
+   * @param {string} data.name Name
+   * @param {string} data.author Author
+   * @param {string} data.description Short description
+   * @param {string} data.image Image file name
+   * @param {(number|string)} data.type Type of the recipe. If string, will be converted to corresponding number.
+   * @param {number} data.cookingTime Cooking time in seconds
+   * @param {number} data.servings Number of servings the recipe is for
+   * @param {string?} data.CREATED_AT Time when the recipe was created in the database.
+   * @param {string?} data.UPDATED_AT Last time when the recipe was edited in the database.
+   * @param {Ingredient[]?} data.ingredients Ingredients (instances) of the recipe.
+   * @param {Step[]?} data.steps Steps (instances) of the recipe.
+   * @param {Tag[]?} data.tags Tags (instaces) of the recipe.
+   */
   constructor(data) {
     this.id = data.id;
     this.name = data.name;
@@ -31,14 +53,26 @@ class Recipe {
     this.tags = data.tags;
   }
 
-  get imageURL() {
-    if (this.image) {
-      return Recipe.baseImagePath + (this.image || process.env.DEFAULT_IMAGE);
-    } else {
-      return "";
-    }
-  }
-
+  /**
+   * 
+   * @param {Object} data Object with the recipe data
+   * @param {string} data.name Name
+   * @param {string} data.author Author
+   * @param {string} data.description Short description
+   * @param {(number|string)} data.type Type of the recipe. If string, will be converted to corresponding number.
+   * @param {number} data.cookingTime Cooking time in seconds
+   * @param {number} data.servings Number of servings the recipe is for
+   * @param {string?} data.CREATED_AT Time when the recipe was created in the database.
+   * @param {string?} data.UPDATED_AT Last time when the recipe was edited in the database.
+   * @param {Ingredient[]?} data.ingredients Ingredients of the recipe. Not Ingredient instances.
+   * @param {Step[]?} data.steps Steps of the recipe. Not Step instances.
+   * @param {Tag[]?} data.tags Tags of the recipe. Not Tag instances.
+   * 
+   * @param {number} id ID. Should be an unique integer greater than 0. `undefined` or `null` if it's a new recipe.
+   * @param {string} image Image file name.
+   * 
+   * @returns {Recipe} The new recipe.
+   */
   static fromJSONData(data, id = undefined, image = undefined) {
     data.id = id;
     data.image = image;
@@ -58,10 +92,42 @@ class Recipe {
     return recipe;
   }
 
+  /**
+   * @returns {string} The path to the recipe image
+   */
+  get imageURL() {
+    if (this.image) {
+      return Recipe.baseImagePath + (this.image || process.env.DEFAULT_IMAGE);
+    } else {
+      return "";
+    }
+  }
+
+  get typeString() {
+    if (this.type >= 0 && this.type <= Recipe.recipeTypes.length)
+      return Recipe.recipeTypes[this.type].name;
+    else
+      throw new Error("Bad recipe type");
+  }
+
+  set typeString(type) {
+    const typeNumber = Recipe.recipeTypes.map(t => t.name).indexOf(type);
+    if (typeNumber < 0)  {
+      throw new Error("The type does not exist");
+    }
+    this.type = typeNumber;
+  }
+
+  /**
+   * Generates the system tags for the recipe.
+   * @param {Object} locale Locale object.
+   * 
+   * @returns {{name: string, classes: string[]}[]} System tags
+   */
   systemTags(locale) {
     let tags = [];
     if (this.type !== 0) {
-      const name = locale.recipeType[Recipe.recipeTypes[this.type].name];
+      const name = locale.recipeType[Recipe.recipeTypes[this.type].name] ?? Recipe.recipeTypes[this.type].name;
       const classes = ["type-tag", `recipe-${Recipe.recipeTypes[this.type].name}`];
       tags.push({ name, classes });
     }
@@ -91,10 +157,21 @@ class Recipe {
     return tags;
   }
 
+  /**
+   * Checks if a recipe exists in the database based on the ID.
+   * @param {number} recipeId ID of the recipe.
+   * @returns {boolean} True if the recipe exist, false otherwise.
+   */
   static checkIfExists(recipeId) {
     return q["sExistRecipe"].pluck().get(recipeId) === 1;
   }
 
+  /**
+   * Returns all the recipes from the database.
+   * Only the recipe, not the sub-objects.
+   * 
+   * @returns {Recipe[]} All the recipes.
+   */
   static getAll() {
     const recipes = q["sAllRecipes"]
       .all()
@@ -103,6 +180,17 @@ class Recipe {
     return recipes;
   }
 
+  /**
+   * Gets a recipe based on the ID.
+   * @param {number} id ID of the recipe
+   * @param {{
+   *  loadIngredients: boolean,
+   *  loadTags: boolean,
+   *  loadSteps: boolean,
+   *  all: boolean
+   * }} options Selects the inner sub-objects to fetch.
+   * @returns {Recipe} The recipe.
+   */
   static getById(id, options = {}) {
     const row = q["sRecipe"].get(id);
     const recipe = new Recipe(row);
@@ -116,18 +204,48 @@ class Recipe {
     options = Object.assign({}, defaults, options);
 
     if (options.loadIngredients || options.all) {
-      recipe.ingredients = Ingredient.loadIngredients(recipe.id);
+      recipe.loadIngredients();
     }
     if (options.loadTags || options.all) {
-      recipe.tags = Tag.loadTags(recipe.id);
+      recipe.loadTags();
     }
     if (options.loadSteps || options.all) {
-      recipe.steps = Step.loadSteps(recipe.id);
+      recipe.loadSteps();
     }
 
     return recipe;
   }
 
+  /**
+   * Load (or reloads) the ingredients for the recipe.
+   * @returns {Ingredient[]} this.ingredients
+   */
+  loadIngredients() {
+    this.ingredients = Ingredient.loadIngredients(this.id);
+    return this.ingredients;
+  }
+
+  /**
+   * Load (or reloads) the tags for the recipe. 
+   * @returns {Tag[]} this.tags
+   */
+  loadTags() {
+    this.tags = Tag.loadTags(this.id);
+    return this.tags;
+  }
+
+  /**
+   * Load (or reloads) the steps for the recipe. 
+   * @returns {Step[]} this.steps
+   */
+  loadSteps() {
+    this.steps = Step.loadSteps(this.id);
+    return this.steps;
+  }
+
+  /**
+   * Inserts the recipe into the database. ID is overwritten by a new one.
+   */
   insert() {
     const info = q["iRecipe"].run({
       name: this.name,
@@ -148,16 +266,12 @@ class Recipe {
     return this.id;
   }
 
+  /**
+   * Updates the recipe in the database.
+   * @param {boolean} deleteImage If `true` deletes the image.
+   */
   update(deleteImage = false) {
-    let update_object = {
-      id: this.id,
-      name: this.name,
-      author: this.author,
-      description: this.description,
-      type: this.type,
-      cookingTime: this.cookingTime,
-      servings: this.servings
-    };
+    let update_object = {...this};
 
     if (!this.image && !deleteImage) {
       // If image does not change
@@ -200,19 +314,21 @@ class Recipe {
     update_steps(this);
   }
 
-  static deleteById(id, imageName = undefined) {
+  /**
+   * Deletes a recipe from the database and its image.
+   * @param {number} id ID of the recipe
+   * @param {string} imageName Name of the image
+   */
+  static async deleteById(id, imageName = undefined) {
     // Delete the image
-    imageName = imageName || q["sRecipeImage"].pluck().get(id)
+    imageName = imageName || q["sRecipeImage"].pluck().get(id);
+
+    let deleteImagePromise;
+    let path;
 
     if (imageName && imageName !== "noimage.jpeg") {
-      const path = "./public" + Recipe.baseImagePath + imageName;
-      fs.unlink(path, (err) => {
-        if (err) {
-          console.error(`Could not delete image for recipe ${id}, path was: \n\t"${path}".`)
-        } else {
-          console.log(`File: "${path}" was deleted.`);
-        }
-      });
+      path = "./public" + Recipe.baseImagePath + imageName;
+      deleteImagePromise = fs.promises.unlink(path);
     }
 
     // Delete the recipe
@@ -223,8 +339,29 @@ class Recipe {
     Tag.deleteUnusedTags();
 
     console.log("Deleted recipe " + id);
+    await deleteImagePromise.then((err) => {
+      if (err) {
+        console.error(`Could not delete image for recipe ${id}, path was: \n\t"${path}".`)
+      } else {
+        console.log(`File: "${path}" was deleted.`);
+      }
+    });
   }
 
+  async delete() {
+    await Recipe.deleteById(this.id, this.image);
+  }
+
+  /**
+   * Search for recipes searching if a given string is in their name.
+   * 
+   * @param {string} str Name
+   * @param {Object} options Options for the search
+   * @param {boolean} options.includeTags Include the recipe tags
+   * @param {number} options.limit Limit of recipes to find. Defautls to 50.
+   * 
+   * @returns {{id: number, name: string, tags: Tags[]}[]} Search results.
+   */
   static searchByName(str, { includeTags = false, limit = 50 } = {}) {
     const results = q.search["sRecipeByName"].all({
       name: `%${str}%`,
@@ -244,7 +381,6 @@ class Recipe {
 function emptyStringToNullSanitizer(value) {
   return value.length > 0 ? value : null;
 }
-
 
 const JSONValidations = [
   body("name")

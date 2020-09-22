@@ -8,7 +8,8 @@
     "start": "node ./bin/www",
     "initDatabase": "node ./models/initDatabase.js",
     "forceInitDatabase": "node ./models/initDatabase.js --force",
-    "addString": "node ./addLocaleString.js"
+    "addString": "node ./addLocaleString.js",
+    "test": "jest"
   },
   "dependencies": {
     "better-sqlite3": "^7.1.0",
@@ -22,5 +23,8 @@
     "http-errors": "^1.7.3",
     "morgan": "^1.10.0",
     "multer": "^1.4.2"
+  },
+  "devDependencies": {
+    "jest": "^26.4.2"
   }
 }

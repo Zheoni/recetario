@@ -70,7 +70,6 @@ public/recipes/images/*
 public/recipes/recipes/*
 
 .DS_Store
-models/testdata.sql
 loadTestData.sh
 TODO.md
 *.pem
