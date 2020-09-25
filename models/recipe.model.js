@@ -1,4 +1,4 @@
-const { body, oneOf } = require("express-validator");
+const { body, query, oneOf } = require("express-validator");
 const fs = require("fs");
 
 const db = require("../utils/db.js").getDB();
@@ -195,23 +195,7 @@ class Recipe {
     const row = q["sRecipe"].get(id);
     const recipe = new Recipe(row);
 
-    const defaults = {
-      loadIngredients: false,
-      loadTags: false,
-      loadSteps: false,
-      all: false
-    };
-    options = Object.assign({}, defaults, options);
-
-    if (options.loadIngredients || options.all) {
-      recipe.loadIngredients();
-    }
-    if (options.loadTags || options.all) {
-      recipe.loadTags();
-    }
-    if (options.loadSteps || options.all) {
-      recipe.loadSteps();
-    }
+    recipe.loadAttributes(options);
 
     return recipe;
   }
@@ -241,6 +225,66 @@ class Recipe {
   loadSteps() {
     this.steps = Step.loadSteps(this.id);
     return this.steps;
+  }
+
+  loadAll() {
+    this.loadIngredients();
+    this.loadTags()
+    this.loadSteps()
+  }
+
+  /**
+   * 
+   * @param {{
+   *  loadIngredients: boolean,
+   *  loadTags: boolean,
+   *  loadSteps: boolean,
+   *  all: boolean
+   * }} options Selects the inner sub-objects to fetch.
+   */
+  loadAttributes(options) {
+    const defaults = {
+      loadIngredients: false,
+      loadTags: false,
+      loadSteps: false,
+      all: false
+    };
+    options = Object.assign({}, defaults, options);
+
+    if (options.all) {
+      this.loadAll()
+    } else {
+      if (options.loadIngredients) {
+        this.loadIngredients();
+      }
+      if (options.loadTags) {
+        this.loadTags();
+      }
+      if (options.loadSteps) {
+        this.loadSteps();
+      }
+    }
+  }
+
+  getSteps() {
+    if (!this.steps) {
+      this.loadSteps();
+    }
+    return this.steps;
+  }
+
+  getIngredients() {
+    if (!this.ingredients) {
+      this.loadIngredients();
+    }
+    return this.ingredients;
+  }
+
+  getTags() {
+    if (!this.tags) {
+      this.loadTags();
+    }
+    return this.tags;
   }
 
   /**
@@ -353,25 +397,117 @@ class Recipe {
   }
 
   /**
-   * Search for recipes searching if a given string is in their name.
+   * Search for recipes
    * 
-   * @param {string} str Name
-   * @param {Object} options Options for the search
-   * @param {boolean} options.includeTags Include the recipe tags
-   * @param {number} options.limit Limit of recipes to find. Defautls to 50.
+   * @param {Object} data Search data
+   * @param {string} [data.name] Check if name is in the name of the recipe
+   * @param {string[]} [data.authors] Recipes whose authors constains at least one of the given strings.
+   * @param {number[]|string[]} [data.types] Recipes that belongs to one of the given types.
+   * @param {string[][]} [data.tags] Tags groups. Union of the recipes that have the all the tags in a tag group.
+   * @param {number} [data.cookingTime] All recipes that have less or equal cooking time.
+   * @param {string[][]} [data.ingredients] Ingredient groups. Union of the recipes that have all the ingredients in a ingredient group.
    * 
-   * @returns {{id: number, name: string, tags: Tags[]}[]} Search results.
+   * @param {Object} sort Sorting of the recipes.
+   * 
+   * @param {Object} [options] Options for the search
+   * @param {number} [options.limit=50] Limit of recipes to find. Defautls to 50. If null, no limit.
+   * @param {{
+   *  attribute: "name"|"author"|"type"|"cookingTime",
+   *  order: "ASC"|"DESC"}[]
+   * } [options.sort] Sort the results.
+   * 
+   * @param {{
+    *  loadIngredients: boolean,
+    *  loadTags: boolean,
+    *  loadSteps: boolean,
+    *  all: boolean
+    * }} [options.attributes] Selects the inner sub-objects to fetch.
+   * 
+   * @returns {Recipe[]} Results
    */
-  static searchByName(str, { includeTags = false, limit = 50 } = {}) {
-    const results = q.search["sRecipeByName"].all({
-      name: `%${str}%`,
-      limit: limit
-    });
+  static search(data, options = {}) {
+    let query = "SELECT * FROM RECIPES WHERE ";
 
-    if (includeTags) {
-      for (let i = 0; i < results.length; ++i) {
-        results[i].tags = Tag.loadTags(results[i].id);
+    if (data.name) {
+      query += `name LIKE '%${data.name}%' AND `;
+    }
+
+    if (data.authors && data.authors.length > 0) {
+      query += "(";
+      for (let i = 0; i < data.authors.length; ++i) {
+        query += `author LIKE '%${data.authors[i]}%'`;
+        if (i !== data.authors.length - 1) query += " OR ";
       }
+      query += ") AND ";
+    }
+
+    if (data.types && data.types.length > 0) {
+      query += "(";
+      for (let i = 0; i < data.types.length; ++i) {
+        let type = data.types[i];
+        if (typeof type === "string") {
+          type = Recipe.recipeTypes.map(t => t.name).indexOf(type);
+        }
+
+        query += `type = ${type}`
+        if (i !== data.types.length - 1) query += " OR ";
+      }
+      query += ") AND ";
+    }
+
+    if (data.tags && data.tags.length > 0) {
+      query += "(";
+      for (let j = 0; j < data.tags.length; ++j) {
+        const tagGroup = data.tags[j];
+        if (tagGroup.length > 0) {
+          query += `(RECIPES.id IN (SELECT RT.recipe FROM RECIPE_TAGS RT INNER JOIN TAGS T ON T.id = RT.tag WHERE T.name IN ('${tagGroup.join("','")}') GROUP BY RT.recipe HAVING COUNT(*) = ${tagGroup.length}))`;
+          if (j !== data.tags.length - 1) query += " OR "
+        }
+      }
+      query += ") AND "
+    }
+
+    if (data.cookingTime) {
+      query += `cookingTime <= ${data.cookingTime} AND `
+    }
+
+    if (data.ingredients && data.ingredients.length > 0) {
+      query += "(";
+      for (let j = 0; j < data.ingredients.length; ++j) {
+        const ingredientGroup = data.ingredients[j];
+        if (ingredientGroup.length > 0) {
+          query += `(RECIPES.id IN (SELECT RI.recipe FROM RECIPE_INGREDIENTS RI INNER JOIN INGREDIENTS I ON I.id = RI.ingredient WHERE I.name IN ('${ingredientGroup.join("','")}') GROUP BY RI.recipe HAVING COUNT(*) = ${ingredientGroup.length}))`;
+          if (j !== data.tags.length - 1) query += " OR "
+        }
+      }
+      query += ") AND "
+    }
+
+    if (query.endsWith("AND "))
+      query = query.slice(0, query.length - 4);
+    else
+      query = query.slice(0, query.length - 6);
+
+    query += "GROUP BY RECIPES.id ";
+
+    if (options.sort && options.sort.length > 0) {
+      query += "ORDER BY "
+      for (let i = 0; i < options.sort.length; ++i) {
+        const rule = options.sort[i];
+        query += `RECIPES.${rule.attribute} ${rule.order}`;
+        if (i !== options.sort.length - 1) query += ", ";
+      }
+    }
+
+    if (options.limit === undefined) options.limit = 50;
+    if (options.limit) {
+      query += ` LIMIT ${options.limit} `;
+    }
+
+    const results = db.prepare(query).all().map(row => new Recipe(row));
+
+    if (options.attributes) {
+      results.forEach(r => r.loadAttributes(options.attributes))
     }
 
     return results;
@@ -485,7 +621,46 @@ const JSONValidations = [
     .toBoolean()
 ];
 
+const searchValidations = [
+  query("name").optional().isString().notEmpty(),
+  query("authors").optional().toArray().isArray({ min: 1 }),
+  query("authors.*").isString().notEmpty(),
+  query("types").optional().toArray().isArray({ min: 1 }),
+  oneOf([
+    query("types.*").isInt({ max: Recipe.recipeTypes.length - 1 }).toInt(),
+    query("types.*").isString().isIn(Recipe.recipeTypes.map(r => r.name))
+  ]),
+  query("cookingTime").optional().isInt({ min: 1}).toInt(),
+  query("tags").optional().toArray().isArray({ min: 1 }),
+  query("tags.*")
+    .customSanitizer((val) => val.split(",").filter(t => t.length > 0))
+    .custom(tags => tags.every(tag => tag.match(/^[0-9A-Za-zñáéíóúäëïöüàèìòùâêîôû\-\+]+$/)))
+    .isArray({ min: 1 }),
+  query("ingredients").optional().toArray().isArray({ min: 1 }),
+  query("ingredients.*")
+    .customSanitizer((val) => val.split(",").filter(i => i.length > 0))
+    .isArray({ min: 1 }),
+
+
+  query("limit").optional().isInt({ min: 1 }).toInt(),
+  query("sort").optional().toArray().isArray({ min: 1 }),
+  query("sort.*")
+    .matches(/^(name|author|type|cookingTime)(_(ASC|DESC))?$/)
+    .customSanitizer(val => {
+      const parts = val.split("_");
+      if (parts.length === 1) parts.push("ASC");
+      return {
+        attribute: parts[0],
+        order: parts[1]
+      }
+    }),
+  query("attributes").optional().toArray().isArray({ min: 1 }),
+  query("attributes.*")
+    .isIn(["all", "ingredients", "tags", "steps"])
+]
+
 module.exports = {
   Recipe,
-  JSONValidations
+  JSONValidations,
+  searchValidations
 };

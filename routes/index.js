@@ -4,11 +4,10 @@ const router = express.Router();
 const { Recipe } = require("../models/recipe.model.js");
 const { Step } = require("../models/step.model.js");
 const { availableLocales } = require("../utils/localeLoader.js");
-const { bundleLocales, validate } = require("../utils/utils.js");
-const { query } = require("express-validator");
+const { bundleLocales } = require("../utils/utils.js");
 
 /* GET home page. */
-router.get('/', function (req, res, next) {
+router.get('/', function (req, res) {
 	const allRecipes = Recipe.getAll();
 
 	res.render('index', {
@@ -16,13 +15,13 @@ router.get('/', function (req, res, next) {
 	});
 });
 
-router.get('/about', function (req, res, next) {
+router.get('/about', function (req, res) {
 	res.render('about');
 });
 
 router.get('/create', bundleLocales([
 	"alerts.reviewRecipeForm"
-]), function (req, res, next) {
+]), function (req, res) {
 	res.render('create', {
 		recipeTypes: Recipe.recipeTypes,
 		stepTypes: Step.stepTypes
@@ -31,25 +30,14 @@ router.get('/create', bundleLocales([
 
 router.get('/search', bundleLocales([
 	"alerts.noRecipeFound"
-]), [
-	query("name").optional().isString()
-], validate, function (req, res, next) {
-	let results = null;
-	if (req.query.name) {
-		results = Recipe.searchByName(req.query.name, {
-			includeTags: true
-		});
-	}
-
-	res.render('search', {
-		results: results
-	});
+]), function (req, res) {
+	res.render('search');
 });
 
 router.get('/settings', bundleLocales([
 	"alerts.deletedCaches",
 	"alerts.deletedSettings"
-]), function (req, res, next) {
+]), function (req, res) {
 	res.render('settings', {
 		allLocales: availableLocales()
 	});

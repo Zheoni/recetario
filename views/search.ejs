@@ -5,11 +5,6 @@
 	<%- include("elements/head"); %>
   <meta id="current-page" content="search">
   <title><%= locale.title.search %></title>
-  <% if (results) { %>
-    <script>
-      const query_results = <%- JSON.stringify(results) %>;
-    </script>
-  <% } %>
   <script defer src="/js/search.js"></script>
   <link rel="stylesheet" href="/css/create.css">
   <link rel="stylesheet" href="/css/recipe.css">
@@ -23,13 +18,32 @@
     <h1>Búsqueda</h1>
 
     <form action="" method="get" id="search-form">
-      <input type="search" name="name" id="search-name" placeholder="Nombre de la receta" class="input">
-
-      <button type="submit" class="button main-button">Buscar!</button>
+      <fieldset id="basicSearch">
+        <div>
+          <input type="search" name="search" id="search" placeholder="Nombre de la receta">
+          <button type="submit"><i class='bx bx-search-alt'></i></button>
+        </div>
+      </fieldset>
+      
+      <fieldset id="advanceSearch" hidden>
+        <div class="tags-input-container form-input"></div>
+      </fieldset>
     </form>
     
-    <ul id="search-results">
-    </ul>
+    <div id="search-results">
+      <template id="result-template">
+          <a>
+            <article class="recipe-result">
+              <img class="recipe-image">
+              <div class="recipe-data">
+                <h3 class="recipe-name"></h3>
+                <div class="tags-container"></div>
+                <i class='bx bx-chevron-right'></i>
+              </div>
+            </article>
+          </a>
+      </template>
+    </div>
 
 	</main>
 
