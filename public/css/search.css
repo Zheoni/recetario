@@ -1,51 +1,83 @@
-#search-form {
-  width: auto;
-  margin-bottom: 1rem;
-}
-
-#search-form input {
-  font-size: 1rem;
-}
-
-#search-results {
-  list-style: none;
-  width: auto;
+#loading {
+  padding-top: 100px;
   margin: auto;
-  padding: 0;
+  width: min-content;
+  font-size: 4rem;
+  color: var(--details-color, gray);
+  text-shadow: var(--details-color) 0 0 0.5rem;
+  animation-delay: 250ms;
 }
 
-li.recipe-result a {
-  display: flex;
-  align-items: center;
-  font-size: 1.5rem;
+#search-form button[type="submit"] {
+  margin-top: 1.5rem;
+}
+
+fieldset#advanced-search {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1fr 1fr;
+}
+
+#advanced-search-switch {
+  float: right;
+  margin: 20px;
+}
+
+#advanced-search-switch > span {
+  margin-right: 10px;
+}
+
+#search {
+  padding: 0.5rem;
+}
+
+#results {
+  margin-top: 1rem;
+}
+
+#search-results a {
   text-decoration: none;
-  color: var(--text-primary, black);
-  width: auto;
-  border: solid 1px var(--borders-color);
+  color: inherit;
+}
+
+.recipe-result {
+  display: grid;
+  align-items: center;
+  gap: 5px;
+  grid-template-columns: 175px 1fr 2rem;
+  margin: 10px 0;
+  height: 175px;
+  border: 1px solid var(--borders-color, whitesmoke);
   border-radius: 5px;
-  background: white;
-  margin: 5px auto;
-  padding: 10px;
+  overflow: hidden;
+  background-color: white;
+  transition: transform 250ms, box-shadow 250ms;
 }
 
-li.recipe-result .tags-container {
-  margin-left: 15px;
+.recipe-result .recipe-name {
+  margin-top: 10px;
+  margin-bottom: 5px;
 }
 
-li.recipe-result .tags-container .tag {
-  cursor: inherit;
+.recipe-result .recipe-tags {
+  margin-bottom: 10px;
 }
 
-#search-name {
-  padding: 10px;
-  margin: 5px auto;
-  display: block;
-  width: 50%;
-  min-width: 250px;
-  max-width: 100%;
+.recipe-result .recipe-image {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
 }
 
-#search-form button {
-  display: block;
-  margin: 5px auto;
+#results a {
+  cursor: pointer;
+}
+
+@media only screen and (min-width: 768px) {
+
+  .recipe-result:hover {
+    box-shadow: 0px 0.05rem 0.25rem 0px rgba(0, 0, 0, 0.3);
+    transform: translateY(-1px) scale(1.005);
+  }
+
 }

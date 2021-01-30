@@ -22,77 +22,6 @@ function isEmpty(element) {
   return true;
 }
 
-// Tags
-const tags_input = document.getElementById("tags-input");
-const tags_user_input = document.getElementById("tags-user-input")
-const tags_container = document.getElementById("tags-container");
-
-const tag_regex = /^[0-9A-Za-zñáéíóúäëïöüàèìòùâêîôû\-\+]+$/;
-const max_tag_length = 20;
-
-function addTagToInput() {
-  let tag_content = tags_user_input.value;
-  tags_user_input.value = "";
-
-  if (tag_regex.test(tag_content) === false || tag_content.length > max_tag_length) return;
-
-  tag_content = tag_content.replace(",", "-");
-
-  const current_tags = tags_input.value.split(",");
-
-  if (tag_content.length > 0 && !current_tags.includes(tag_content)) {
-    // Create the new tag div and add it to the document
-    const new_tag_div = document.createElement("div");
-    new_tag_div.classList.add("tag-view");
-    new_tag_div.textContent = tag_content;
-    new_tag_div.onclick = () => removeTagFromInput(new_tag_div);
-
-    tags_container.insertBefore(new_tag_div, tags_user_input);
-
-    // Add the tag to the input that will be sent
-    if (tags_input.value.length === 0)
-      tags_input.value = tag_content;
-    else
-      tags_input.value += "," + tag_content;
-  }
-
-  if (tags_container.classList.contains("validate")) {
-    validateTags();
-  }
-}
-
-function removeTagFromInput(tag) {
-  const tag_content = tag.textContent;
-  tag.remove();
-  tags_input.value = tags_input.value.replace(RegExp(tag_content + ",?"), "");
-  tags_input.value = tags_input.value.replace(/,$/, "");
-
-  if (tags_container.classList.contains("validate")) {
-    validateTags();
-  }
-}
-
-tags_user_input.addEventListener("keydown", (event) => {
-  if (event.key === "Enter" || event.key === "," || event.key === "Tab" || event.key === " ") {
-    event.preventDefault();
-    addTagToInput();
-  } else if (event.key === "Backspace" && tags_user_input.value.length === 0) {
-    event.preventDefault();
-    if (tags_container.childElementCount >= 4) {
-      const tag = tags_container.children[tags_container.childElementCount - 4];
-      removeTagFromInput(tag);
-    }
-  }
-});
-
-tags_user_input.addEventListener("focusout", (event) => {
-  event.preventDefault();
-  if (tags_user_input.value.length > 0) {
-    addTagToInput();
-    tags_user_input.focus();
-  }
-});
-
 // Ingredients
 const ingredients_list = document.getElementById("ingredients");
 const ingredient_template = ingredients_list.children[ingredients_list.childElementCount - 1].cloneNode(true);
@@ -235,24 +164,10 @@ function deleteThisStep(step) {
   }
 }
 
-// Cooking time
-const cookingTimeDiv = document.getElementById("cookingtime");
-const cookingTimeInput = document.getElementById("cookingtimeInput");
-
-cookingTimeDiv.addEventListener("input", () => {
-  const hours = Number(cookingTimeDiv.querySelector("#h").value);
-  const minutes = Number(cookingTimeDiv.querySelector("#m").value);
-  
-  const totalTime = hours * 60 + minutes;
-  cookingTimeInput.value = totalTime;
-
-  if (cookingTimeDiv.classList.contains("validate")) {
-    validateCookingTime();
-  }
-});
-
 
 // Validation
+const tags_container = document.querySelector(".tags-input-container")
+const tags_input = document.querySelector(".tags-input")
 function validateTags() {
   let valid;
   if (tags_input.value.length === 0) {
@@ -333,7 +248,9 @@ function validateSteps() {
   return valid;
 }
 
+const cookingTimeDiv = document.querySelector(".cookingtime-container");
 function validateCookingTime() {
+
   const valid = cookingTimeDiv.querySelectorAll(":invalid").length === 0;
   if (valid) {
     cookingTimeDiv.classList.remove("invalid");
@@ -394,50 +311,6 @@ function validate() {
   
   return isValid;
 }
-
-
-// Autocomplete
-let tagFetchController = new AbortController();
-
-function tagHinter(event) {
-  const input = event.target;
-  const list = document.getElementById("tag-datalist");
-
-  const minCharacters = 2;
-
-  if (input.value.length >= minCharacters) {
-    
-    tagFetchController.abort();
-    tagFetchController = new AbortController();
-    
-    const query = new URLSearchParams({
-      name: input.value,
-      limit: 5
-    });
-
-    fetch(`/api/autocomplete/tag?${query}`, {
-      signal: tagFetchController.signal
-    })
-      .then(response => response.json())
-      .then(response => {
-        list.innerHTML = "";
-    
-        response.tags.forEach(tag => {
-          const option = document.createElement("option");
-          option.value = tag;
-    
-          list.appendChild(option);
-        });
-      })
-      .catch(err => {
-        if (!(err instanceof DOMException && err.name === "AbortError")) {
-          console.error(err);
-        }
-      });
-  }
-}
-
-tags_user_input.addEventListener("input", tagHinter);
 
 
 // Upload JSON

@@ -101,9 +101,13 @@ router.post('/recipe', JSONValidations, validate, function (req, res) {
 });
 
 router.get('/search', searchValidations, validate, function (req, res) {
-  const { name, authors, types,
+  let { search, name, authors, types,
     tags, cookingTime, ingredients,
     limit, sort, attributes } = req.query;
+
+  if (search) {
+    name = search;
+  }
 
   let attributesObject = {};
   if (attributes) {

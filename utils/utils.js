@@ -1,5 +1,5 @@
 const { validationResult } = require("express-validator");
-const { Recipe } = require("../models/recipe.model.js"); 
+const { Recipe, safeStringRegex } = require("../models/recipe.model.js"); 
 
 function validate(req, res, next) {
 	try {
@@ -50,5 +50,6 @@ function parseRecipeId(req, res, next) {
 module.exports = {
   validate,
 	bundleLocales,
-	parseRecipeId
+	parseRecipeId,
+	safeStringRegex,
 }

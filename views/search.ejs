@@ -5,9 +5,9 @@
 	<%- include("elements/head"); %>
   <meta id="current-page" content="search">
   <title><%= locale.title.search %></title>
+  <script defer src="/js/form_utils.js"></script>
   <script defer src="/js/search.js"></script>
-  <link rel="stylesheet" href="/css/create.css">
-  <link rel="stylesheet" href="/css/recipe.css">
+  <link rel="stylesheet" href="/css/form_utils.css">
   <link rel="stylesheet" href="/css/search.css">
 </head>
 
@@ -15,34 +15,83 @@
   <%- include("elements/navbar"); %>
 	
 	<main>
-    <h1>Búsqueda</h1>
+    <div id="advanced-search-switch" class="center-content">
+      <span><%= locale.search.advancedSearch %></span>
+      <label class="switch">
+        <input type="checkbox">
+        <span class="slider"></span>
+      </label>
+    </div>
+    
+    <h1><%= locale.search.title %></h1>
 
-    <form action="" method="get" id="search-form">
-      <fieldset id="basicSearch">
-        <div>
-          <input type="search" name="search" id="search" placeholder="Nombre de la receta">
-          <button type="submit"><i class='bx bx-search-alt'></i></button>
+    <form id="search-form" autocomplete="off">
+  
+      <input type="search" name="search" id="search" class="input">
+      
+      <datalist id="tag-datalist"></datalist>
+      <fieldset id="advanced-search" hidden>
+        <legend><%= locale.search.advancedSearch %></legend>
+
+        <div class="form-item">
+          <label for="name"><%= locale.search.nameLabel %></label>
+          <input type="text" name="name" id="name">
+        </div>
+
+        <div class="form-item">
+          <label for="author"><%= locale.search.authorLabel %></label>
+          <input type="text" name="author" id="author">
+        </div>
+
+        <div class="form-item" id="tags">
+          <label for="tags"><%= locale.search.tagsLabel %></label>
+          <div class="tags-input-container form-input">
+            <input name="tags" type="text" class="tags-input" hidden>
+            <input type="text" class="tags-user-input" placeholder="<%= locale.search.tagsPlaceholder %>" list="tag-datalist">
+          </div>
+        </div>
+
+        <div class="form-item">
+          <label for="ingredients"><%= locale.search.ingredientsLabel %></label>
+          <input type="text" name="ingredients" id="ingredients" placeholder="<%= locale.search.ingredientsPlaceholder %>">
+        </div>
+
+        <div class="form-item" id="max-time">
+          <label for="max-time"><%= locale.search.maxTimeLabel %></label>
+          <div class="form-input cookingtime-container">
+            <input type="hidden" name="cookingTime" id="cookingtimeInput">
+            <input class="" type="number" id="h" step="1" min="0" pattern="\d*">
+            <label for="h">h</label>
+            <input class="" type="number" id="m" step="1" min="0" pattern="\d*">
+            <label for="m">m</label>
+          </div>
         </div>
       </fieldset>
-      
-      <fieldset id="advanceSearch" hidden>
-        <div class="tags-input-container form-input"></div>
-      </fieldset>
+
+      <button type="submit" class="button main-button center-content center-in-container">
+        <i class='bx bx-search-alt'></i> 
+        <%= locale.search.searchButton %>
+      </button>
     </form>
     
-    <div id="search-results">
-      <template id="result-template">
-          <a>
-            <article class="recipe-result">
-              <img class="recipe-image">
-              <div class="recipe-data">
-                <h3 class="recipe-name"></h3>
-                <div class="tags-container"></div>
-                <i class='bx bx-chevron-right'></i>
-              </div>
-            </article>
-          </a>
-      </template>
+    <template id="result-template">
+        <a>
+          <article class="recipe-result">
+            <img class="recipe-image" onerror="javascript:this.src='/images/chefs-hat.png';this.style.objectFit='contain'">
+            <div class="recipe-data">
+              <h3 class="recipe-name"></h3>
+              <div class="recipe-tags tags-container"></div>
+            </div>
+            <i class='bx bx-chevron-right bx-md'></i>
+          </article>
+        </a>
+    </template>
+    <div id="results">
+      <div id="loading" class="fade-in" hidden>
+        <i class='bx bx-loader-alt bx-spin'></i>
+      </div>
+      <div id="search-results" class="fade-in">
+      </div>
     </div>
 
 	</main>

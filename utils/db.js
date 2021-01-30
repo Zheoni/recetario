@@ -1,6 +1,7 @@
 const assert = require('assert');
 const Database = require('better-sqlite3');
 const debug = require("debug")("recetario:db");
+const fs = require('fs');
 
 let _db = null;
 
@@ -12,6 +13,18 @@ function initDB(databaseName, options) {
       fileMustExist: true
     }, options);
     _db = new Database(databaseName, options);
+
+    // Load all extensions 
+    if (fs.existsSync("ext")) {
+      const dir = fs.readdirSync("ext");
+      dir.forEach(ext => {
+        debug("Loading SQLite extension: " + ext)
+        _db.loadExtension("ext/" + ext)
+      });
+      if (dir.length == 0) debug("No extensions to load in ext dir")
+    } else {
+      debug("Extensions dir not found")
+    }
     _db.pragma("foreign_keys = 1");
   }
 

@@ -3,9 +3,11 @@
 
 <head>
 	<%- include("elements/head"); %>
+  <link rel="stylesheet" href="/css/form_utils.css">
   <link rel="stylesheet" href="/css/create.css">
   <script defer src="/vendor/Sortable.min.js"></script>
   <script defer src="/js/recipe_form.js"></script>
+  <script defer src="/js/form_utils.js"></script>
   <meta id="current-page" content="create">
   <title><%= locale.title.create %></title>
 </head>
@@ -67,36 +69,41 @@
     <h1><%= locale.recipeForm.createTitle %></h1>
 
     <form class="recipe-form" action="/recipe" onsubmit="return validate()" novalidate method="POST" autocomplete="off" spellcheck="false" enctype="multipart/form-data">
-      <div class="form-item name">
-        <label for="name"><%= locale.recipeForm.nameLabel %></label>
-        <input type="text" name="name" id="name" maxlength="128" required placeholder="<%= locale.recipeForm.namePlaceholder %>">
-        <p class="error"><%= locale.recipeForm.nameError %></p>
-      </div>
+      <fieldset id="general-fieldset">
+        <legend><%= locale.recipeForm.generalInformationLegend %></legend>
 
-      <div class="form-item author">
-        <label for="author"><%= locale.recipeForm.authorLabel %></label>
-        <input type="text" name="author" id="author" maxlength="64" placeholder="<%= locale.recipeForm.authorPlaceholder %>">
-      </div>
-
-      <div class="form-item description">
-        <label for="description"><%= locale.recipeForm.descriptionLabel %></label>
-        <input type="text" name="description" id="description" maxlength="256" required
-          placeholder="<%= locale.recipeForm.descriptionPlaceholder %>">
-        <p class="error"><%= locale.recipeForm.descriptionError %></p>
-      </div>
-
-      <div class="form-item tags">
-        <label for="tags"><%= locale.recipeForm.tagsLabel %></label>
-        <div class="tags-container form-input" id="tags-container">
-          <input type="text" id="tags-user-input" placeholder="<%= locale.recipeForm.tagsPlaceholder %>" list="tag-datalist">
-          <datalist id="tag-datalist"></datalist>
-          <input name="tags" type="text" id="tags-input" hidden>
+        <div class="form-item name">
+          <label for="name"><%= locale.recipeForm.nameLabel %></label>
+          <input type="text" name="name" id="name" maxlength="128" required placeholder="<%= locale.recipeForm.namePlaceholder %>">
+          <p class="error"><%= locale.recipeForm.nameError %></p>
         </div>
-        <p class="error"><%= locale.recipeForm.tagsError %></p>
-      </div>
+  
+        <div class="form-item author">
+          <label for="author"><%= locale.recipeForm.authorLabel %></label>
+          <input type="text" name="author" id="author" maxlength="64" placeholder="<%= locale.recipeForm.authorPlaceholder %>">
+        </div>
+  
+        <div class="form-item description">
+          <label for="description"><%= locale.recipeForm.descriptionLabel %></label>
+          <input type="text" name="description" id="description" maxlength="256" required
+            placeholder="<%= locale.recipeForm.descriptionPlaceholder %>">
+          <p class="error"><%= locale.recipeForm.descriptionError %></p>
+        </div>
+  
+        <div class="form-item tags">
+          <label for="tags"><%= locale.recipeForm.tagsLabel %></label>
+          <div class="tags-input-container form-input">
+            <datalist id="tag-datalist"></datalist>
+            <input name="tags" type="text" class="tags-input" hidden>
+            <input type="text" class="tags-user-input" placeholder="<%= locale.recipeForm.tagsPlaceholder %>" list="tag-datalist">
+          </div>
+          <p class="error"><%= locale.recipeForm.tagsError %></p>
+        </div>
+      </fieldset>
 
-      <div class="form-item ingredients">
-        <label for="ingredients"><%= locale.recipeForm.ingredientsLabel %></label>
+      <fieldset id="ingredients-fieldset">
+        <legend><%= locale.recipeForm.ingredientsLabel %></legend>
+
         <div class="ingredient-container ingredient-labels">
           <div></div>
           <p class="amount"><%= locale.recipeForm.amountColumnLabel %></p>
@@ -115,11 +122,12 @@
           </li>
         </ul>
         <p class="error"><%= locale.recipeForm.ingredientsError %></p>
-        <button class="button" type="button" onclick="addIngredient();"><%= locale.recipeForm.addIngredientButton %></button>
-      </div>
+        <button class="button center-in-container" type="button" onclick="addIngredient();"><%= locale.recipeForm.addIngredientButton %></button>
+      </fieldset>
 
-      <div class="form-item method">
-        <label for="method"><%= locale.recipeForm.methodLabel %></label>
+      <fieldset id="method-fieldset">
+        <legend><%= locale.recipeForm.methodLabel %></legend>
+
         <ol id="method" class="steps-list">
           <li class="step form-item">
             <div class="handle">
@@ -132,7 +140,7 @@
         </ol>
         <p class="error"><%= locale.recipeForm.methodError %></p>
 
-        <button type="button" role="button" class="button add-step-button">
+        <button type="button" role="button" class="button add-step-button center-in-container">
           <i class="bx bx-plus" onclick="addStep();"></i>
           <select id="new-step-type">
             <% stepTypes.forEach(type => { %>
@@ -140,42 +148,46 @@
             <% }) %>
           </select>
         </button>
-      </div>
+      </fieldset>
 
-      <div class="form-item cookingtime">
-        <label for="cookingtime"><%= locale.recipeForm.cookingTimeLabel%></label>
-        <div class="form-input" id="cookingtime">
-          <input type="hidden" name="cookingTime" id="cookingtimeInput">
-          <input class="" type="number" id="h" step="1" min="0" pattern="\d*">
-          <label for="h">h</label>
-          <input class="" type="number" id="m" step="1" min="0" pattern="\d*">
-          <label for="m">m</label>
+      <fieldset id="extra-fieldset">
+        <legend><%= locale.recipeForm.extraInformationLegend%></legend>
+
+        <div class="form-item cookingtime">
+          <label for="cookingtime"><%= locale.recipeForm.cookingTimeLabel%></label>
+          <div class="form-input cookingtime-container">
+            <input type="hidden" name="cookingTime" id="cookingtimeInput">
+            <input class="" type="number" id="h" step="1" min="0" pattern="\d*">
+            <label for="h">h</label>
+            <input class="" type="number" id="m" step="1" min="0" pattern="\d*">
+            <label for="m">m</label>
+          </div>
+          <p class="error"><%= locale.recipeForm.cookingTimeError %></p>
         </div>
-        <p class="error"><%= locale.recipeForm.cookingTimeError %></p>
-      </div>
-
-      <div class="form-item servings">
-        <label for="servings"><%= locale.recipeForm.servingsLabel %></label>
-        <input type="number" name="servings" id="servings" step="1" min="1" pattern="\d*">
-      </div>
-
-      <div class="form-item image">
-        <label for="image"><%= locale.recipeForm.imageLabel %></label>
-        <div class="form-input">
-          <button class="button" type="button" id="chooseImageButton"><%= locale.recipeForm.chooseImageButton %></button>
-          <span id="selected-image"><%= locale.recipeForm.choosenImagePlaceholder %></span>
+  
+        <div class="form-item servings">
+          <label for="servings"><%= locale.recipeForm.servingsLabel %></label>
+          <input type="number" name="servings" id="servings" step="1" min="1" pattern="\d*">
         </div>
-        <input type="file" name="image" id="image" style="display:none" accept="image/*">
-      </div>
-
-      <div class="form-item type">
-        <label for="type"><%= locale.recipeForm.typeLabel %></label>
-        <select name="type" id="type">
-          <% recipeTypes.forEach(type => { %>
-            <option value="<%= type.name %>"><%= locale.recipeType[type.name] %></option>
-          <% }) %>
-        </select>
-      </div>
+  
+        <div class="form-item image">
+          <label for="image"><%= locale.recipeForm.imageLabel %></label>
+          <div class="form-input">
+            <button class="button" type="button" id="chooseImageButton"><%= locale.recipeForm.chooseImageButton %></button>
+            <span id="selected-image"><%= locale.recipeForm.choosenImagePlaceholder %></span>
+          </div>
+          <input type="file" name="image" id="image" style="display:none" accept="image/*">
+        </div>
+  
+        <div class="form-item type">
+          <label for="type"><%= locale.recipeForm.typeLabel %></label>
+          <select name="type" id="type">
+            <% recipeTypes.forEach(type => { %>
+              <option value="<%= type.name %>"><%= locale.recipeType[type.name] %></option>
+            <% }) %>
+          </select>
+        </div>
+      </fieldset>
 
       <div class="form-item submit">
         <button class="button main-button" type="submit"><%= locale.recipeForm.createRecipeButton %></button>

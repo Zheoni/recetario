@@ -29,7 +29,9 @@ router.get('/create', bundleLocales([
 });
 
 router.get('/search', bundleLocales([
-	"alerts.noRecipeFound"
+	"alerts.noRecipeFound",
+	"alerts.cannotSearch",
+	"alerts.invalidSearch"
 ]), function (req, res) {
 	res.render('search');
 });

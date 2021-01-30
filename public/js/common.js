@@ -45,6 +45,18 @@ if (currentPage) {
   }
 }
 
+// Dont send empty fields in forms
+const navbarSearchForm = document.getElementById("navbar-search-form");
+if (navbarSearchForm) {
+  navbarSearchForm.addEventListener("submit", (event) => {
+    const input = navbarSearchForm.querySelector("input");
+    if (input.value === "") {
+      event.preventDefault();
+      window.location.assign("/search");
+    }
+  });
+}
+
 
 // Alerts
 const main_element = document.getElementsByTagName("main")[0];

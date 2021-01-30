@@ -40,6 +40,9 @@ class Recipe {
     this.author = data.author;
     this.description = data.description;
     this.image = data.image;
+    this.imageURL = data.image
+      ? Recipe.baseImagePath + (this.image || process.env.DEFAULT_IMAGE)
+      : "";
     this.type = typeof data.type === "number"
       ? data.type
       : Recipe.recipeTypes.map(type => type.name).indexOf(data.type);
@@ -90,17 +93,6 @@ class Recipe {
       return new Tag(tag);
     });
     return recipe;
-  }
-
-  /**
-   * @returns {string} The path to the recipe image
-   */
-  get imageURL() {
-    if (this.image) {
-      return Recipe.baseImagePath + (this.image || process.env.DEFAULT_IMAGE);
-    } else {
-      return "";
-    }
   }
 
   get typeString() {
@@ -426,6 +418,7 @@ class Recipe {
    * @returns {Recipe[]} Results
    */
   static search(data, options = {}) {
+    // Maybe use a query builder instead of doing it manually
     let query = "SELECT * FROM RECIPES WHERE ";
 
     if (data.name) {
@@ -476,8 +469,17 @@ class Recipe {
       for (let j = 0; j < data.ingredients.length; ++j) {
         const ingredientGroup = data.ingredients[j];
         if (ingredientGroup.length > 0) {
-          query += `(RECIPES.id IN (SELECT RI.recipe FROM RECIPE_INGREDIENTS RI INNER JOIN INGREDIENTS I ON I.id = RI.ingredient WHERE I.name IN ('${ingredientGroup.join("','")}') GROUP BY RI.recipe HAVING COUNT(*) = ${ingredientGroup.length}))`;
-          if (j !== data.tags.length - 1) query += " OR "
+          // Maybe improve this by using a spellfix virtual table
+          let spellfix_query = "";
+          for (let k = 0; k < ingredientGroup.length; ++k) {
+            const ingredient = ingredientGroup[k];
+            spellfix_query += `(editdist3(I.name, '${ingredient}') < 450)`;
+            if (k < ingredientGroup.length - 1) {
+              spellfix_query += " OR ";
+            }
+          }
+          query += `(RECIPES.id IN (SELECT RI.recipe FROM RECIPE_INGREDIENTS RI INNER JOIN INGREDIENTS I ON I.id = RI.ingredient WHERE ${spellfix_query} GROUP BY RI.recipe HAVING COUNT(*) = ${ingredientGroup.length}))`;
+          if (j !== data.ingredients.length - 1) query += " OR "
         }
       }
       query += ") AND "
@@ -507,7 +509,7 @@ class Recipe {
     const results = db.prepare(query).all().map(row => new Recipe(row));
 
     if (options.attributes) {
-      results.forEach(r => r.loadAttributes(options.attributes))
+      results.forEach(r => r.loadAttributes(options.attributes));
     }
 
     return results;
@@ -621,10 +623,13 @@ const JSONValidations = [
     .toBoolean()
 ];
 
+const safeStringRegex = /^[\s\d\p{L}&,\.$€ç%°ºª?¿!¡\-:]+$/iu;
+
 const searchValidations = [
-  query("name").optional().isString().notEmpty(),
+  query("search").optional().notEmpty().matches(safeStringRegex),
+  query("name").optional().notEmpty().matches(safeStringRegex),
   query("authors").optional().toArray().isArray({ min: 1 }),
-  query("authors.*").isString().notEmpty(),
+  query("authors.*").isString().notEmpty().matches(safeStringRegex),
   query("types").optional().toArray().isArray({ min: 1 }),
   oneOf([
     query("types.*").isInt({ max: Recipe.recipeTypes.length - 1 }).toInt(),
@@ -639,6 +644,7 @@ const searchValidations = [
   query("ingredients").optional().toArray().isArray({ min: 1 }),
   query("ingredients.*")
     .customSanitizer((val) => val.split(",").filter(i => i.length > 0))
+    .custom(ingredients => ingredients.every(ingredient => ingredient.match(safeStringRegex)))
     .isArray({ min: 1 }),
 
 
@@ -662,5 +668,6 @@ const searchValidations = [
 module.exports = {
   Recipe,
   JSONValidations,
-  searchValidations
+  searchValidations,
+  safeStringRegex
 };

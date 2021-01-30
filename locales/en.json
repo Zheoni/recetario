@@ -66,7 +66,9 @@
 		"resetModal": "Reset",
 		"tagsError": "Cannot have more than 5 tags.",
 		"chooseImageButton": "Choose image",
-		"choosenImagePlaceholder": "No image chosen"
+		"choosenImagePlaceholder": "No image chosen",
+		"generalInformationLegend": "General",
+		"extraInformationLegend": "Extra information"
 	},
 	"recipeView": {
 		"ingredientsLabel": "Ingredients",
@@ -79,8 +81,15 @@
 	},
 	"search": {
 		"title": "Search",
-		"namePlaceholder": "Name of the recipe",
-		"searchButton": "Search!"
+		"searchButton": "Search!",
+		"nameLabel": "Name",
+		"advancedSearch": "Advance search",
+		"authorLabel": "Author",
+		"tagsLabel": "Tags",
+		"ingredientsLabel": "Ingredients",
+		"tagsPlaceholder": "Required tags",
+		"ingredientsPlaceholder": "Ingredients (comma separated)",
+		"maxTimeLabel": "Max cooking time"
 	},
 	"settings": {
 		"title": "Settings",
@@ -114,7 +123,9 @@
 		"noRecipeFound": "No recipe found.",
 		"reviewRecipeForm": "Please review the fields in the form that are not correct and try again.",
 		"deletedCaches": "Cached data has been removed.",
-		"deletedSettings": "Settings have been removed. The default preferences will now apply."
+		"deletedSettings": "Settings have been removed. The default preferences will now apply.",
+		"cannotSearch": "Search could not be performed.",
+		"invalidSearch": "Search request is invalid."
 	},
 	"about": {
 		"title": "About",

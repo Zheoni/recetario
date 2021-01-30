@@ -102,10 +102,6 @@ h1 {
 }
 
 /* Search bar */
-.search-container, .searchbox {
-  display: flex;
-  align-items: center;
-}
 
 .search-container {
   padding: 0 5px;
@@ -271,6 +267,7 @@ body {
 }
 
 .fade-in {
+  opacity: 0;
   animation: fade-in 500ms ease-in forwards;
 }
 
@@ -284,7 +281,7 @@ body {
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 .button {
@@ -404,6 +401,66 @@ body {
 
 .no-decoration {
   text-decoration: none;
+}
+
+.center-in-container {
+  margin: 0 auto;
+  display: block;
+}
+  
+.center-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tags-container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.tags-container.inline {
+  display: inline-flex;
+  margin: 0;
+}
+
+.tag {
+  margin: 2px;
+  padding: 4px 10px;
+  color: white;
+  background: var(--details-color, gray);
+  white-space: nowrap;
+  font-weight: bold;
+  text-transform: lowercase;
+  text-decoration: none;
+  border-radius: 3px;
+  cursor: default;
+}
+
+.system-tags .tag {
+  border: solid 1px var(--borders-color);
+}
+
+.time-tag {
+  background-color: darkseagreen;
+}
+
+.servings-tag {
+  background-color: lightsalmon;
+}
+
+.tag.recipe-starter {
+  background-color: mediumturquoise;
+}
+
+.tag.recipe-main {
+  background-color: plum;
+}
+
+.tag.recipe-dessert {
+  background-color: darksalmon;
 }
 
 /* Small screens */

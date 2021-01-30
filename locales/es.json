@@ -66,7 +66,9 @@
 		"resetModal": "Reiniciar",
 		"tagsError": "No se permiten más de 5 etiquetas.",
 		"chooseImageButton": "Escoger imagen",
-		"choosenImagePlaceholder": "Ninguna imagen elegida"
+		"choosenImagePlaceholder": "Ninguna imagen elegida",
+		"generalInformationLegend": "General",
+		"extraInformationLegend": "Información extra"
 	},
 	"recipeView": {
 		"ingredientsLabel": "Ingredientes",
@@ -79,8 +81,15 @@
 	},
 	"search": {
 		"title": "Búsqueda",
-		"namePlaceholder": "Nombre de la receta",
-		"searchButton": "Buscar!"
+		"searchButton": "¡Buscar!",
+		"nameLabel": "Nombre",
+		"advancedSearch": "Búsqueda avanzada",
+		"authorLabel": "Autor",
+		"tagsLabel": "Etiquetas",
+		"ingredientsLabel": "Ingredientes",
+		"tagsPlaceholder": "Etiquetas deseadas",
+		"ingredientsPlaceholder": "Ingredientes (separados por comas)",
+		"maxTimeLabel": "Tiempo de cocinado máximo"
 	},
 	"settings": {
 		"title": "Ajustes",
@@ -114,7 +123,9 @@
 		"noRecipeFound": "No se ha encontrado ninguna receta.",
 		"reviewRecipeForm": "Revise los campos del formulario que no son correctos e inténtelo de nuevo.",
 		"deletedCaches": "Se han eliminado los datos almacenados en caché.",
-		"deletedSettings": "Se han eliminado los ajustes. Ahora se aplicarán las preferencias por defecto."
+		"deletedSettings": "Se han eliminado los ajustes. Ahora se aplicarán las preferencias por defecto.",
+		"cannotSearch": "No se pudo realizar la búsqueda.",
+		"invalidSearch": "La petición de búsqueda no es válida."
 	},
 	"about": {
 		"title": "Acerca de",
