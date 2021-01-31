@@ -51,9 +51,33 @@
         <section class="recipe-tags">
           <div class="system-tags tags-container">
             <% recipe.systemTags(locale).forEach(tag => { %>
-            <span class="tag system-tag <%= tag.classes.join(' ') %>">
-              <%= tag.name %>
-            </span>
+              <%
+                let query = undefined;
+                if (tag.classes.includes('type-tag')) {
+                  const type = tag.classes.find(c => c.includes('recipe-')).split('-')[1]
+                  query = `types=${type}`;
+                } else if (tag.classes.includes('time-tag')) {
+                  let time = 0;
+                  for (const part of tag.name.split(" ")) {
+                    if (part.includes("m")) {
+                      time += Number(part.slice(0, part.length - 3));
+                    } else {
+                      time += Number(part.slice(0, part.length - 1)) * 60;
+                    }
+                  }
+                  query = `cookingTime=${time}`;
+                }
+                // servings makes no sense... amounts can be recalculated
+              %>
+              <% if (query) { %>
+                <a class="tag system-tag <%= tag.classes.join(' ') %>" href="/search?<%= query %>">
+                  <%= tag.name %>
+                </a>
+              <% } else { %>
+                <span class="tag system-tag <%= tag.classes.join(' ') %>">
+                  <%= tag.name %>
+                </span>
+              <% } %>
             <% }) %>
           </div>
 
