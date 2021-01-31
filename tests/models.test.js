@@ -219,6 +219,7 @@ describe('recipe', () => {
       const r = Recipe.fromJSONData(JSON.parse(JSON.stringify(recipe)));
       delete recipe.id;
       delete recipe.image;
+      delete recipe.imageURL;
       for (let igr of recipe.ingredients) {
         delete igr.recipe;
       }
@@ -236,6 +237,7 @@ describe('recipe', () => {
       const recipe = Recipe.getById(1, { all: true });
       delete recipe.id;
       delete recipe.image;
+      delete recipe.imageURL;
       for (let igr of recipe.ingredients) {
         delete igr.recipe;
       }

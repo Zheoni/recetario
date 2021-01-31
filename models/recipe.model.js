@@ -42,7 +42,7 @@ class Recipe {
     this.image = data.image;
     this.imageURL = data.image
       ? Recipe.baseImagePath + (this.image || process.env.DEFAULT_IMAGE)
-      : "";
+      : undefined;
     this.type = typeof data.type === "number"
       ? data.type
       : Recipe.recipeTypes.map(type => type.name).indexOf(data.type);
