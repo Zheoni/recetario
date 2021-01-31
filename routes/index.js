@@ -33,7 +33,9 @@ router.get('/search', bundleLocales([
 	"alerts.cannotSearch",
 	"alerts.invalidSearch"
 ]), function (req, res) {
-	res.render('search');
+	res.render('search', {
+		recipeTypes: Recipe.recipeTypes
+	});
 });
 
 router.get('/settings', bundleLocales([

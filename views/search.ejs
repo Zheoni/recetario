@@ -56,6 +56,16 @@
           <input type="text" name="ingredients" id="ingredients" placeholder="<%= locale.search.ingredientsPlaceholder %>">
         </div>
 
+        <div class="form-item">
+          <label for="type"><%= locale.search.type %></label>
+          <!-- ? maybe add multiple specifier... -->
+          <select name="types" id="type">
+            <% recipeTypes.forEach(type => { %>
+              <option value="<%= type.name %>"><%= locale.recipeType[type.name] %></option>
+            <% }) %>
+          </select>
+        </div>
+
         <div class="form-item" id="max-time">
           <label for="max-time"><%= locale.search.maxTimeLabel %></label>
           <div class="form-input cookingtime-container">

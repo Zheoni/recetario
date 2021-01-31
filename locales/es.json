@@ -89,7 +89,8 @@
 		"ingredientsLabel": "Ingredientes",
 		"tagsPlaceholder": "Etiquetas deseadas",
 		"ingredientsPlaceholder": "Ingredientes (separados por comas)",
-		"maxTimeLabel": "Tiempo de cocinado máximo"
+		"maxTimeLabel": "Tiempo de cocinado máximo",
+		"type": "Tipo de receta"
 	},
 	"settings": {
 		"title": "Ajustes",

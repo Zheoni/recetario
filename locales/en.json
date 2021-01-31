@@ -89,7 +89,8 @@
 		"ingredientsLabel": "Ingredients",
 		"tagsPlaceholder": "Required tags",
 		"ingredientsPlaceholder": "Ingredients (comma separated)",
-		"maxTimeLabel": "Max cooking time"
+		"maxTimeLabel": "Max cooking time",
+		"type": "Recipe type"
 	},
 	"settings": {
 		"title": "Settings",

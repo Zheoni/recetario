@@ -45,6 +45,7 @@ function buildParams() {
           
         params.append("ingredients", ingredients);
       }
+      else if (name === "types" && value === "none") continue;
       else params.append(name, value);
     }
   } else {
@@ -72,7 +73,11 @@ function fillForm(searchParams) {
 
     document.getElementById("name").value = searchParams.get("name");
     document.getElementById("author").value = searchParams.get("author");
-    document.getElementById("ingredients").value = searchParams.get("ingredients").split(",").join(", ");
+
+    const ingredients = searchParams.get("ingredients");
+    if (ingredients) {
+      document.getElementById("ingredients").value = ingredients.split(",").join(", ");
+    }
 
     const tags_div = document.getElementById("tags");
     const tags_container = tags_div.querySelector(".tags-input-container");
@@ -88,6 +93,8 @@ function fillForm(searchParams) {
       document.getElementById("m").value = (cookingTime % 60).toString();
       document.getElementById("cookingtimeInput").value = cookingTime.toString();
     }
+
+    document.getElementById("type").value = searchParams.get("types");
   }
 }
 
