@@ -439,6 +439,10 @@ body {
   cursor: default;
 }
 
+a.tag {
+  cursor: pointer;
+}
+
 .system-tags .tag {
   border: solid 1px var(--borders-color);
 }

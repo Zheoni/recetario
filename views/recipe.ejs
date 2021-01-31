@@ -59,9 +59,9 @@
 
           <div class="user-tags tags-container">
             <% recipe.tags.forEach(tag => { %>
-            <span class="tag user-tag">
-              <%= tag.name %>
-            </span>
+              <a href="/search?tags=<%= tag.name %>" class="tag user-tag">
+                <%= tag.name %>
+              </a>
             <% }) %>
           </div>
         </section>
