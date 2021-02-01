@@ -467,6 +467,49 @@ a.tag {
   background-color: darksalmon;
 }
 
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pagination li {
+  list-style: none;
+  border: var(--borders-color) 1px solid;
+}
+
+.pagination li:not(:first-child) {
+  border-left: none;
+}
+
+.pagination li:first-child {
+  border-radius: 5px 0 0 5px;
+}
+
+.pagination li:last-child {
+  border-radius: 0 5px 5px 0;
+}
+
+.pagination li.active {
+  background-color: CornflowerBlue;
+  color: var(--text-secondary);
+  font-weight: bolder;
+}
+
+.pagination li.disabled {
+  color: var(--borders-color);
+}
+
+.pagination li a {
+  text-decoration: none;
+  color: inherit;
+  font-weight: inherit;
+  padding: 5px 10px;
+  min-width: 1rem;
+  display: inline-block;
+  text-align: center;
+}
+
 /* Small screens */
 @media only screen and (max-width: 767px) {
   :root{

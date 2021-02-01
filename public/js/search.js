@@ -4,7 +4,12 @@ const advancedSearchFieldset = document.getElementById("advanced-search");
 const loadingDiv = document.getElementById("loading");
 const resultsDiv = document.getElementById("search-results");
 const resultTemplate = document.getElementById("result-template");
-const form = document.forms["search-form"]
+const form = document.forms["search-form"];
+const paginationDiv = document.getElementById("pagination");
+
+let page = 1;
+let limit = 10;
+let resultsCount = null;
 
 function setAdvancedSearch(isAdvanced) {
   advancedSearchSwitch.checked = isAdvanced;
@@ -19,12 +24,36 @@ advancedSearchSwitch.addEventListener("change", (event) => {
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
-  search(buildParams());
+  const params = buildParams();
+  updateURL(params);
+  page = 1;
+  resultsCount = null;
+  search(params);
 });
 
 function loadingAnimation(status) {
   loadingDiv.hidden = !status;
   resultsDiv.hidden = status;
+  paginationDiv.hidden = status;
+}
+
+function updateURL(newData) {
+  let params;
+  if (typeof newData === "number") {
+    params = new URLSearchParams(window.location.search);
+    params.set("p", newData);
+  } else {
+    params = newData;
+  }
+
+  let newUrl;
+  if (params.toString().length > 0) {
+    newUrl = `${window.location.href.split("?")[0]}?${params}`;
+  } else {
+    newUrl = window.location.href.split("?")[0];
+  }
+  
+  window.history.replaceState(null, document.title, newUrl);
 }
 
 function buildParams() {
@@ -64,11 +93,19 @@ function buildParams() {
  */
 function fillForm(searchParams) {
   // Check type of search
-  if (searchParams.has("search")) {
-    setAdvancedSearch(false);
+  let isAdvanced = false;
+  for (const k of searchParams.keys()) {
+    if (k === "search") {
+      isAdvanced = false;
+      break;
+    }
+    if (k !== "p") {
+      isAdvanced = true;
+      break;
+    }
+  }
 
-    document.getElementById("search").value = searchParams.get("search");
-  } else {
+  if (isAdvanced) {
     setAdvancedSearch(true);
 
     document.getElementById("name").value = searchParams.get("name");
@@ -95,6 +132,9 @@ function fillForm(searchParams) {
     }
 
     document.getElementById("type").value = searchParams.get("types");
+  } else {
+    setAdvancedSearch(false);
+    document.getElementById("search").value = searchParams.get("search");
   }
 }
 
@@ -132,28 +172,127 @@ function showResults(data) {
  * 
  * @param {URLSearchParams} searchParams 
  */
-function search(searchParams) {
-  if (!searchParams) {
-    // if not params given, take them from url
-    searchParams = new URLSearchParams(window.location.search);
-    fillForm(searchParams);
-  } else {
-    // else update the url search params with 
-    let newUrl;
-    if (searchParams.toString().length > 0) {
-      newUrl = `${window.location.href.split("?")[0]}?${searchParams}`;
+function fetchCount(searchParams) {
+  fetch(`/api/search?${searchParams}&count=true`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Cannot fetch number of results');
+      }
+      return response.json();
+    })
+    .then(data => resultsCount = data.count)
+    .then(() => buildPaginationDiv())
+    .catch(err => {
+      console.error(err);
+      addAlert(bundledLocales["alerts.cannotSearch"], {
+        type: "error",
+        candismiss: true,
+        scrollback: true,
+      });
+    });
+}
+
+function goToPage(to) {
+  paginationDiv.style.visibility = 'hidden';
+  page = to;
+  search().then(() =>{
+    updateURL(page);
+    buildPaginationDiv();
+  });
+}
+
+function buildPaginationDiv() {
+  const margin = 2;
+
+  paginationDiv.style.visibility = 'hidden';
+
+  paginationDiv.innerHTML = "";
+  const pageCount = Math.ceil(resultsCount / limit);
+  let li;
+
+  if (pageCount > 0) {
+    li = document.createElement("li");
+    li.innerHTML = "<a><i class='bx bx-chevrons-left'></i></a>";
+    if (page == 1) {
+      li.classList.add("disabled");
     } else {
-      newUrl = window.location.href.split("?")[0];
+      li.addEventListener("click", () => {
+        goToPage(1);
+      });
     }
-    window.history.replaceState(null, document.title, newUrl);
+    paginationDiv.appendChild(li);
+
+    let i = (page - margin > 1 ? page - margin : 1);
+    if (i !== 1) {
+      li = document.createElement("li");
+      li.classList.add("disabled");
+      li.innerHTML = '<a>...</a>';
+    }
+    paginationDiv.appendChild(li);
+
+    const clickClosure = (ev) => {
+      goToPage(Number(ev.currentTarget.textContent));
+    }
+
+    for (; i <= (page + margin) && i <= pageCount; i++) {
+      li = document.createElement("li");
+      li.innerHTML = `<a>${i}</a>`;
+      if (i == page) {
+        li.classList.add("active");
+      } else {
+        li.addEventListener("click", clickClosure);
+      }
+      paginationDiv.appendChild(li);
+    }
+
+    if (i <= pageCount) {
+      li = document.createElement("li");
+      li.classList.add("disabled");
+      li.innerHTML = '<a>...</a>';
+      paginationDiv.appendChild(li);
+    }
+
+    li = document.createElement("li");
+    li.innerHTML = "<a><i class='bx bx-chevrons-right'></i></a>";
+    if (page == pageCount) {
+      li.classList.add("disabled");
+    } else {
+      li.addEventListener("click", () => {
+        goToPage(pageCount);
+      })
+    }
+    paginationDiv.appendChild(li);
+  }
+
+  paginationDiv.style.visibility = 'visible';
+}
+
+let lastSearchParams = null;
+/**
+ * 
+ * @param {URLSearchParams} searchParams 
+ */
+function search(searchParams) {
+  if (searchParams) {
+    lastSearchParams = searchParams;
+  } else {
+    searchParams = lastSearchParams;
   }
 
   // Hide the content while loading
   loadingAnimation(true);
   resultsDiv.innerHTML = "";
 
-  searchParams.append("attributes", "tags");
-  fetch(`/api/search?${searchParams}`)
+  if (resultsCount == null) {
+    fetchCount(searchParams);
+  }
+
+  let offset = page * limit - limit;
+
+  searchParams.set("attributes", "tags");
+  searchParams.set("limit", limit.toString());
+  searchParams.set("offset", offset.toString());
+  return fetch(`/api/search?${searchParams}`)
     .then(response => {
       if (!response.ok) {
         if (response.status == 400) {
@@ -186,5 +325,10 @@ function search(searchParams) {
 }
 
 if (window.location.search) {
-  search();
+  const searchParams = new URLSearchParams(window.location.search);
+  page = Number(searchParams.get("p") || "1");
+  if (searchParams.delete)
+    searchParams.delete("p");
+  fillForm(searchParams);
+  search(searchParams);
 }

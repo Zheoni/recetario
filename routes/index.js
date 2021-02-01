@@ -4,14 +4,29 @@ const router = express.Router();
 const { Recipe } = require("../models/recipe.model.js");
 const { Step } = require("../models/step.model.js");
 const { availableLocales } = require("../utils/localeLoader.js");
-const { bundleLocales } = require("../utils/utils.js");
+const { bundleLocales, validate } = require("../utils/utils.js");
+const { query } = require('express-validator');
 
 /* GET home page. */
-router.get('/', function (req, res) {
-	const allRecipes = Recipe.getAll();
+router.get('/', [
+	query("p").default(1).isInt({ min: 1 }).toInt()
+], validate, function (req, res) {
+	let page = req.query.p ?? 1;
+	const limit = 18; // ? Maybe editable in the future
+	
+	const recipeCount = Recipe.getCount();
+	const pageCount = Math.ceil(recipeCount / limit);
+	if (page > pageCount) {
+		page = pageCount;
+	}
+	const offset = page * limit - limit;
+
+	const allRecipes = Recipe.getAll({ limit, offset });
 
 	res.render('index', {
-		recipes: allRecipes
+		recipes: allRecipes,
+		page,
+    pageCount
 	});
 });
 

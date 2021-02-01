@@ -1,0 +1,34 @@
+<ul class="pagination">
+  <% const margin = 2; // number of page number +- of the current one %>
+  <% if (pageCount > 1) { %>
+    <% if (page == 1) { %>
+      <li class="disabled"><a><i class='bx bx-chevrons-left'></i></a></li>
+    <% } else { %>
+      <li><a href="/?p=1"><i class='bx bx-chevrons-left'></i></a></li>
+    <% } %>
+  
+    <% let i = (page - margin > 1 ? page - margin : 1) %>
+  
+    <% if (i !== 1) { %>
+      <li class="disabled"><a>...</a></li>
+    <% } %>
+  
+    <% for (; i <= (page + margin) && i <= pageCount; i++) { %>
+      <% if (i == page) { %>
+        <li class="active"><a><%= i %></a></li>
+      <% } else { %>
+        <li><a href="/?p=<%= i %>"><%= i %></a></li>
+      <% } %>
+    <% } %>
+  
+    <% if (i <= pageCount) { %>
+      <li class="disabled"><a>...</a></li>
+    <% } %>
+  
+    <% if (page == pageCount) { %>
+      <li class="disabled"><a><i class='bx bx-chevrons-right'></i></a></li>
+    <% } else { %>
+      <li><a href="/?p=<%= pageCount %>"><i class='bx bx-chevrons-right'></i></a></li>
+    <% } %>
+  <% } %>  
+</ul>

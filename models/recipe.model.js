@@ -159,14 +159,31 @@ class Recipe {
   }
 
   /**
+   * Return the number of recipes in the database
+   * 
+   * @returns {number} Number of recipes
+   */
+  static getCount() {
+    return Number(q["sRecipeCount"].pluck().get())
+  }
+
+  /**
    * Returns all the recipes from the database.
+   * Offers options for pagination.
    * Only the recipe, not the sub-objects.
+   * 
+   * @param {{
+   *  limit: number,
+   *  offset: number
+   * }} options Pagination options
    * 
    * @returns {Recipe[]} All the recipes.
    */
-  static getAll() {
+  static getAll(options = {}) {
+    options = Object.assign({}, { limit: -1, offset: 0 }, options);
+
     const recipes = q["sAllRecipes"]
-      .all()
+      .all(options.limit, options.offset)
       .map(row => new Recipe(row));
 
     return recipes;
@@ -402,7 +419,9 @@ class Recipe {
    * @param {Object} sort Sorting of the recipes.
    * 
    * @param {Object} [options] Options for the search
-   * @param {number} [options.limit=50] Limit of recipes to find. Defautls to 50. If null, no limit.
+   * @param {boolean} [options.count?] Just returns the number of results
+   * @param {number} [options.limit?] Limit of recipes to find. Defautls to 50. If null, no limit.
+   * @param {number} [options.offset?] Offset to the results.
    * @param {{
    *  attribute: "name"|"author"|"type"|"cookingTime",
    *  order: "ASC"|"DESC"}[]
@@ -415,11 +434,19 @@ class Recipe {
     *  all: boolean
     * }} [options.attributes] Selects the inner sub-objects to fetch.
    * 
-   * @returns {Recipe[]} Results
+   * @returns {Recipe[]|number} Results
    */
   static search(data, options = {}) {
     // Maybe use a query builder instead of doing it manually
-    let query = "SELECT * FROM RECIPES WHERE ";
+
+    let query;
+    if (options.count) {
+      query = "SELECT COUNT(*)"
+    } else {
+      query = "SELECT *";
+    }
+
+    query += " FROM RECIPES WHERE ";
 
     if (data.name) {
       query += `name LIKE '%${data.name}%' AND `;
@@ -490,7 +517,8 @@ class Recipe {
     else
       query = query.slice(0, query.length - 6);
 
-    query += "GROUP BY RECIPES.id ";
+    // ? does it makes sense in this query...
+    // query += "GROUP BY RECIPES.id ";
 
     if (options.sort && options.sort.length > 0) {
       query += "ORDER BY "
@@ -501,15 +529,23 @@ class Recipe {
       }
     }
 
-    if (options.limit === undefined) options.limit = 50;
     if (options.limit) {
       query += ` LIMIT ${options.limit} `;
     }
 
-    const results = db.prepare(query).all().map(row => new Recipe(row));
-
-    if (options.attributes) {
-      results.forEach(r => r.loadAttributes(options.attributes));
+    if (options.limit) {
+      query += ` OFFSET ${options.offset} `;
+    }
+    
+    const prepared_query = db.prepare(query);
+    let results;
+    if (options.count) {
+      results = { count: prepared_query.pluck().get() };
+    } else {
+      results = prepared_query.all().map(row => new Recipe(row));
+      if (options.attributes) {
+        results.forEach(r => r.loadAttributes(options.attributes));
+      }
     }
 
     return results;
@@ -648,7 +684,9 @@ const searchValidations = [
     .isArray({ min: 1 }),
 
 
-  query("limit").optional().isInt({ min: 1 }).toInt(),
+  query("count").default(false).isBoolean().toBoolean(),
+  query("limit").optional().isInt().toInt(),
+  query("offset").default(0).isInt({ min: 0 }).toInt(),
   query("sort").optional().toArray().isArray({ min: 1 }),
   query("sort.*")
     .matches(/^(name|author|type|cookingTime)(_(ASC|DESC))?$/)
@@ -662,7 +700,7 @@ const searchValidations = [
     }),
   query("attributes").optional().toArray().isArray({ min: 1 }),
   query("attributes.*")
-    .isIn(["all", "ingredients", "tags", "steps"])
+    .isIn(["all", "ingredients", "tags", "steps"]),
 ]
 
 module.exports = {
