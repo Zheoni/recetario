@@ -647,7 +647,25 @@ a.tag {
     display: none !important;
   }
 
+  .tag {
+    font-weight: normal;
+    color: var(--text-primary);
+    font-size: 1rem;
+    border: solid 1px var(--borders-color);
+  }
+
   * {
     box-shadow: none !important;
   }
+
+  :root {
+    --bg-primary: #fff;
+    --text-primary: #000;
+    font-family: sans-serif;
+    font-size: 11px;
+  }
+}
+
+@page {
+  margin: 2cm;
 }

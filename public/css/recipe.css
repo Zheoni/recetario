@@ -323,4 +323,18 @@ hr {
   .recipe-image {
     filter: none;
   }
+
+  .image-container {
+    background-image: none !important;
+    page-break-inside: avoid;
+  }
+
+  .method h2, .method h3 {
+    page-break-after: avoid;
+  }
+
+  .banner {
+    position: relative;
+    margin-top: 0;
+  }
 }

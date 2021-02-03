@@ -18,7 +18,7 @@
       <div class="image-container">
         <img class="recipe-image" src="<%= recipe.imageURL %>" alt="">
       </div>
-      <div class="banner-content">
+      <div class="banner-content no-print">
         <div class="chevron">
           <i class='bx bx-chevron-down' ></i>
         </div>
@@ -137,11 +137,16 @@
 
         <div class="recipe-buttons no-print">
           <% 
-            const filename = `${recipe.id}-${encodeURI(recipe.name.replace(/ /g, "_"))}.json`;
+            const filename = `${recipe.id}-${encodeURI(recipe.name.replace(/ /g, "_"))}`;
           %>
-          <a href="/api/recipe/<%= recipe.id %>" download="<%= filename %>">
+
+          <button type="button" class="button" onclick="window.print();">
+            <i class='bx bxs-printer'></i> Print
+          </button>
+
+          <a href="/api/recipe/<%= recipe.id %>" download="<%= filename %>.json">
             <button type="button" class="button">
-              <i class="bx bx-download"></i> JSON
+              <i class='bx bxs-file-json'></i> JSON
             </button>
           </a>
 
