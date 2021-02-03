@@ -3,6 +3,7 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const helmet = require('helmet')
 const debug = require("debug")("recetario:app");
 
 const { initDB, closeDB } = require("./utils/db.js");
@@ -38,6 +39,7 @@ if (process.env.USE_LOGGER !== "false")
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(helmet());
 app.use(express.static(path.join(__dirname, 'public')));
 app.locals.locale = process.env.DEFAULT_LOCALE ?? "en";
 app.locals.availableLocales = availableLocales().map((loc) => loc.code);
