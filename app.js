@@ -39,7 +39,10 @@ if (process.env.USE_LOGGER !== "false")
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(helmet());
+if (process.env.USE_HELMET === "true") {
+  debug("Using helmet");
+  app.use(helmet());
+}
 app.use(express.static(path.join(__dirname, 'public')));
 app.locals.locale = process.env.DEFAULT_LOCALE ?? "en";
 app.locals.availableLocales = availableLocales().map((loc) => loc.code);

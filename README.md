@@ -49,7 +49,8 @@ This will start the server. By default it will listen on port 3000, it can be ch
 - `DATABASE_NAME` name of the database file. *Default: recipes.db*
 - `DATABASE_DIR` path to the database directory where the database file is stored. *Default: .*
 - `DEBUG` used to show debug messages. By default no messages are shown. To show some, I would set it to `recetario:*`. More on this [here](https://github.com/visionmedia/debug).
-- `USE_LOGGER` wheter to log all requests to the server or not. *Default: true*
+- `USE_LOGGER` whether to log all requests to the server or not. *Default: true*
+- `USE_HELMET` whether to use [helmet](https://github.com/helmetjs/helmet) or not. *Default: false*
 - `NODE_ENV` to use it, set it to `production`. More on this [here](https://expressjs.com/en/advanced/best-practice-performance.html#set-node_env-to-production).
 - `HTTPS` can be "false", "true", "only". When set to "false", the app only creates 1 http server. When set to "true", the app creates 2 servers, one for http connections and other for https. When set to "only", the app only creates 1 https server. If it is set to "true" or "only", also requires that `HTTPS_CERT` and `HTTPS_KEY` are present as environment variables. *Default: false*
 - `HTTPS_CERT` is the path to the file where the certificate is stored.
