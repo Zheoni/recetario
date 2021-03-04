@@ -1,5 +1,4 @@
 :root {
-  font-size: 16px;
   font-family: 'Noto Sans', sans-serif;
   --text-primary: #23272a;
   --text-secondary: #f0f8ff;
@@ -662,7 +661,7 @@ a.tag {
     --bg-primary: #fff;
     --text-primary: #000;
     font-family: sans-serif;
-    font-size: 11px;
+    font-size: 11pt;
   }
 }
 

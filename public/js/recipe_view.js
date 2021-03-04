@@ -77,6 +77,15 @@ function deleteRecipe() {
   }
 }
 
+
+
+
+
+
+
+
+
+
 // Load conversion data
 async function clearOldCache() {
   if (!window.caches || window.location.protocol !== "https:") return;
@@ -136,6 +145,7 @@ async function getData(response) {
 }
 
 async function getUnitID(unit) {
+  if (unit === "") return undefined;
   const url = `/api/conversions/find-unit?name=${unit}`;
   const response = await fetchFromCache(url, "aliases");
   const data = await getData(response);
@@ -325,54 +335,106 @@ async function loadData() {
   }
 }
 
-async function convertToUserUnits(ingredients, graph, units) {
+let lastMulitplier;
+async function convertToUserUnits(ingredients, graph, units, multiplier) {
   const userUnits = localStorage.getItem("unitSystem") ?? "metric";
-  const userBestFit = localStorage.getItem("bestFit") ?? "true";
+  const userBestFit = (localStorage.getItem("bestFit") ?? "true") === "true";
 
   for (const ingredient of ingredients) {
+
+    let amountContent = "";
+    let unitContent = ingredient.originalUnit;
+
     if (ingredient.originalValue && ingredient.originalUnitId) {
-      if (ingredient.newUnit === undefined) {
-        const result = convertToSystem(graph, units, ingredient.originalValue, ingredient.originalUnitId, {
+      if (ingredient.newUnit === undefined || lastMulitplier != multiplier) {
+        const result = convertToSystem(graph, units, ingredient.originalValue * multiplier, ingredient.originalUnitId, {
           system: userUnits,
-          bestFit: userBestFit === "true"
+          bestFit: userBestFit
         });
 
         ingredient.newUnit = getUnitFromID(units, result.unit);
         ingredient.newValue = result.value;
       }
 
-      ingredient.amountSpan.textContent = ingredient.newValue
-        .toFixed(2)
-        .replace(/0+$/, "")
-        .replace(/\.$/, "");
-      ingredient.unitSpan.textContent = ingredient.newUnit.name;
+      amountContent = ingredient.newValue;
+      unitContent = ingredient.newUnit.name;
+    } else if (ingredient.originalValue) {
+      amountContent = ingredient.originalValue * multiplier;
     }
 
+    ingredient.unitSpan.textContent = unitContent;
+    ingredient.amountSpan.textContent = amountContent.toFixed(2)
+      .replace(/0+$/, "")
+      .replace(/\.$/, "");
+
   }
+
+  lastMulitplier = multiplier
 }
 
-function restoreOriginalUnits(ingredients) {
+function restoreOriginalUnits(ingredients, graph, units, multiplier) {
+  const userBestFit = (localStorage.getItem("bestFit") ?? "true") === "true";
+
   for (const ingredient of ingredients) {
-    ingredient.amountSpan.textContent = ingredient.originalValue > 0
-      ? ingredient.originalValue
-      : "";
-    ingredient.unitSpan.textContent = ingredient.originalUnit;
+    let amountContent = "";
+    let unitContent = ingredient.originalUnit;
+    if (ingredient.originalValue > 0) {
+      if (userBestFit && ingredient.originalUnitId) {
+        const result = convertToSystem(graph, units, ingredient.originalValue * multiplier, ingredient.originalUnitId, {
+          system: getUnitFromID(units, ingredient.originalUnitId).system,
+          bestFit: userBestFit
+        });
+        amountContent = result.value;
+        unitContent = getUnitFromID(units, result.unit).name;
+      } else {
+        amountContent = ingredient.originalValue * multiplier;
+      }
+      amountContent = amountContent.toFixed(2)
+        .replace(/0+$/, "")
+        .replace(/\.$/, "");
+    }
+
+    ingredient.amountSpan.textContent = amountContent;
+    ingredient.unitSpan.textContent = unitContent;
   }
 }
 
+// Ingredient multiplier
+const ingredientMultiplierInput = document.getElementById("ingredientMultiplierInput");
+let multiplier = 1;
+
+async function changeMultiplier(event) {
+  const newServings = Number(event.target.value);
+  if (!isFinite(newServings) || newServings < 1)
+    return;
+
+  multiplier = newServings / ingredientMultiplierInput.defaultValue;
+  console.log(event.target.value, multiplier);
+
+  convert();
+}
+
+if (ingredientMultiplierInput) {
+  ingredientMultiplierInput.value = ingredientMultiplierInput.defaultValue;
+  ingredientMultiplierInput.addEventListener("input", changeMultiplier);
+}
 
 const convertButton = document.getElementById("convertUnitsButton");
 
-let converted = false;
-convertButton.addEventListener("click", async () => {
+let needConvert = false;
+async function convert() {
   const data = await loadData();
 
-  if (converted) {
-    restoreOriginalUnits(data.ingredients);
-    convertButton.classList.remove("activated");
-  } else {
-    convertToUserUnits(data.ingredients, data.graph, data.units);
+  if (needConvert) {
+    convertToUserUnits(data.ingredients, data.graph, data.units, multiplier);
     convertButton.classList.add("activated");
+  } else {
+    restoreOriginalUnits(data.ingredients, data.graph, data.units, multiplier);
+    convertButton.classList.remove("activated");
   }
-  converted = !converted;
+}
+
+convertButton.addEventListener("click", () => {
+  needConvert = !needConvert;
+  convert();
 });

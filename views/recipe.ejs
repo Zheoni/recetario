@@ -73,6 +73,10 @@
                 <a class="tag system-tag <%= tag.classes.join(' ') %>" href="/search?<%= query %>">
                   <%= tag.name %>
                 </a>
+              <% } else if (tag.classes.includes('servings-tag')) { %>
+                <div class="tag system-tag <%= tag.classes.join(' ') %>">
+                  <input id="ingredientMultiplierInput" type="number" value="<%= tag.name %>" min="1" pattern="\d*">
+                </div>
               <% } else { %>
                 <span class="tag system-tag <%= tag.classes.join(' ') %>">
                   <%= tag.name %>

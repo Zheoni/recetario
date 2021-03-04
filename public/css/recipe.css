@@ -224,6 +224,14 @@ hr {
   transform: rotate(180deg);
 }
 
+#ingredientMultiplierInput {
+  background: transparent;
+  border: none;
+  font-size: inherit;
+  color: inherit;
+  width: 2em;
+}
+
 /* Small screens */
 @media only screen and (max-width: 767px) {
   .ingredients {
