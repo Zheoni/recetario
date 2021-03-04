@@ -1,6 +1,6 @@
 {
   "name": "recetario",
-  "version": "0.7.0-beta",
+  "version": "0.8.1-beta",
   "private": true,
   "description": "Cookbook web application designed for a home network",
   "license": "MIT",

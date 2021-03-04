@@ -15,4 +15,5 @@ FROM (
            UNITS ON UNIT_ALIASES.unit = UNITS.id
 )
 WHERE alias IS $name OR 
-alias || 's' IS $name;
+alias || 's' IS $name OR
+alias || '.' IS $name;
