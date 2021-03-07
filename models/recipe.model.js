@@ -104,7 +104,7 @@ class Recipe {
 
   set typeString(type) {
     const typeNumber = Recipe.recipeTypes.map(t => t.name).indexOf(type);
-    if (typeNumber < 0)  {
+    if (typeNumber < 0) {
       throw new Error("The type does not exist");
     }
     this.type = typeNumber;
@@ -324,7 +324,7 @@ class Recipe {
    * @param {boolean} deleteImage If `true` deletes the image.
    */
   update(deleteImage = false) {
-    let update_object = {...this};
+    let update_object = { ...this };
 
     if (!this.image && !deleteImage) {
       // If image does not change
@@ -536,7 +536,7 @@ class Recipe {
     if (options.limit) {
       query += ` OFFSET ${options.offset} `;
     }
-    
+
     const prepared_query = db.prepare(query);
     let results;
     if (options.count) {
@@ -553,7 +553,7 @@ class Recipe {
 }
 
 function emptyStringToNullSanitizer(value) {
-  return value.length > 0 ? value : null;
+  return value.toString().length > 0 ? value : null;
 }
 
 const JSONValidations = [
@@ -624,7 +624,7 @@ const JSONValidations = [
       let foundOne = false;
       let emptySection = false;
       for (let i = 0; i < steps.length; ++i) {
-        let type = steps[i]?.type;      
+        let type = steps[i]?.type;
 
         if (type === 0 || type === "step") foundOne = true;
 
@@ -671,7 +671,7 @@ const searchValidations = [
     query("types.*").isInt({ max: Recipe.recipeTypes.length - 1 }).toInt(),
     query("types.*").isString().isIn(Recipe.recipeTypes.map(r => r.name))
   ]),
-  query("cookingTime").optional().isInt({ min: 1}).toInt(),
+  query("cookingTime").optional().isInt({ min: 1 }).toInt(),
   query("tags").optional().toArray().isArray({ min: 1 }),
   query("tags.*")
     .customSanitizer((val) => val.split(",").filter(t => t.length > 0))
