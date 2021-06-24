@@ -329,6 +329,22 @@ hr {
 }
 
 @media only print {
+  :root {
+    font-size: 12pt;
+  }
+
+  .recipe {
+    max-width: none;
+    width: 100vw;
+    margin: 0;
+  }
+
+  #ingredientMultiplierInput {
+    -webkit-appearance: none;
+    margin: 0;
+    -moz-appearance: textfield;
+  }
+
   .recipe-image {
     filter: none;
   }

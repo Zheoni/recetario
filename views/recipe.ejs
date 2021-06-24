@@ -45,7 +45,7 @@
               <%= recipe.CREATED_AT %>
             </time>
             <% if (recipe.CREATED_AT !== recipe.UPDATED_AT) { %>
-            (<%= locale.recipeView.edited %>)
+              <span class="no-print">(<%= locale.recipeView.edited %>)</span>
             <% } %>
           </p>
           <div class="about-text">
