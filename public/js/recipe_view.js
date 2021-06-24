@@ -288,12 +288,15 @@ function searchConversion(graph, units, startUnitID, value, { system = "metric",
 
         // decimal part close to a multiple of 1/4
         let decHeur = 0;
-        for (let i = 1; i < 4; ++i) {
-          decHeur += Math.abs(node.value - Math.floor(node.value) - 1/i)**2;
+        let decimalPart = Math.abs(node.value - Math.floor(node.value));
+        if (decimalPart > 0.01) {
+          for (let i = 1; i < 4; ++i) {
+            decHeur += Math.abs(decimalPart - 1/i)**2;
+          }
         }
 
         // join all 3 heristics
-        node.heuristic = valHeur * 0.3 + intHeur * 0.5 + decHeur * 0.2;
+        node.heuristic = valHeur * 0.2 + intHeur * 0.5 + decHeur * 0.3;
 
         // penalize numbers without a whole portion
         if (intHeur === 0) {
@@ -372,9 +375,13 @@ async function convertToUserUnits(ingredients, graph, units, multiplier) {
     }
 
     ingredient.unitSpan.textContent = unitContent;
-    ingredient.amountSpan.textContent = amountContent.toFixed(2)
-      .replace(/0+$/, "")
-      .replace(/\.$/, "");
+    if (typeof amountContent === "number") {
+      ingredient.amountSpan.textContent = amountContent.toFixed(2)
+        .replace(/0+$/, "")
+        .replace(/\.$/, "");
+    } else {
+      ingredient.amountSpan.textContent = amountContent;
+    }
 
   }
 
