@@ -33,7 +33,12 @@
 
         <section class="recipe-about">
           <% if (recipe.author) { %>
-          <p class="author"><%= recipe.author %></p>
+            <%
+              const params = new URLSearchParams();
+              params.append("author", recipe.author);
+              const authorUri = `/search?${params}`;
+            %>
+            <a class="author" href="<%= authorUri %>"><%= recipe.author %></a>
           <% } %>
           <p class="date"><%= locale.recipeView.publicationDate %>
             <time datetime="<%= recipe.CREATED_AT %>" class="date-to-format">
