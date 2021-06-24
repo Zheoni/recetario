@@ -105,6 +105,11 @@ router.get('/search', searchValidations, validate, function (req, res) {
     tags, cookingTime, ingredients,
     limit, sort, attributes, offset, count } = req.query;
 
+  // Fallback to only one author
+  if (authors === undefined) {
+    authors = [req.query.author];
+  }
+
   if (search) {
     name = search;
   }

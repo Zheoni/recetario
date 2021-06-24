@@ -664,6 +664,7 @@ const safeStringRegex = /^[\s\d\p{L}&,\.$€ç%°ºª?¿!¡\-:]+$/iu;
 const searchValidations = [
   query("search").optional().notEmpty().matches(safeStringRegex),
   query("name").optional().notEmpty().matches(safeStringRegex),
+  query("author").optional().notEmpty().matches(safeStringRegex),
   query("authors").optional().toArray().isArray({ min: 1 }),
   query("authors.*").isString().notEmpty().matches(safeStringRegex),
   query("types").optional().toArray().isArray({ min: 1 }),

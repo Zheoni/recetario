@@ -241,6 +241,7 @@ function getFactor(graph, currentNode) {
 function searchConversion(graph, units, startUnitID, value, { system = "metric", bestFit = false }) {
   let currentNode = { id: startUnitID, parent: null };
   const visited = new Set();
+  visited.add(currentNode.id);
   const queue = [currentNode];
 
   let validConversions = [];
@@ -279,23 +280,31 @@ function searchConversion(graph, units, startUnitID, value, { system = "metric",
         const value = node.value.toFixed(5);
         const parts = value.split(".");
 
+        // close to 1
         let valHeur = Math.abs(node.value - 1);
 
+        // less digits in whole portion, better
         let intHeur = parts[0] === "0" ? 0 : parts[0].length;
 
+        // decimal part close to a multiple of 1/4
         let decHeur = 0;
-        for (const digit of parts[1]) if (digit === "0") ++decHeur;
-        decHeur = 1 - decHeur / parts[1].length;
-
-        node.heuristic = valHeur * 0.2 + intHeur * 0.5 + decHeur * 0.3;
-        if (intHeur === 0) {
-          node.heuristic = (node.heuristic + 1) * 100;
+        for (let i = 1; i < 4; ++i) {
+          decHeur += Math.abs(node.value - Math.floor(node.value) - 1/i)**2;
         }
 
-        // console.log(value, valHeur, intHeur, decHeur, node.heuristic);
+        // join all 3 heristics
+        node.heuristic = valHeur * 0.3 + intHeur * 0.5 + decHeur * 0.2;
+
+        // penalize numbers without a whole portion
+        if (intHeur === 0) {
+          node.heuristic += 1000;
+        }
+
+        // console.debug(value, valHeur, intHeur, decHeur, node.heuristic);
         return node;
       })
       .sort((a, b) => a.heuristic - b.heuristic)
+      // console.debug(validConversions)
     return validConversions[0].node;
   } else {
     return null;
