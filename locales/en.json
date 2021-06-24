@@ -77,7 +77,8 @@
 		"methodLabel": "Method",
 		"editButton": "Edit",
 		"deleteButton": "Delete",
-		"confirmDelete": "Are you sure you want to delete the recipe?"
+		"confirmDelete": "Are you sure you want to delete the recipe?",
+		"printButton": "Print"
 	},
 	"search": {
 		"title": "Search",

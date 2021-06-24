@@ -77,7 +77,8 @@
 		"methodLabel": "Método",
 		"editButton": "Editar",
 		"deleteButton": "Eliminar",
-		"confirmDelete": "¿Estás seguro de que quieres eliminar la receta?"
+		"confirmDelete": "¿Estás seguro de que quieres eliminar la receta?",
+		"printButton": "Imprimir"
 	},
 	"search": {
 		"title": "Búsqueda",

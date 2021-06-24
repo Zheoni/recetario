@@ -150,7 +150,7 @@
           %>
 
           <button type="button" class="button" onclick="window.print();">
-            <i class='bx bxs-printer'></i> Print
+            <i class='bx bxs-printer'></i> <%= locale.recipeView.printButton %>
           </button>
 
           <a href="/api/recipe/<%= recipe.id %>" download="<%= filename %>.json">
